@@ -1,3 +1,5 @@
+import Navbar from "../components/Navbar";
+
 function ProfilPage(){
     const xp = 25;//test
 
@@ -9,6 +11,7 @@ function ProfilPage(){
 
     return (
         <div>
+            <Navbar></Navbar>
             <h1>
                 Profil
             </h1>

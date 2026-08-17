@@ -79,3 +79,13 @@ Beispiel: xp >= achievement.schwelle ? "✅ freigeschaltet" : "🔒 gesperrt"
 - [x] Leaderboard-Komponente mit .map() + key gebaut
 - [x] RankingPage erstellt und Route verkabelt
 - [x] ProfilPage mit Achievement-Liste + Freischalt-Logik (ternärer Operator) gebaut und Route verkabelt
+
+## Navbar – Navigation zwischen den Seiten
+
+NavLink = wie Link, kennt aber zusätzlich seinen eigenen "aktiv"-Zustand (für spätere Hervorhebung der aktuellen Seite).
+JSX entfernt Zeilenumbrüche zwischen Elementen (anders als normales HTML) – deshalb kein automatischer Abstand zwischen den NavLinks, Abstand muss per CSS kommen.
+nav a (CSS-Selektor) = "jedes <a>-Element innerhalb eines <nav>" – NavLink wird im Browser zu einem echten <a>-Tag, deshalb greift der Selektor.
+
+- [x] Navbar-Komponente gebaut (NavLink zu Dashboard, Ranking, Profil)
+- [x] Navbar in Dashboard-, Ranking- und Profil-Seite eingebunden
+- [x] CSS-Abstand zwischen Navi-Links ergänzt (index.css)
