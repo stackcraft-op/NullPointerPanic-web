@@ -4,6 +4,7 @@ import LoginPage from "./pages/LoginPage";
 import DashboardPage from "./pages/DashboardPage";
 import RankingPage from "./pages/RankingPage";
 import ProfilPage from "./pages/ProfilPage";
+import FlashcardsPage from "./pages/FlashcardsPage";
 
 function App() {
   return(
@@ -14,6 +15,7 @@ function App() {
         <Route path="/dashboard" element={<DashboardPage/>}/>
         <Route path="/ranking" element={<RankingPage/>}/>
         <Route path="/profil" element={<ProfilPage/>}/>
+        <Route path="/karteikarten" element={<FlashcardsPage/>}/>
       </Routes>
     </BrowserRouter>
   )

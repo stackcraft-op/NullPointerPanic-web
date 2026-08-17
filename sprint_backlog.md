@@ -89,3 +89,15 @@ nav a (CSS-Selektor) = "jedes <a>-Element innerhalb eines <nav>" – NavLink wir
 - [x] Navbar-Komponente gebaut (NavLink zu Dashboard, Ranking, Profil)
 - [x] Navbar in Dashboard-, Ranking- und Profil-Seite eingebunden
 - [x] CSS-Abstand zwischen Navi-Links ergänzt (index.css)
+
+## ProfilPage – Name & Avatar
+
+Test-Variablen name/avatar angelegt und mit {avatar} {name} in JSX eingebaut. Später soll der echte Name aus dem Login (useState in LoginPage) hier ankommen - dafür müsste State zwischen Seiten geteilt werden (größerer nächster Schritt, noch offen).
+
+## Feature-Idee (Kollege): Karteikarten zusätzlich zum Quiz
+
+Neben dem Quiz sollen tägliche Karteikarten fürs aktive Wiederholen kommen (Spaced Repetition): Karte anzeigen, bei "weiß ich schon" verschwindet sie aus der Liste. Technisch easy machbar - neues Konzept: State, der ein Array ist, und Elemente daraus entfernen.
+
+FlashcardsPage angelegt: State ist diesmal ein ganzes Array (karten/setKarten), nicht nur ein einzelner Wert wie bisher. Route /karteikarten + Navbar-Link ergänzt. "Karte entfernen beim Klick" folgt als nächster Schritt (.filter()).
+
+- [x] FlashcardsPage mit Karten-Liste (State als Array) gebaut, Route + Navbar-Link verkabelt

@@ -2,6 +2,8 @@ import Navbar from "../components/Navbar";
 
 function ProfilPage(){
     const xp = 25;//test
+    const name = "Alex";
+    const avatar = "🧑‍💻";
 
     const achievements = [
         { id: 1, titel : "Erste Schritte", schwelle: 10, icon: "🥉"},
@@ -15,6 +17,7 @@ function ProfilPage(){
             <h1>
                 Profil
             </h1>
+            <p>{avatar} {name}</p>
             <ul>
                 {achievements.map((achievement)=>(
                     <li key={achievement.id}>{achievement.titel}(ab {achievement.schwelle} XP)-{" "}
