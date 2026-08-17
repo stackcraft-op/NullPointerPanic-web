@@ -13,11 +13,14 @@ Rolle: Frontend (React). Ziel: bis Tag 3 erläutern können, was frontendseitig 
 - [x] DashboardPage **eigenständig** gebaut und korrekt verkabelt (Route + Import)
 - [x] Navigation Start → Login funktioniert (`<Link to="...">`)
 - [x] Login-Formular mit funktionierendem, live-aktualisiertem Eingabefeld (Controlled Input via `useState`)
+- [x] Login-Button mit `useNavigate` springt bei Klick zu `/dashboard`
+- [x] Erste eigene Komponente `XPBar` gebaut und mit Props in `DashboardPage` eingebunden
 
 ## Nächste Schritte
 
-- [ ] Login-Button hinzufügen, der bei Klick zu `/dashboard` springt (`useNavigate`)
-- [ ] Weitere Seiten: Ranking, Profil mit Achievements
+- [ ] Ranking-Liste anzeigen (Listen rendern mit `.map()` + `key`)
+- [ ] XPBar optisch zum echten Balken ausbauen (Prozent-Berechnung)
+- [ ] Weitere Seiten: Profil mit Achievements
 - [ ] Später: echte Daten vom Ruby-Backend laden (`useEffect` + `fetch`)
 
 ---
@@ -43,3 +46,9 @@ Rolle: Frontend (React). Ziel: bis Tag 3 erläutern können, was frontendseitig 
 | **`event`** | Automatisch mitgeliefertes Objekt bei jedem Ereignis (Klick, Tastendruck, ...) |
 | **`event.target`** | Das konkrete HTML-Element, wo das Ereignis stattfand |
 | **`event.target.value`** | Der aktuelle Text/Wert in genau diesem Element |
+| **`useNavigate()`** | Gibt eine einzelne Funktion zurück, mit der man "per Code" zu einer anderen Route springen kann |
+| **`<Link>` vs. `useNavigate()`** | `<Link>` springt sofort ohne Bedingung. `useNavigate()` erlaubt vorher eigene Logik/Prüfung, dann erst springen |
+| **Objekt-Destrukturierung `{ a, b }`** | Wie Array-Destrukturierung, nur für Objekte statt Arrays – packt einzelne Felder direkt aus |
+| **Props-Objekt** | Jede Komponente bekommt technisch nur EIN Objekt mit allen Props übergeben, `{ xp, maxXp }` in der Parameterklammer packt es sofort aus |
+| **`prop="text"` vs. `prop={wert}`** | Anführungszeichen = fester String. Geschweifte Klammern = echter JS-Wert (Zahl, Variable, Ausdruck) |
+| **Relative Importpfade (`../ordner`)** | `..` = einen Ordner nach oben, dann rein in den Zielordner – reine Dateipfad-Navigation |
