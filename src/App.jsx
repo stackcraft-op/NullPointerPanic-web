@@ -2,6 +2,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import StartPage from "./pages/StartPage";
 import LoginPage from "./pages/LoginPage";
 import DashboardPage from "./pages/DashboardPage";
+import RankingPage from "./pages/RankingPage";
+import ProfilPage from "./pages/ProfilPage";
 
 function App() {
   return(
@@ -10,6 +12,8 @@ function App() {
         <Route path = "/" element={<StartPage/>} />
         <Route path="/login" element={<LoginPage/>} />
         <Route path="/dashboard" element={<DashboardPage/>}/>
+        <Route path="/ranking" element={<RankingPage/>}/>
+        <Route path="/profil" element={<ProfilPage/>}/>
       </Routes>
     </BrowserRouter>
   )

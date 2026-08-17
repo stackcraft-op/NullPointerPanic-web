@@ -1,54 +1,81 @@
-# Sprint Backlog – React-Einarbeitung (Frontend)
+## 17.08
 
-Projekt: Gamifizierte IHK AP1/AP2-Lernplattform (Scrum-Teamprojekt, FIAE)
-Rolle: Frontend (React). Ziel: bis Tag 3 erläutern können, was frontendseitig machbar ist.
+## einführung react
 
-## Erledigt – 2026-08-17
+Jede React-Komponente MUSS mit return etwas zurückgeben (JSX), sonst zeigt sie nichts an. Das wird dir noch öfter passieren, das ist super normal am Anfang.
+.jsx – javascript xml
+export default Name;
+Macht eine Komponente aus dieser Datei für andere Dateien nutzbar ("Paket verschicken"). Gegenstück: import Name from "./pfad" ("Paket abholen"). Pro Datei nur ein export default erlaubt
 
-- [x] React-Grundlagen verstanden: Komponenten, JSX, `return`-Pflicht, `export default` / `import`
-- [x] React Router installiert (`react-router-dom`)
-- [x] Grundgerüst mit `BrowserRouter` / `Routes` / `Route` aufgesetzt
-- [x] StartPage gebaut (Überschrift, Text, Link)
-- [x] LoginPage gebaut
-- [x] DashboardPage **eigenständig** gebaut und korrekt verkabelt (Route + Import)
-- [x] Navigation Start → Login funktioniert (`<Link to="...">`)
-- [x] Login-Formular mit funktionierendem, live-aktualisiertem Eingabefeld (Controlled Input via `useState`)
-- [x] Login-Button mit `useNavigate` springt bei Klick zu `/dashboard`
-- [x] Erste eigene Komponente `XPBar` gebaut und mit Props in `DashboardPage` eingebunden
+npm run build
+Baut das Projekt einmal komplett und zeigt Fehler an, die man beim reinen Rumklicken im Browser evtl. übersieht – guter schneller Check zwischendurch
 
-## Nächste Schritte
+## React Router installiert & Grundkonzept verstanden (Navigation zwischen Seiten ohne Reload)
 
-- [ ] Ranking-Liste anzeigen (Listen rendern mit `.map()` + `key`)
-- [ ] XPBar optisch zum echten Balken ausbauen (Prozent-Berechnung)
-- [ ] Weitere Seiten: Profil mit Achievements
-- [ ] Später: echte Daten vom Ruby-Backend laden (`useEffect` + `fetch`)
+React Router ist der "Türsteher" der App: Er schaut sich die Adresszeile an (z.B. /login, /dashboard) und zeigt je nachdem eine andere Komponente an – ohne dass die Seite neu lädt. Dadurch fühlt sich eine React-App wie mehrere Seiten an, ist technisch aber weiterhin nur eine einzige HTML-Seite ("Single Page App").
 
----
+## es wurde login simmuliert erstellt und als neues route in app.jsx hinzugefügt
 
-## Glossar (bisher gelernte Begriffe)
+## ein link from start screen to login
 
-| Begriff | Kurz erklärt |
-|---|---|
-| **Komponente** | Wiederverwendbarer Baustein für ein Stück UI, im Kern eine Funktion, die JSX zurückgibt |
-| **JSX** | "JavaScript XML" – HTML-ähnlicher Code innerhalb von JavaScript, wird beim Speichern automatisch in normales JS übersetzt |
-| **`return`** | Jede Komponente muss ihr JSX per `return` zurückgeben, sonst wird nichts angezeigt |
-| **Props** | Werte, die eine Komponente von außen übergeben bekommt (wie ein Zettel mit Anweisungen) |
-| **State** | Speicher, den eine Komponente sich selbst merkt, lesbar und veränderbar; Änderung löst Neu-Zeichnen aus |
-| **`useState(startwert)`** | Erzeugt State, gibt `[aktuellerWert, changerFunktion]` zurück |
-| **`export default Name;`** | Macht eine Komponente aus dieser Datei für andere Dateien nutzbar |
-| **`import Name from "./pfad"`** | Holt eine exportierte Komponente aus einer anderen Datei |
-| **Namenskollision** | Zwei Dinge (z.B. `import` und eigene Funktion) dürfen in derselben Datei nicht denselben Namen haben |
-| **`<BrowserRouter>`** | Aktiviert Routing für die ganze App (einmal außen rum) |
-| **`<Routes>`** | Container/Liste aller Seiten-Zuordnungen |
-| **`<Route path="..." element={...} />`** | Eine einzelne Regel: "bei dieser Adresse, zeig diese Komponente" |
-| **`<Link to="...">`** | Wie `<a href>`, aber ohne Seiten-Neuladen – nur der Inhalt wechselt |
-| **Controlled Input** | Eingabefeld, dessen Inhalt komplett von React (State) gesteuert wird: `value={state}` + `onChange` |
-| **`event`** | Automatisch mitgeliefertes Objekt bei jedem Ereignis (Klick, Tastendruck, ...) |
-| **`event.target`** | Das konkrete HTML-Element, wo das Ereignis stattfand |
-| **`event.target.value`** | Der aktuelle Text/Wert in genau diesem Element |
-| **`useNavigate()`** | Gibt eine einzelne Funktion zurück, mit der man "per Code" zu einer anderen Route springen kann |
-| **`<Link>` vs. `useNavigate()`** | `<Link>` springt sofort ohne Bedingung. `useNavigate()` erlaubt vorher eigene Logik/Prüfung, dann erst springen |
-| **Objekt-Destrukturierung `{ a, b }`** | Wie Array-Destrukturierung, nur für Objekte statt Arrays – packt einzelne Felder direkt aus |
-| **Props-Objekt** | Jede Komponente bekommt technisch nur EIN Objekt mit allen Props übergeben, `{ xp, maxXp }` in der Parameterklammer packt es sofort aus |
-| **`prop="text"` vs. `prop={wert}`** | Anführungszeichen = fester String. Geschweifte Klammern = echter JS-Wert (Zahl, Variable, Ausdruck) |
-| **Relative Importpfade (`../ordner`)** | `..` = einen Ordner nach oben, dann rein in den Zielordner – reine Dateipfad-Navigation |
+<Link to="/login"> ist quasi wie <a href="/login">, nur dass React Router dabei nicht die ganze Seite neu lädt – nur der Inhalt in der Mitte wechselt (schneller, kein weißer Blitz).
+
+## State in React: ein Stück Speicher, das die Komponente sich selbst merkt, jederzeit auslesen kann, und das sich ändern kann. Der echte Fachbegriff dafür ist einfach "State" (oder auf Deutsch "Zustand") – das musst du dir merken, nicht "Post-it". Das Bild soll dir nur helfen, dir vorzustellen, WAS State eigentlich ist (Speicher, den man beschreiben und lesen kann), nicht mehr.
+
+event
+Automatisch mitgeliefertes Objekt bei jedem Ereignis (Klick, Tastendruck...) – enthält Infos darüber, was passiert ist
+event.target
+Das konkrete HTML-Element, wo das Ereignis stattgefunden hat
+event.target.value
+Der aktuelle Text/Wert, der in genau diesem Element gerade steht
+
+## Array-Destrukturierung
+
+    [a, b] = array	JS-Kurzschreibweise, um einzelne Einträge eines Arrays direkt in Variablen auszupacken
+
+## useState()
+
+     Rückgabewert	Immer ein Array mit 2 Einträgen: [aktuellerWert, changerFunktion] – unabhängig davon, WAS der State selbst ist
+
+## Der State-Wert selbst
+
+    Kann Text, Zahl, Boolean, Objekt oder Array sein – bestimmt durch den Startwert in useState(...)
+
+## useNavigate()
+
+gibt dir eine Funktion (navigate), mit der du "per Code" zu einer anderen Adresse springen kannst – wie ein Link, nur ausgelöst durch eine Aktion (hier: Klick) statt durch direktes Anklicken eines <Link>.
+
+## Faustregel:
+
+Reiner Klick-Link ohne Bedingung (z.B. "zurück zum Dashboard", "Los geht's" auf der Startseite) → <Link>
+Erst Logik, dann vielleicht navigieren (Formulare, Login, Validierung) → Button + useNavigate()
+
+## Props-Objekt
+
+    React übergibt jeder Komponente immer nur EIN Objekt mit allen Props. { xp, maxXp } in der Parameterklammer ist Objekt-Destrukturierung, keine echten 2 Parameter
+
+## Objekt-Destrukturierung
+
+    Kurzschreibweise, um einzelne Felder direkt aus einem Objekt in Variablen auszupacken – ähnlich wie Array-Destrukturierung, nur mit { } statt [ ]
+
+## Die geschweiften Klammern { } in JSX bedeuten generell: "das hier drin ist kein fester Text, sondern echtes JavaScript" – kann eine Zahl sein, eine Variable, ein Rechenausdruck, was auch immer. Für Zahlen, Booleans, Variablen etc. brauchst du deshalb immer die geschweiften Klammern statt Anführungszeichen.
+
+Kleiner Merksatz für dich: jede Komponente, die du irgendwo als <Xyz /> benutzt, muss vorher entweder in derselben Datei definiert ODER importiert sein – sonst kennt JavaScript den Namen nicht. Das war schon zweimal dein Stolperstein (erst bei StartPage, jetzt bei RankingPage) – ein guter Punkt für deinen persönlichen "worauf ich achten muss"-Merkzettel.
+
+## .map() – Leaderboard-Komponente
+
+.map() geht ein Array durch, wandelt JEDES Element per eigener Funktion in etwas Neues um (hier: Objekt → <li>-Element), gibt ein NEUES Array zurück, Original bleibt unverändert.
+key={eindeutigeId} ist Pflicht bei per .map() erzeugten Listen-Elementen, damit React sie beim Neuzeichnen auseinanderhalten kann (am besten eine echte ID aus den Daten, nicht den Array-Index).
+
+## Component vs. Page (präzisiert)
+
+Nicht "Logik vs. Anzeige". Sondern: Component = wiederverwendbar / mehrfach gebraucht (z.B. XPBar, Leaderboard). Page = gehört zu einer URL, darf auch eigene Logik haben, wenn die nur für diese eine Seite gilt (z.B. LoginPage mit useState + useNavigate direkt drin, keine eigene Komponente nötig).
+
+## ProfilPage – Achievements mit Freischalt-Logik
+
+Ternärer Operator: bedingung ? wertWennWahr : wertWennFalsch – Kurzform für if/else innerhalb eines Ausdrucks.
+Beispiel: xp >= achievement.schwelle ? "✅ freigeschaltet" : "🔒 gesperrt"
+
+- [x] Leaderboard-Komponente mit .map() + key gebaut
+- [x] RankingPage erstellt und Route verkabelt
+- [x] ProfilPage mit Achievement-Liste + Freischalt-Logik (ternärer Operator) gebaut und Route verkabelt
