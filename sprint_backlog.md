@@ -101,3 +101,12 @@ Neben dem Quiz sollen tägliche Karteikarten fürs aktive Wiederholen kommen (Sp
 FlashcardsPage angelegt: State ist diesmal ein ganzes Array (karten/setKarten), nicht nur ein einzelner Wert wie bisher. Route /karteikarten + Navbar-Link ergänzt. "Karte entfernen beim Klick" folgt als nächster Schritt (.filter()).
 
 - [x] FlashcardsPage mit Karten-Liste (State als Array) gebaut, Route + Navbar-Link verkabelt
+
+## Karte per Klick entfernen (.filter())
+
+.filter() geht die Liste durch und behält NUR die Elemente, die eine Bedingung erfüllen - anders als .map() (wandelt jedes Element um, Anzahl bleibt gleich), verändert .filter() die Anzahl der Elemente.
+karten.filter((karte) => karte.id !== id) = "behalte alle Karten, deren id NICHT der angeklickten id entspricht" - die eine Karte fällt raus.
+setKarten(...) ersetzt die alte Liste komplett durch die neue (gekürzte) Liste, React zeichnet automatisch neu.
+Stolperstein gehabt: neuer <li> mit Button wurde AUSSERHALB von .map() eingefügt statt INNERHALB - karte gibt's aber nur innerhalb der .map()-Funktion, außerhalb "nicht definiert"-Fehler.
+
+- [x] Karteikarten-Mechanismus fertig: Klick auf "Weiß ich schon" entfernt die Karte per .filter() aus dem Array-State

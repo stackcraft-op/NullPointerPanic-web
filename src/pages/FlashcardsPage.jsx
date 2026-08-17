@@ -8,14 +8,21 @@ function FlashcardsPage(){
         { id: 3, frage: "Was bedeutet HTTP 404?" },
     ])
 
+    function kartenWeg(id){
+        setKarten(karten.filter((karte)=> karte.id !== id));
+    }
+
     return (
         <div>
             <Navbar/>
             <h1>Karteikarten</h1>
             <ul>
                 {karten.map((karte)=>(
-                    <li key={karte.id}>{karte.frage}</li>
+                    <li key={karte.id}>{karte.frage}
+                    <button onClick={()=> kartenWeg(karte.id)}>Weiss ich</button>
+                    </li>
                 ))}
+                
             </ul>
         </div>
     )
