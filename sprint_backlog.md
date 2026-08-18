@@ -110,3 +110,134 @@ setKarten(...) ersetzt die alte Liste komplett durch die neue (gekürzte) Liste,
 Stolperstein gehabt: neuer <li> mit Button wurde AUSSERHALB von .map() eingefügt statt INNERHALB - karte gibt's aber nur innerhalb der .map()-Funktion, außerhalb "nicht definiert"-Fehler.
 
 - [x] Karteikarten-Mechanismus fertig: Klick auf "Weiß ich schon" entfernt die Karte per .filter() aus dem Array-State
+
+## 18.08
+
+## QuizPage gebaut – State + Events + Conditional Rendering kombiniert
+
+Neu diesmal: zwei zusätzliche States neben dem Fragen-Array selbst – `aktuelleFrage` (Zahl,
+Index der gerade angezeigten Frage im Array, Start bei 0) und `feedback` (Text, der nach
+Klick "Richtig!!!" oder "Falsch, richtig wäre ..." anzeigt, Start leer).
+`frage = fragen[aktuelleFrage]` ist KEIN State, nur eine normale Variable, die sich bei
+jedem Neuzeichnen frisch aus dem Array holt, welche Frage gerade dran ist.
+
+onClick mit Pfeilfunktion, z.B. `onClick={()=> antwortKlick(antwort)}`:
+Ohne die `()=>`-Verpackung würde `antwortKlick(antwort)` sofort beim Zeichnen der Seite
+laufen (nicht erst beim Klick) - Fehler. Mit `()=>` drumherum wird stattdessen eine neue,
+unbenannte Funktion übergeben ("Zettel mit Anweisung"), die React sich merkt und ERST beim
+tatsächlichen Klick ausführt. Nötig, sobald man der Klick-Funktion einen eigenen Wert
+mitgeben will (hier: welcher der 3 Antwort-Texte geklickt wurde) statt nur das automatische
+Klick-Event.
+
+- [x] QuizPage-Gerüst angelegt, Route (/quiz) + Navbar-Link verkabelt
+- [x] Quiz-Fragen als Array-State (id, frage, antworten[], richtig) angelegt
+- [x] Aktuelle Frage anzeigen (aktuelleFrage-Index + frage-Variable) + Antwort-Buttons per .map()
+- [x] Klick-Handler antwortKlick() prüft Antwort gegen frage.richtig, setzt feedback-Text (ternärer Operator)
+
+## Feature-Scope-Update (Kollege): Karteikarten vs. Quiz klarer getrennt
+
+Rücksprache mit dem Backend-Kollegen: Karteikarten sind eigentlich als täglicher
+Lern-Input gedacht (z.B. "hier sind deine 10 Karten für heute") - reine Info-Anzeige zum
+Durchlesen/Merken, kein Abfragen. Der von uns gebaute Mechanismus (Karte anklicken →
+verschwindet aus der Liste per .filter()) ist technisch fertig und bleibt bestehen, wird
+aber zu einem SPÄTEREN Feature (z.B. "als gelernt markieren" innerhalb der täglichen
+Lernkarten), nicht der Kernfunktion. Kein Code-Änderungsbedarf jetzt, nur Einordnung für
+die Team-Abstimmung an Tag 3 wichtig.
+
+## Quiz – Nächste-Frage-Button + Ende abfangen (early return)
+
+naechsteFrage() zählt aktuelleFrage per setAktuelleFrage(aktuelleFrage+1) hoch und setzt
+feedback zurück auf "". Ohne Absicherung würde bei der letzten Frage fragen[3] (existiert
+nicht) zu einem Absturz führen (frage = undefined, frage.frage nicht lesbar).
+Fix: if(!frage){ return (...) } ganz oben im return-Bereich - "früher return": sobald diese
+Bedingung zutrifft, gibt die Funktion sofort die Endnachricht zurück, der Rest der Funktion
+läuft dann gar nicht mehr.
+
+- [x] naechsteFrage()-Button gebaut, zählt aktuelleFrage-Index hoch
+- [x] Quiz-Ende abgefangen (early return mit if(!frage)) statt Absturz bei letzter Frage
+
+## Login/Registrierung – Architektur-Klärung fürs Team
+
+Ablauf-Vereinbarung fürs Backend-Gespräch (Tag 3): Frontend schickt beim Login-/Registrieren-
+Klick die Formulardaten als JSON per fetch() (POST) an Ruby - fetch() direkt in der
+Klick-Funktion, KEIN useEffect (useEffect ist nur für automatisch beim Öffnen einer Seite
+geladene Daten, z.B. Ranking-Liste). Ruby vergleicht mit der DB und schickt Erfolg/Fehler
+zurück, Frontend navigiert dann per useNavigate() weiter oder zeigt Fehlertext.
+
+Passwort-Hashing macht bewusst NICHT das Frontend (bringt sicherheitstechnisch nichts, wenn
+nur der Hash verschickt wird, und wäre Business-Logik) - macht das Backend mit bcrypt, bevor
+das Passwort in die DB geschrieben wird. Frontend schickt nur das Klartext-Passwort im JSON.
+
+Vorschlag Schnittstellen-Vertrag (JSON-Form), als Diskussionsgrundlage für den Kollegen:
+{ "benutzername": "max", "passwort": "geheim123" } (Request)
+{ "erfolg": true, "name": "Max", "xp": 120 } bzw. { "erfolg": false, "fehler": "..." } (Response)
+
+RegisterPage gebaut (/registrieren, Route + Link von LoginPage aus verkabelt): eigene
+Controlled Inputs für Benutzername/Passwort/Passwort-Wiederholung, Vergleich der beiden
+Passwort-Felder als reine Frontend-Anzeigelogik (kein echter Sicherheitscheck - der passiert
+später im Backend). Neues Muster: if-Anweisung VOR dem return, Ergebnis in einer normalen
+Variable (fehlerText) gespeichert, im JSX nur noch {fehlerText} referenziert - weil in JSX
+nur Ausdrücke (keine if-Anweisungen) direkt in { } stehen dürfen.
+
+- [x] Login/Registrierung-Datenfluss + Schnittstellen-Vertrag (JSON) für Backend-Gespräch geklärt
+- [x] Passwort-Hashing bewusst als Backend-Aufgabe (bcrypt) eingeordnet, nicht Frontend
+- [x] RegisterPage gebaut: Formular + Passwort-Übereinstimmungs-Check, Route + Link verkabelt
+
+## Login-Name state-lifting (App.jsx als gemeinsamer Speicherort)
+
+Zwei Seiten (LoginPage, ProfilPage) sind komplett getrennte Dateien und können normalerweise
+nichts voneinander sehen. Der Name muss deshalb dort gespeichert werden, wo BEIDE Zugriff
+haben - das ist App.jsx, weil dort beide Seiten per <Route> eingebunden werden ("state
+lifting": den State eine Ebene höher legen, zum gemeinsamen Elternteil).
+
+Umsetzung: eingeloggterName + setEingeloggterName liegen jetzt in App.jsx (useState).
+LoginPage bekommt nur setEingeloggterName als Prop (den "Stift" - darf schreiben), ruft ihn
+beim Login-Klick auf (einloggen()-Funktion: erst setEingeloggterName(name), dann navigate).
+ProfilPage bekommt nur eingeloggterName als Prop (den "Zettel-Inhalt" - darf nur lesen),
+zeigt ihn per {eingeloggterName} an, kein hart codierter Test-Name mehr.
+Wichtig: die zwei Props brauchen unterschiedliche Namen als LoginPages eigenes lokales
+name/setName (Eingabefeld-State), sonst Verwechslungsgefahr zwischen "was gerade getippt
+wird" und "was tatsächlich eingeloggt ist".
+
+Zusätzlich: Passwort-Feld (type="password", eigener State) in LoginPage ergänzt - wird
+aktuell noch nicht ausgewertet (kein echter Login-Check ohne Backend), sammelt aber schon
+strukturell das Passwort mit, für den späteren fetch()-Request an Ruby.
+
+- [x] Gemeinsamer Name-State in App.jsx angelegt (eingeloggterName/setEingeloggterName)
+- [x] LoginPage schreibt beim Login-Klick in den gemeinsamen State (Prop: setEingeloggterName)
+- [x] ProfilPage liest den gemeinsamen State aus (Prop: eingeloggterName) statt Test-Wert "Alex"
+- [x] Passwort-Feld in LoginPage ergänzt (State + Controlled Input, type="password")
+
+## DailyLearningPage (/learning) – Karten mit Klick-zum-Aufklappen
+
+Neues Muster: pro Karte in .map() individuell entscheiden, ob ihre Info sichtbar ist -
+offeneKarteId (State) merkt sich die id der gerade aufgeklappten Karte (Start: null =
+keine). Pro Karte Vergleich karte.id === offeneKarteId, nur bei Treffer wird info befüllt.
+Dafür brauchte die Pfeilfunktion in .map() erstmals { } + eigenes return statt der kurzen
+(...)-Schreibweise, weil vorher noch eine if-Prüfung laufen muss.
+Debugging-Fund (Klammer-Fehler): eine überzählige } hat die Pfeilfunktion zu früh
+geschlossen, sodass return danach "allein" (außerhalb jeder Funktion) stand - ergab keinen
+gültigen Code. Zweiter Fund: nach Umbenennung der Datei (Tippfehler behoben) musste der
+Import-Pfad in App.jsx manuell nachgezogen werden, sonst findet React die Datei nicht mehr.
+
+- [x] DailyLearningPage gebaut (Route /learning + Navbar-Link), 5 Karten mit Thema+Info
+- [x] Klick auf Thema zeigt Info darunter an (offeneKarteId-State, .map() mit if+return)
+- [x] "Ist mir klar, entfernen"-Button (.filter(), bekanntes Muster)
+
+## FlashcardsPage – Quizlet-Prinzip (Frage→Antwort aufdecken→Weiß ich/Weiß ich noch nicht)
+
+Umbau der ursprünglichen Karteikarten nach Vorbild Quizlet: Karte zeigt erst nur die Frage,
+Klick auf "Antwort zeigen" deckt die Antwort auf, dann zwei Buttons: "Weiß ich" (Karte fällt
+komplett raus, .filter()) oder "Weiß ich noch nicht" (Karte fällt raus UND wird hinten
+wieder angehängt, .filter() + .concat() kombiniert) - eine Art Schleife, die erst endet,
+wenn alle Karten als "weiß ich" markiert wurden (Array leer, early return wie beim Quiz).
+
+Neue Konzepte: karte = karten[0] (immer die vorderste Karte der Warteschlange statt Index),
+aufgedeckt-State (steuert Frage/Antwort-Ansicht, wird bei jeder neuen Karte auf false
+zurückgesetzt), .concat(array) (klebt zwei Arrays zusammen, Original bleibt unverändert -
+restKarten.concat([karte]) hängt die aktuelle Karte wieder hinten an), aktionsBereich
+(Variable, per if/else vor dem return befüllt mit dem passenden JSX-Block - gleiches Muster
+wie fehlerText bei RegisterPage).
+
+- [x] FlashcardsPage nach Quizlet-Prinzip umgebaut: Frage zeigen → Antwort aufdecken → Weiß ich/Weiß ich noch nicht
+- [x] "Weiß ich noch nicht" hängt Karte ans Ende der Warteschlange (.filter()+.concat()), Schleife bis Array leer

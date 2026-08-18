@@ -6,7 +6,9 @@ function Navbar(){
             <NavLink to="/dashboard">Dashboard</NavLink>
             <NavLink to="/ranking">Ranking</NavLink>
             <NavLink to= "/profil">Profil</NavLink>
-            <NavLink to="/karteikarten">Karteikarten</NavLink>
+            <NavLink to="/karteikarten">Karteikarten(feature)</NavLink>
+            <NavLink to="/quiz">Quiz</NavLink>
+            <NavLink to="/learning">Daily Learning</NavLink>
         </nav>
     )
 }

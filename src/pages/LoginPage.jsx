@@ -1,9 +1,16 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
-function LoginPage(){
+function LoginPage({setEingeloggterName}){
     const [name,setName] = useState("");
+    const [passwort, setPasswort] = useState("");
     const navigate = useNavigate();
+
+    function einloggen(){
+        setEingeloggterName(name);
+        navigate("/dashboard");
+    }
 
     return(
         <div>
@@ -13,8 +20,18 @@ function LoginPage(){
                 value={name}
                 onChange={(event) => setName(event.target.value)}
                 placeholder="Dein Name"/>
+            <input 
+                type="password"
+                value={password}
+                onChange={(event)=> setPasswort(event.target.value)}
+                placeholder="Passwort"/>
                 <p>du tippst gerade: {name}</p>
-                <button onClick={() => navigate("/dashboard")}>Einloggen</button>
+                <button onClick={() => einloggen()}>Einloggen</button>
+                <p>
+                    <Link to="/registrieren">
+                    Noch kein Konto? Jetzt registrieren 
+                    </Link>
+                </p>
         </div>
     )
 }

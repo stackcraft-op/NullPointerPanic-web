@@ -3,27 +3,54 @@ import Navbar from "../components/Navbar";
 
 function FlashcardsPage(){
     const [karten, setKarten] = useState([
-        { id: 1, frage: "Was ist Normalisierung?" },
-        { id: 2, frage: "Was ist ein Sprint Backlog?" },
-        { id: 3, frage: "Was bedeutet HTTP 404?" },
+        { id: 1, frage: "Was ist Normalisierung?", antwort: "Datenbank-Tabellen so aufräumen, dass Daten nicht doppelt gespeichert werden." },
+        { id: 2, frage: "Was ist ein Sprint Backlog?", antwort: "Die Liste der Aufgaben, die ein Team sich für einen Sprint vorgenommen hat." },
+        { id: 3, frage: "Was bedeutet HTTP 404?", antwort: "Die angefragte Ressource wurde nicht gefunden." },
     ])
 
-    function kartenWeg(id){
-        setKarten(karten.filter((karte)=> karte.id !== id));
+    const [aufgedeckt, setAufgedeckt] = useState(false);
+
+    const karte = karten[0];
+    if(!karte){
+        return(
+            <div>
+                <Navbar/>
+                <h1>Gut gemacht</h1>
+            </div>
+        )
     }
 
-    return (
+    function weissIch(){
+        const restKarten = karten.filter((k)=>k.id !== karte.id);
+        setKarten(restKarten);
+        setAufgedeckt(false);
+    }
+    function weissIchNicht(){
+        const restKarten = karten.filter((k)=>k.id !== karte.id);
+        setKarten(restKarten.concat([karte]));
+        setAufgedeckt(false);
+    }
+
+    let aktionsBereich;
+    if(!aufgedeckt){
+        aktionsBereich = <button onClick={()=> setAufgedeckt(true)}>Antwort anzeigen</button>
+    }else {
+        aktionsBereich = (
+            <div>
+                <p>{karte.antwort}</p>
+                <button onClick = {()=> weissIch()}>Weiß ich</button>
+                <button onClick = {()=> weissIchNicht()}>Weiß ich noch nicht</button>
+            </div>
+        );
+    }
+
+    return(
         <div>
             <Navbar/>
             <h1>Karteikarten</h1>
-            <ul>
-                {karten.map((karte)=>(
-                    <li key={karte.id}>{karte.frage}
-                    <button onClick={()=> kartenWeg(karte.id)}>Weiss ich</button>
-                    </li>
-                ))}
-                
-            </ul>
+            <p>Noch {karten.length} Karte(n) übrig</p>
+            <h2>{karte.frage}</h2>
+            {aktionsBereich}
         </div>
     )
 }
