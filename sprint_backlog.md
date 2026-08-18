@@ -303,3 +303,20 @@ Ruby-Backend vorbereitet werden. Zu klären/vorzubereiten (Team-Gespräch):
 - [ ] Mit Kollege JSON-Verträge für alle geplanten Endpunkte abstimmen
 - [ ] Hosting-Lösung für Ruby-Backend klären (Empfehlung: Render/Railway, früh anfangen)
 - [ ] Sobald Backend erreichbar: ersten echten fetch()-Aufruf testen (z.B. Login)
+
+## Weekly/Global-Ranking-Split (Punkt 1 aus dem Planning umgesetzt)
+
+Leaderboard-Komponente war bisher NICHT wiederverwendbar (Spieler-Daten fest eingebaut).
+Umbau: Daten raus aus der Komponente, stattdessen als Prop rein (function
+Leaderboard({spieler})) - dieselbe Anzeige-Logik (<ul>+.map()) jetzt beliebig oft mit
+unterschiedlichen Daten wiederverwendbar, statt sie zu duplizieren.
+RankingPage zeigt jetzt zwei getrennte Leaderboards (weeklySpieler, globalSpieler)
+untereinander. Zusätzlich Leaderboard mit weeklySpieler auch ins Dashboard eingebaut -
+wichtige Klärung dabei: nur die Component (Leaderboard) importieren, NICHT die ganze Page
+(RankingPage), weil eine Page (Navbar, Überschriften, mehrere Components) für eine
+bestimmte URL gebaut ist und nicht in eine andere Seite eingebettet werden soll - Pages
+binden Components zusammen, nicht umgekehrt.
+
+- [x] Leaderboard-Komponente auf Props umgestellt (spieler-Prop statt fest eingebauter Daten)
+- [x] RankingPage zeigt Weekly- und Global-Ranking getrennt (zwei Leaderboard-Instanzen)
+- [x] Weekly-Ranking zusätzlich im Dashboard eingebunden (nur Component, nicht ganze Page importiert)

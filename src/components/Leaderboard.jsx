@@ -1,9 +1,5 @@
-function Leaderboard() {
-    const spieler = [
-        { id: 1, name: "Aylin", xp:420 },
-        { id: 2, name: "Ben", xp:380 },
-        { id: 3, name: "Chris", xp:260 },
-    ];
+function Leaderboard({spieler}) {
+    
 
     return (
         <ul>
