@@ -22,7 +22,7 @@ function LoginPage({setEingeloggterName}){
                 placeholder="Dein Name"/>
             <input 
                 type="password"
-                value={password}
+                value={passwort}
                 onChange={(event)=> setPasswort(event.target.value)}
                 placeholder="Passwort"/>
                 <p>du tippst gerade: {name}</p>

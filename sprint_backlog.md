@@ -241,3 +241,65 @@ wie fehlerText bei RegisterPage).
 
 - [x] FlashcardsPage nach Quizlet-Prinzip umgebaut: Frage zeigen → Antwort aufdecken → Weiß ich/Weiß ich noch nicht
 - [x] "Weiß ich noch nicht" hängt Karte ans Ende der Warteschlange (.filter()+.concat()), Schleife bis Array leer
+
+## Bugfix – Tippfehler LoginPage (Login funktionierte nicht)
+
+value={password} in LoginPage.jsx zeigte auf eine nicht existierende Variable (State heißt
+passwort, nicht password) - ReferenceError beim Zeichnen der Seite, dadurch Absturz/weiße
+Seite. Merksatz: Variablennamen müssen exakt so geschrieben sein wie beim useState() -
+schon ein einziger Buchstabe Unterschied reicht für einen Absturz.
+
+- [x] Tippfehler value={password} -> value={passwort} korrigiert, Login läuft wieder
+
+## Planning – geplante Features (noch NICHT gebaut, Besprechung mit Kollege 18.08)
+
+Reihenfolge/Umsetzung noch offen, hier nur als Gedächtnisstütze für die Weiterarbeit
+festgehalten. Für jedes Feature grob eingeordnet, was reines Frontend ist (mit
+Fake-Daten schon baubar) und was wirklich Backend/DB braucht:
+
+**1. Ranking in zwei Tabellen aufteilen: Weekly Ranking + Global Ranking**
+Frontend: zwei getrennte Leaderboards (z.B. Tabs), mit zwei Fake-Arrays testbar - baubar.
+Backend: "diese Woche gesammelte XP" muss die DB zeitlich gefiltert berechnen.
+
+**2. Daily Learning: täglich EIN Thema mit 10-20 Lernpunkten, nach Abschluss aller Punkte
+wird ein Quiz zu dem Thema freigeschaltet**
+Frontend: Fortschritt zählen (wie viele Punkte abgehakt), Quiz-Button erst per Conditional
+Rendering zeigen, wenn alle Punkte abgehakt sind - komplett mit Fake-Daten baubar.
+Backend: welches Thema "heute" dran ist (Rotations-/Auswahllogik) entscheidet die DB/Server.
+
+**3. Aus Daily Learning heraus: Punkt per Klick zu den Karteikarten hinzufügen ("finde ich
+wichtig"-Button), neuer Tag = neues Thema**
+Frontend: komplett baubar - Klick fügt neues Objekt ins karten-Array (State) ein.
+Backend: erst nötig, wenn das auch nach Neuladen/auf anderem Gerät erhalten bleiben soll.
+
+**4. Karteikarten nach Ebbinghaus-Kurve: nach Themen sortiert, nach Abschluss eines Themas
+startet ein Timer, nach z.B. 8 Stunden Hinweis im Dashboard ("Zeit, Thema X zu
+wiederholen"), beim Dashboard-Öffnen wird die Zeit aktualisiert/mit DB-Eintrag verglichen**
+WICHTIG (Architektur-Erkenntnis): kein Timer im Frontend, weil der beim Schließen des
+Browser-Tabs verloren geht. Stattdessen: Backend speichert nur einen Zeitstempel
+("Thema X abgeschlossen um ..."), und bei JEDEM Dashboard-Öffnen fragt das Frontend per
+fetch() beim Backend nach ("gibt's was zu wiederholen?") - Backend berechnet aus
+gespeichertem Zeitstempel + aktueller Zeit, ob die Schwelle überschritten ist, und schickt
+nur das fertige Ergebnis zurück. Frontend zeigt nur an, rechnet nichts selbst nach - passt
+zur Architektur-Leitplanke (keine Business-Logik im Frontend).
+
+## Nächster wichtiger Schritt: Vorbereitung auf den Datenaustausch mit dem Backend
+
+Bevor die obigen Features mit echten Daten arbeiten können, muss die Schnittstelle zum
+Ruby-Backend vorbereitet werden. Zu klären/vorzubereiten (Team-Gespräch):
+- JSON-Vertrag für Login/Registrierung festlegen (siehe Notiz weiter oben:
+  { "benutzername": ..., "passwort": ... } etc.)
+- JSON-Form für die weiteren Endpunkte grob skizzieren: Ranking (weekly/global getrennt
+  abrufbar?), Daily-Learning-Thema des Tages, Karteikarten-Wiederholungs-Hinweis
+- Klären, wie/wo der Ruby-Server erreichbar sein wird, da wir NICHT im selben Netz sind
+  (Empfehlung: Kollege deployed früh auf Render/Railway kostenlose Stufe, statt ngrok als
+  Dauerlösung) - realistisch 1,5-3 Std. Aufwand für den ersten Deploy
+- CORS muss im Backend aktiviert werden, sonst blockt der Browser unsere fetch()-Aufrufe
+  trotz laufendem Server
+- Wissen, dass fetch() bei uns direkt in Klick-Funktionen läuft (Login, Registrieren,
+  "Punkt zu Karteikarten"), aber useEffect+fetch dort, wo Daten automatisch beim Öffnen
+  einer Seite geladen werden sollen (Ranking, Dashboard, Karteikarten-Wiederholungs-Check)
+
+- [ ] Mit Kollege JSON-Verträge für alle geplanten Endpunkte abstimmen
+- [ ] Hosting-Lösung für Ruby-Backend klären (Empfehlung: Render/Railway, früh anfangen)
+- [ ] Sobald Backend erreichbar: ersten echten fetch()-Aufruf testen (z.B. Login)
