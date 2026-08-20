@@ -9,9 +9,11 @@ import QuizPage from "./pages/QuizPage";
 import RegisterPage from "./pages/RegisterPage";
 import { useState } from "react";
 import DailyLearningPage from "./pages/DailyLearningPage";
+import "./php-design.css"; // Design aus dem PHP-Projekt übernommen – löschen = diese Zeile + die Datei entfernen
 
 function App() {
   const [eingeloggterName,setEingeloggterName] = useState("");
+  const [gespeicherteKarten,setGespeicherteKarten] = useState([]);
 
   return(
     <BrowserRouter>
@@ -21,10 +23,10 @@ function App() {
         <Route path="/dashboard" element={<DashboardPage/>}/>
         <Route path="/ranking" element={<RankingPage/>}/>
         <Route path="/profil" element={<ProfilPage eingeloggterName = {eingeloggterName}/>}/>
-        <Route path="/karteikarten" element={<FlashcardsPage/>}/>
+        <Route path="/karteikarten" element={<FlashcardsPage gespeicherteKarten = {gespeicherteKarten} setGespeicherteKarten = {setGespeicherteKarten}/>}/>
         <Route path="/quiz" element={<QuizPage/>}/>
         <Route path="/registrieren" element={<RegisterPage/>}/>
-        <Route path="/learning" element={<DailyLearningPage/>}/>
+        <Route path="/learning" element={<DailyLearningPage gespeicherteKarten = {gespeicherteKarten} setGespeicherteKarten = {setGespeicherteKarten}/>}/>
       </Routes>
     </BrowserRouter>
   )

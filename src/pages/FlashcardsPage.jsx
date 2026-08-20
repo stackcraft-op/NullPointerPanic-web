@@ -1,56 +1,82 @@
 import { useState } from "react";
 import Navbar from "../components/Navbar";
 
-function FlashcardsPage(){
-    const [karten, setKarten] = useState([
-        { id: 1, frage: "Was ist Normalisierung?", antwort: "Datenbank-Tabellen so aufräumen, dass Daten nicht doppelt gespeichert werden." },
-        { id: 2, frage: "Was ist ein Sprint Backlog?", antwort: "Die Liste der Aufgaben, die ein Team sich für einen Sprint vorgenommen hat." },
-        { id: 3, frage: "Was bedeutet HTTP 404?", antwort: "Die angefragte Ressource wurde nicht gefunden." },
-    ])
+function FlashcardsPage({gespeicherteKarten, setGespeicherteKarten}){
+    const [ausgewaeltesThema,setAusgewaeltesThema] = useState(null);
+    const [ausgewaehlteKarteId, setAusgewaehlteKarteId] = useState(null);
+    const [antwortSichtbar, setAntwortSichtbar] = useState(false);
+    const themen = [];
 
-    const [aufgedeckt, setAufgedeckt] = useState(false);
+    gespeicherteKarten.forEach((karte)=>{
+        if(!themen.includes(karte.thema)){
+            themen.push(karte.thema);
+        }
+    })
 
-    const karte = karten[0];
-    if(!karte){
+    function karteOeffnen(id){
+        setAusgewaehlteKarteId(id);
+        setAntwortSichtbar(false);
+    }
+
+    function karteSchliessen(){
+        setAusgewaehlteKarteId(null);
+        setAntwortSichtbar(false);
+    }
+
+    function karteLoeschen(id){
+        setGespeicherteKarten(gespeicherteKarten.filter((karte) => karte.id !== id));
+        setAusgewaehlteKarteId(null);
+        setAntwortSichtbar(false);
+    }
+
+    if(ausgewaehlteKarteId){
+        const treffer = gespeicherteKarten.filter((karte) => karte.id === ausgewaehlteKarteId);
+        const aktuelleKarte = treffer[0];
+
         return(
             <div>
                 <Navbar/>
-                <h1>Gut gemacht</h1>
+                <button onClick={()=> karteSchliessen()}>zurück</button>
+                <h1>{aktuelleKarte.titel}</h1>
+                {antwortSichtbar && <p>{aktuelleKarte.info}</p>}
+                <button onClick={()=> setAntwortSichtbar(true)}>Antwort anzeigen</button>
+                <button onClick={()=> karteLoeschen(aktuelleKarte.id)}>Weiß ich</button>
+                <button onClick={()=> karteLoeschen(aktuelleKarte.id)}>Karte löschen</button>
             </div>
         )
     }
 
-    function weissIch(){
-        const restKarten = karten.filter((k)=>k.id !== karte.id);
-        setKarten(restKarten);
-        setAufgedeckt(false);
-    }
-    function weissIchNicht(){
-        const restKarten = karten.filter((k)=>k.id !== karte.id);
-        setKarten(restKarten.concat([karte]));
-        setAufgedeckt(false);
-    }
+    if(ausgewaeltesThema){
+        const karten = gespeicherteKarten.filter((karte) => karte.thema === ausgewaeltesThema);
 
-    let aktionsBereich;
-    if(!aufgedeckt){
-        aktionsBereich = <button onClick={()=> setAufgedeckt(true)}>Antwort anzeigen</button>
-    }else {
-        aktionsBereich = (
+        return(
             <div>
-                <p>{karte.antwort}</p>
-                <button onClick = {()=> weissIch()}>Weiß ich</button>
-                <button onClick = {()=> weissIchNicht()}>Weiß ich noch nicht</button>
+                <Navbar/>
+                <button onClick={()=> setAusgewaeltesThema(null)}>zurück</button>
+                <h1>{ausgewaeltesThema}</h1>
+                <ul>
+                    {karten.map((karte)=>(
+                        <li key={karte.id}>
+                            <button onClick={()=> karteOeffnen(karte.id)}>{karte.titel}</button>
+                        </li>
+                    ))}
+                </ul>
             </div>
-        );
+        )
     }
 
     return(
         <div>
             <Navbar/>
             <h1>Karteikarten</h1>
-            <p>Noch {karten.length} Karte(n) übrig</p>
-            <h2>{karte.frage}</h2>
-            {aktionsBereich}
+            {themen.length === 0 && <p>Noch keine Karten gespeichert</p>}
+            <ul>
+                {themen.map((thema)=>(
+                    <li key={thema}>
+                        <button onClick={()=>setAusgewaeltesThema(thema)}>{thema}</button>
+                    </li>
+                ))}
+            </ul>
         </div>
     )
 }
