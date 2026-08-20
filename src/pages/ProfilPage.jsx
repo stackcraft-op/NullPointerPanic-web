@@ -10,6 +10,13 @@ function ProfilPage({eingeloggterName}){
         { id: 3, titel : "Prüfungsreif", schwelle: 30, icon: "🥇"},        
     ];
 
+    const stufen = [ 
+        { name : "Einsteger", schwelle: 0},
+        { name: "Junior", schwelle: 50 },
+        { name: "Middle", schwelle: 100 },
+        { name: "Senior", schwelle: 200 },
+    ]
+
     return (
         <div>
             <Navbar></Navbar>
@@ -17,6 +24,7 @@ function ProfilPage({eingeloggterName}){
                 Profil
             </h1>
             <p>{avatar} {eingeloggterName}</p>
+            
             <ul>
                 {achievements.map((achievement)=>(
                     <li key={achievement.id}>{achievement.titel}(ab {achievement.schwelle} XP)-{" "}
