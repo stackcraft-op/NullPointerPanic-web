@@ -1,15 +1,24 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import { einloggen } from "../api";
+
 
 function LoginPage({setEingeloggterName}){
-    const [name,setName] = useState("");
+    const [username,setUsername] = useState("");
     const [passwort, setPasswort] = useState("");
     const navigate = useNavigate();
+    const [serverFehler,setServerFehler] = useState("");
 
-    function einloggen(){
-        setEingeloggterName(name);
-        navigate("/dashboard");
+    async function login(){
+        try{
+            await einloggen(username,passwort);
+            setEingeloggterName(username);
+            navigate("/dashboard")
+        }
+        catch(fehler){
+            setServerFehler(fehler.message)
+        }
     }
 
     return(
@@ -17,16 +26,17 @@ function LoginPage({setEingeloggterName}){
             <h1>Login</h1>
             <input 
                 type="text"
-                value={name}
-                onChange={(event) => setName(event.target.value)}
-                placeholder="Dein Name"/>
+                value={username}
+                onChange={(event) => setUsername(event.target.value)}
+                placeholder="Dein Username"/>
             <input 
                 type="password"
                 value={passwort}
                 onChange={(event)=> setPasswort(event.target.value)}
                 placeholder="Passwort"/>
-                <p>du tippst gerade: {name}</p>
-                <button onClick={() => einloggen()}>Einloggen</button>
+                <p>du tippst gerade: {username}</p>
+                {serverFehler && <p>{serverFehler}</p>}
+                <button onClick={() => login()}>Einloggen</button>
                 <p>
                     <Link to="/registrieren">
                     Noch kein Konto? Jetzt registrieren 
