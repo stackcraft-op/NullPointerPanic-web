@@ -83,7 +83,9 @@ a {
 /* ===== Formularfelder (Login, Registrierung) ===== */
 input[type="text"],
 input[type="password"],
-input[type="email"] {
+input[type="email"],
+input[type="date"],
+select {
   display: block;
   width: 100%;
   max-width: 320px;
