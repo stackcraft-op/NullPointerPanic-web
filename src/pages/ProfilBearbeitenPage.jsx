@@ -1,11 +1,18 @@
 import Navbar from "../components/Navbar";
 import { Link, useNavigate } from "react-router-dom";
+import { profilSpeichern } from "../api";
 
 function ProfilBearbeitenPage ({profilDaten, setProfilDaten}){
     const navigate = useNavigate();
-    function speichern() {
-        //------
-        navigate("/profil");
+    async  function speichern() {
+        try{
+            await profilSpeichern(profilDaten);
+            navigate("/profil");
+        }
+        catch(fehler){
+            console.log(fehler.message);
+        }
+        
     }
 
     function zurueck() {
