@@ -28,3 +28,17 @@ export async function einloggen(username, password){
     }
     return daten;
 }
+
+export async function profilSpeichern(profilDaten){
+    const response = await fetch(`${API_URL}/api/profile`, {
+        method: "PATCH",
+        headers: {"Content-Type" : "application/json"},
+        body: JSON.stringify(profilDaten),
+    });
+
+    const daten = await response.json();
+    if(!response.ok){
+        throw new Error(daten.error)
+    }
+    return daten;
+}
