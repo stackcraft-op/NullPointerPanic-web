@@ -30,10 +30,21 @@ export async function einloggen(username, password){
 }
 
 export async function profilSpeichern(profilDaten){
+    const token = localStorage.getItem("token");
+    const body = {
+        first_name: profilDaten.vorname,
+        last_name: profilDaten.nachname,
+        specialization: profilDaten.fachbereich,
+        city: profilDaten.stadt,
+        state: profilDaten.bundesland,
+    };
     const response = await fetch(`${API_URL}/api/profile`, {
         method: "PATCH",
-        headers: {"Content-Type" : "application/json"},
-        body: JSON.stringify(profilDaten),
+        headers: {
+            "Content-Type" : "application/json",
+            "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify(body),
     });
 
     const daten = await response.json();
@@ -42,3 +53,4 @@ export async function profilSpeichern(profilDaten){
     }
     return daten;
 }
+
