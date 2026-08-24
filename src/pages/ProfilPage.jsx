@@ -1,7 +1,12 @@
 import Navbar from "../components/Navbar";
 import { Link } from "react-router-dom";
-function ProfilPage({eingeloggterName}){
-    const xp = 200;//test
+import { useContext } from "react";
+import UserContext from "../UserContext";
+
+function ProfilPage(){
+    
+    const { eingeloggterName, aktuelleStufe} = useContext(UserContext);
+    const xp = 200;
    
 
     const achievements = [
@@ -10,15 +15,10 @@ function ProfilPage({eingeloggterName}){
         { id: 3, titel : "Prüfungsreif", schwelle: 30, icon: "🥇"},        
     ];
 
-    const stufen = [ 
-    { name : "Einsteiger", schwelle: 0, rahmenFarbe: "blue", avatarBild: "/avatare/einsteiger.webp" },
-    { name: "Junior", schwelle: 50, rahmenFarbe: "silver", avatarBild: "/avatare/junior.jpeg" },
-    { name: "Middle", schwelle: 100, rahmenFarbe: "green", avatarBild: "/avatare/middle.jpg" },
-    { name: "Senior", schwelle: 200, rahmenFarbe: "gold", avatarBild: "/avatare/senior.webp" },
-]
+    
 
 
-    const aktuelleStufe = [...stufen].reverse().find((stufe)=> xp >= stufe.schwelle);
+
 
     return (
         <div>
