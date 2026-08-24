@@ -1,8 +1,8 @@
 import Navbar from "../components/Navbar";
 import { Link } from "react-router-dom";
 function ProfilPage({eingeloggterName}){
-    const xp = 201;//test
-    const avatar = "🧑‍💻";
+    const xp = 200;//test
+   
 
     const achievements = [
         { id: 1, titel : "Erste Schritte", schwelle: 10, icon: "🥉"},
@@ -11,11 +11,12 @@ function ProfilPage({eingeloggterName}){
     ];
 
     const stufen = [ 
-        { name : "Einsteiger", schwelle: 0},
-        { name: "Junior", schwelle: 50 },
-        { name: "Middle", schwelle: 100 },
-        { name: "Senior", schwelle: 200 },
-    ]
+    { name : "Einsteiger", schwelle: 0, rahmenFarbe: "blue", avatarBild: "/avatare/einsteiger.webp" },
+    { name: "Junior", schwelle: 50, rahmenFarbe: "silver", avatarBild: "/avatare/junior.jpeg" },
+    { name: "Middle", schwelle: 100, rahmenFarbe: "green", avatarBild: "/avatare/middle.jpg" },
+    { name: "Senior", schwelle: 200, rahmenFarbe: "gold", avatarBild: "/avatare/senior.webp" },
+]
+
 
     const aktuelleStufe = [...stufen].reverse().find((stufe)=> xp >= stufe.schwelle);
 
@@ -25,7 +26,18 @@ function ProfilPage({eingeloggterName}){
             <h1>
                 Profil
             </h1>
-            <p>{avatar} {eingeloggterName}</p>
+            <img
+                src={aktuelleStufe.avatarBild}
+                alt={aktuelleStufe.name}
+                style={{
+                    width : "80px",
+                    height : "80px",
+                    borderRadius: "50px",
+                    border: `4px solid ${aktuelleStufe.rahmenFarbe}`,
+                    objectFit: "cover"
+                }}
+                />
+                <p>{eingeloggterName}</p>
             <p>{aktuelleStufe.name}</p>
             <Link to="/profil/bearbeiten">Profil Bearbeiten</Link>
             <ul>
