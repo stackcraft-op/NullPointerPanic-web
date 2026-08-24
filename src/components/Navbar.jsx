@@ -1,14 +1,29 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import UserContext from "../UserContext";
+
 
 function Navbar(){
+    const {eingeloggterName, currency, aktuelleStufe} = useContext(UserContext)
+
+    function logout(){
+        localStorage.removeItem("token");
+        setEingeloggterName("");
+        navigate("/login");
+    }
+
     return (
         <nav>
             <NavLink to="/dashboard">Dashboard</NavLink>
             <NavLink to="/ranking">Ranking</NavLink>
-            <NavLink to= "/profil">Profil</NavLink>
             <NavLink to="/karteikarten">Karteikarten(feature)</NavLink>
             <NavLink to="/quiz">Quiz</NavLink>
             <NavLink to="/learning">Daily Learning</NavLink>
+            <NavLink to= "/profil" className="profil-menu">
+            {eingeloggterName} · {aktuelleStufe.name} · 🪙 {currency}
+            </NavLink>
+            <button onClick={()=> logout()}>Logout</button>
+            
         </nav>
     )
 }

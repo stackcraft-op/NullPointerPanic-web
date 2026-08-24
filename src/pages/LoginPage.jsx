@@ -12,7 +12,8 @@ function LoginPage({setEingeloggterName}){
 
     async function login(){
         try{
-            await einloggen(username,passwort);
+            const daten = await einloggen(username,passwort);
+            localStorage.setItem("token", daten.token)
             setEingeloggterName(username);
             navigate("/dashboard")
         }

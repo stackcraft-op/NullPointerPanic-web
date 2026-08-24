@@ -75,6 +75,14 @@ nav a.active {
   color: var(--php-text);
 }
 
+/* Profil-Link (Username/Titel/Currency, siehe Navbar.jsx) wird im
+   flex-Container ganz nach rechts geschoben - alles danach (aktuell der
+   Logout-Button) folgt direkt daneben. Robust gegen Reihenfolge-Änderungen,
+   weil über die feste Klasse statt Position (:last-child) angesteuert. */
+.profil-menu {
+  margin-left: auto;
+}
+
 /* ===== Links (z.B. "Los gehts", "Jetzt registrieren") ===== */
 a {
   color: var(--php-text);
