@@ -320,3 +320,43 @@ binden Components zusammen, nicht umgekehrt.
 - [x] Leaderboard-Komponente auf Props umgestellt (spieler-Prop statt fest eingebauter Daten)
 - [x] RankingPage zeigt Weekly- und Global-Ranking getrennt (zwei Leaderboard-Instanzen)
 - [x] Weekly-Ranking zusätzlich im Dashboard eingebunden (nur Component, nicht ganze Page importiert)
+
+## 25.08
+
+## Dashboard – Tageskarten vom Backend (GET /api/flashcards/daily)
+
+Neuer Contract vom Backend-Kollegen: eine "Karte" hat `question`/`answer` (der eigentliche
+Lerninhalt) + `topic` (id/name) + `exam_type`, und zusätzlich eine verschachtelte
+`multiple_choice_question` (eigene `question_text` + `answer_options`, ohne verratene
+richtige Antwort - die prüft der Server erst bei POST /api/answer_options/:id/submit).
+Für den Dashboard-Teil brauchen wir aktuell nur `topic.name` und `answer`, die
+`multiple_choice_question` ist für ein späteres Quiz-Feature reserviert.
+
+holeTagesKarten() in api.js: genau wie login/register/profilSpeichern ein echtes fetch(),
+diesmal method "GET" mit Authorization: Bearer ${token} statt Content-Type+body - der
+Contract verlangt einen gültigen Token, sonst 401.
+
+useEffect(fn, []) in DashboardPage: lädt die Karten automatisch EINMAL, sobald die Seite
+zum ersten Mal gezeichnet wird - Netzwerk-Aufrufe sind eine "Nebenwirkung" (Side Effect) und
+gehören nicht in den normalen Render-Vorgang, sonst würde jeder Rerender einen neuen fetch
+auslösen (Endlosschleife, weil setState selbst ein Rerender auslöst).
+
+Kann-ich/Kann-ich-noch-nicht-Mechanik: gleiches Prinzip wie schon in FlashcardsPage
+(Quizlet-Prinzip), nur diesmal auf den vom Backend geladenen tagesKarten statt den
+gespeicherten Karten. aktuelleKarte = tagesKarten[0] ist bewusst KEIN eigener State, nur
+eine normale Variable, die sich bei jedem Rerender frisch die vorderste Karte holt (wie
+frage = fragen[frageIndex] im Quiz). "Kann ich" filtert die Karte raus, "Kann ich noch
+nicht" filtert sie raus UND hängt sie per .concat() wieder hinten an.
+
+Zusätzlich: Weekly Ranking im Dashboard ans Ende verschoben (steht jetzt nach der XPBar),
+reine Reihenfolge-Änderung im JSX, keine Logik-Änderung.
+
+- [x] holeTagesKarten() in api.js gebaut (GET, Bearer-Token) - Endpoint noch nicht live,
+      ungetestet
+- [x] DashboardPage lädt Tageskarten automatisch per useEffect beim Öffnen
+- [x] Kann-ich/Kann-ich-noch-nicht-Mechanik für Tageskarten im Dashboard gebaut
+      (filter/concat, wie bei FlashcardsPage)
+- [x] Weekly Ranking im Dashboard ans Ende verschoben
+- [ ] Testen, sobald /api/flashcards/daily beim Kollegen deployed ist
+- [ ] Quiz-Teil (multiple_choice_question) mit echtem POST-Submit-Flow - später, nicht im
+      Dashboard

@@ -54,3 +54,18 @@ export async function profilSpeichern(profilDaten){
     return daten;
 }
 
+export async function holeTagesKarten() {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`${API_URL}/api/flashcards/daily`,{
+        method: "GET",
+        headers: {
+            "Authorization": `Bearer ${token}`
+        },
+    })
+
+    const daten = await response.json();
+    if(!response.ok){
+        throw new Error(daten.error);
+    }
+    return daten;
+}
