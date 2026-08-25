@@ -10,6 +10,7 @@ import RegisterPage from "./pages/RegisterPage";
 import { useState } from "react";
 import DailyLearningPage from "./pages/DailyLearningPage";
 import "./php-design.css"; // Design aus dem PHP-Projekt übernommen – löschen = diese Zeile + die Datei entfernen
+import "./App.css"; // war bisher nirgends importiert - unsere .tageskarte-Styles brauchen das
 import ProfilBearbeitenPage from "./pages/ProfilBearbeitenPage";
 import UserContext from "./UserContext";
 
