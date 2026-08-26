@@ -4,11 +4,19 @@ import UserContext from "../UserContext";
 
 
 function Navbar(){
-    const {eingeloggterName, currency, aktuelleStufe} = useContext(UserContext)
+    const {eingeloggterName, setEingeloggterName, currency, aktuelleStufe, setProfilDaten} = useContext(UserContext)
+    const navigate = useNavigate();
 
     function logout(){
         localStorage.removeItem("token");
         setEingeloggterName("");
+        setProfilDaten({
+            vorname: "",
+            nachname: "",
+            fachbereich: "",
+            stadt: "",
+            bundesland: "",
+        });
         navigate("/login");
     }
 

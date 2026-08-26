@@ -38,7 +38,7 @@ function App() {
 
   return(
     <BrowserRouter>
-      <UserContext.Provider value={{eingeloggterName, setEingeloggterName, currency, aktuelleStufe}}>
+      <UserContext.Provider value={{eingeloggterName, setEingeloggterName, currency, aktuelleStufe, setProfilDaten}}>
       <Routes>
         <Route path = "/" element={<StartPage/>} />
         <Route path="/login" element={<LoginPage setEingeloggterName = {setEingeloggterName}/>} />
