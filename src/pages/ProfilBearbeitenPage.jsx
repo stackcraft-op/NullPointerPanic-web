@@ -1,9 +1,26 @@
 import Navbar from "../components/Navbar";
 import { Link, useNavigate } from "react-router-dom";
-import { profilSpeichern } from "../api";
+import { profilSpeichern, holeProfil } from "../api";
+import { useEffect } from "react";
 
 function ProfilBearbeitenPage ({profilDaten, setProfilDaten}){
     const navigate = useNavigate();
+
+    // Beim Öffnen der Seite automatisch die echten, gespeicherten Profildaten
+    // des eingeloggten Nutzers laden (nicht in einer Klick-Funktion, weil es
+    // von selbst beim Öffnen passieren soll - dafür ist useEffect da).
+    useEffect(() => {
+        holeProfil().then((daten) => {
+            setProfilDaten({
+                vorname: daten.first_name || "",
+                nachname: daten.last_name || "",
+                fachbereich: daten.specialization || "",
+                stadt: daten.city || "",
+                bundesland: daten.state || "",
+            });
+        });
+    }, []);
+
     async  function speichern() {
         try{
             await profilSpeichern(profilDaten);

@@ -4,7 +4,10 @@ const API_URL = import.meta.env.VITE_API_URL;
 export async function registrieren(username,email,password) {
     const response = await fetch(`${API_URL}/api/register`, {
         method : "POST",
-        headers: {"Content-Type": "application/json"},
+        headers: {
+            "Content-Type": "application/json",
+            "ngrok-skip-browser-warning": "true"
+        },
         body:JSON.stringify({ username, email, password})
     });
 
@@ -18,7 +21,10 @@ export async function registrieren(username,email,password) {
 export async function einloggen(username, password){
     const response = await fetch(`${API_URL}/api/login`,{
         method: "POST",
-        headers: {"Content-Type": "application/json"},
+        headers: {
+            "Content-Type": "application/json",
+            "ngrok-skip-browser-warning": "true"
+        },
         body: JSON.stringify({username,password})
     });
 
@@ -42,7 +48,8 @@ export async function profilSpeichern(profilDaten){
         method: "PATCH",
         headers: {
             "Content-Type" : "application/json",
-            "Authorization": `Bearer ${token}`
+            "Authorization": `Bearer ${token}`,
+            "ngrok-skip-browser-warning": "true"
         },
         body: JSON.stringify(body),
     });
@@ -59,12 +66,30 @@ export async function holeTagesKarten() {
     const response = await fetch(`${API_URL}/api/flashcards/daily`,{
         method: "GET",
         headers: {
-            "Authorization": `Bearer ${token}`
+            "Authorization": `Bearer ${token}`,
+            "ngrok-skip-browser-warning": "true"
         },
     })
 
     const daten = await response.json();
     if(!response.ok){
+        throw new Error(daten.error);
+    }
+    return daten;
+}
+
+export async function holeProfil() {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`${API_URL}/api/profile`, {
+        method: "GET",
+        headers: {
+            "Authorization": `Bearer ${token}`,
+            "ngrok-skip-browser-warning": "true"
+        },
+    });
+
+    const daten = await response.json();
+    if (!response.ok) {
         throw new Error(daten.error);
     }
     return daten;
