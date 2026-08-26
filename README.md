@@ -1,16 +1,62 @@
-# React + Vite
+# NullPointerPanic – Web (Frontend)
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Frontend einer gamifizierten Lernplattform zur Vorbereitung auf die IHK-Prüfungen
+AP1 und AP2 (Fachinformatiker Anwendungsentwicklung). Scrum-Teamprojekt im Rahmen
+der Umschulung.
 
-Currently, two official plugins are available:
+**Team:** Frontend (React, dieses Repo) – @the-neyro · Backend (Ruby on Rails) – Kollege,
+separates Repo [`NullPointerPanic-api`](https://github.com/stackcraft-op/NullPointerPanic-api)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Tech Stack
 
-## React Compiler
+- React 19 + Vite
+- React Router (Client-seitiges Routing)
+- Plain CSS (`php-design.css` – Design aus einem früheren PHP-Projekt übernommen)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Setup
 
-## Expanding the Oxlint configuration
+1. `npm install`
+2. `.env` anlegen (siehe `.env.example`):
+VITE_API_URL=http://localhost:3000
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+
+(URL des laufenden Backends – lokal oder per ngrok)
+3. `npm run dev` → http://localhost:5174
+
+## Verfügbare Scripts
+
+| Befehl | Macht |
+|---|---|
+| `npm run dev` | Entwicklungsserver mit Hot Reload |
+| `npm run build` | Produktions-Build nach `dist/` |
+| `npm run lint` | Oxlint über den Code laufen lassen |
+| `npm run preview` | Gebauten Build lokal testen |
+
+## Projektstruktur
+
+src/
+├─ pages/        eine Datei pro Route (Dashboard, Ranking, Profil, Quiz, ...)
+├─ components/   wiederverwendbare Bausteine (Navbar, Leaderboard, XPBar)
+├─ api.js        fetch()-Calls ans Ruby-Backend (Login, Register, Profil speichern)
+├─ UserContext.jsx  globaler State ohne Prop-Drilling (Name, Titel, Currency)
+└─ php-design.css   Design/Layout (Farben, Nav, Buttons, Tabelle, ...)
+
+
+
+## Seiten
+
+| Route | Seite |
+|---|---|
+| `/` | Startseite |
+| `/login`, `/registrieren` | Login / Registrierung |
+| `/dashboard` | Tageskarte + Weekly Ranking |
+| `/ranking` | Komplettes Ranking (Weekly + Global) |
+| `/profil`, `/profil/bearbeiten` | Profil ansehen / bearbeiten |
+| `/quiz` | Quiz |
+| `/karteikarten` | Karteikarten (Feature in Arbeit) |
+| `/learning` | Daily Learning |
+
+## Backend
+
+Läuft getrennt im Repo `NullPointerPanic-api` (Ruby on Rails). Die
+API-Verträge (Request/Response-Formate) stehen dort in `API
