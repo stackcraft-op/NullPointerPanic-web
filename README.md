@@ -4,7 +4,7 @@ Frontend einer gamifizierten Lernplattform zur Vorbereitung auf die IHK-Prüfung
 AP1 und AP2 (Fachinformatiker Anwendungsentwicklung). Scrum-Teamprojekt im Rahmen
 der Umschulung.
 
-**Team:** Frontend (React, dieses Repo) – @the-neyro · Backend (Ruby on Rails) – Kollege,
+**Team:** Frontend (React, dieses Repo) – @the-neyro · Backend (Ruby on Rails) – @philipprcodes,
 separates Repo [`NullPointerPanic-api`](https://github.com/stackcraft-op/NullPointerPanic-api)
 
 ## Tech Stack
