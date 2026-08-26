@@ -61,7 +61,7 @@ function DashboardPage(){
                 <p>Keine Karten mehr für heute </p>
                 )}
 
-            <XPBar xp={30} maxXp={50} />
+            
             <h2>Weakly Ranking</h2>
             <Leaderboard spieler={weeklySpieler}/>
         </div>

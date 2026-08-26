@@ -20,7 +20,9 @@ function Navbar(){
             <NavLink to="/quiz">Quiz</NavLink>
             <NavLink to="/learning">Daily Learning</NavLink>
             <NavLink to= "/profil" className="profil-menu">
-            {eingeloggterName} · {aktuelleStufe.name} · 🪙 {currency}
+                <span>{eingeloggterName}</span>
+                <span>{aktuelleStufe.name}</span>
+                <span>🪙 {currency}</span>
             </NavLink>
             <button onClick={()=> logout()}>Logout</button>
             
