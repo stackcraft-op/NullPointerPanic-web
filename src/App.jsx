@@ -13,6 +13,7 @@ import "./php-design.css"; // Design aus dem PHP-Projekt übernommen – lösche
 import "./App.css"; // war bisher nirgends importiert - unsere .tageskarte-Styles brauchen das
 import ProfilBearbeitenPage from "./pages/ProfilBearbeitenPage";
 import UserContext from "./UserContext";
+import WikiPage from "./pages/WikiPage";
 
 function App() {
   const [xp,setXp] = useState(200);
@@ -47,9 +48,11 @@ function App() {
         <Route path="/profil" element={<ProfilPage/>}/>
         <Route path="/karteikarten" element={<FlashcardsPage gespeicherteKarten = {gespeicherteKarten} setGespeicherteKarten = {setGespeicherteKarten}/>}/>
         <Route path="/quiz" element={<QuizPage/>}/>
+        <Route path="/wiki" element={<WikiPage/>}/>
         <Route path="/registrieren" element={<RegisterPage/>}/>
         <Route path="/learning" element={<DailyLearningPage gespeicherteKarten = {gespeicherteKarten} setGespeicherteKarten = {setGespeicherteKarten}/>}/>
         <Route path="/profil/bearbeiten" element ={<ProfilBearbeitenPage profilDaten={profilDaten} setProfilDaten={setProfilDaten}/>}/>
+        
       </Routes>
       </UserContext.Provider>
     </BrowserRouter>

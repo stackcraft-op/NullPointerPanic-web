@@ -26,6 +26,7 @@ function Navbar(){
             <NavLink to="/ranking">Ranking</NavLink>
             <NavLink to="/karteikarten">Karteikarten(feature)</NavLink>
             <NavLink to="/quiz">Quiz</NavLink>
+            <NavLink to="/wiki">Wiki</NavLink>
             <NavLink to="/learning">Daily Learning</NavLink>
             <NavLink to= "/profil" className="profil-menu">
                 <span>{eingeloggterName}</span>
