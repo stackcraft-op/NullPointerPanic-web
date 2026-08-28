@@ -7,7 +7,8 @@ import ProfilPage from "./pages/ProfilPage";
 import FlashcardsPage from "./pages/FlashcardsPage";
 import QuizPage from "./pages/QuizPage";
 import RegisterPage from "./pages/RegisterPage";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { holeTagesKarten } from "./api";
 import DailyLearningPage from "./pages/DailyLearningPage";
 import "./php-design.css"; // Design aus dem PHP-Projekt übernommen – löschen = diese Zeile + die Datei entfernen
 import "./App.css"; // war bisher nirgends importiert - unsere .tageskarte-Styles brauchen das
@@ -28,6 +29,14 @@ function App() {
   const aktuelleStufe = [...stufen].reverse().find((stufe)=> xp >= stufe.schwelle);
 
   const [eingeloggterName,setEingeloggterName] = useState("");
+  const [tagesKarten,setTagesKarten] = useState([]);
+  useEffect(()=>{
+    holeTagesKarten()
+      .then((karten)=>setTagesKarten(karten))
+      .catch((error)=> console.error("Tageskarten laden fehlgeschlagen:", error))
+}, []);
+
+
   const [gespeicherteKarten,setGespeicherteKarten] = useState([]);
   const [profilDaten, setProfilDaten] = useState({
     vorname: "",
@@ -43,7 +52,7 @@ function App() {
       <Routes>
         <Route path = "/" element={<StartPage/>} />
         <Route path="/login" element={<LoginPage setEingeloggterName = {setEingeloggterName}/>} />
-        <Route path="/dashboard" element={<DashboardPage/>}/>
+        <Route path="/dashboard" element={<DashboardPage tagesKarten={tagesKarten} setTagesKarten={setTagesKarten}/>}/>
         <Route path="/ranking" element={<RankingPage/>}/>
         <Route path="/profil" element={<ProfilPage/>}/>
         <Route path="/karteikarten" element={<FlashcardsPage gespeicherteKarten = {gespeicherteKarten} setGespeicherteKarten = {setGespeicherteKarten}/>}/>

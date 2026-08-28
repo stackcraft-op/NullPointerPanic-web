@@ -3,15 +3,10 @@ import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import Leaderboard from "../components/Leaderboard";
 import { holeTagesKarten } from "../api";
-import { tagesKartenMock } from "../mockData";
 
-function DashboardPage(){
-    const[tagesKarten, setTagesKarten] = useState([]);
-    useEffect(()=>{
-    // TEMPORÄR zum Testen - danach wieder zurück zu holeTagesKarten()
-    setTagesKarten(tagesKartenMock);
-    // holeTagesKarten().then((karten)=> setTagesKarten(karten))
-}, []);
+function DashboardPage({tagesKarten, setTagesKarten}){
+    
+
 
     const aktuelleKarte = tagesKarten[0];
     // wie viele "Geisterkarten" hinter der echten Karte sichtbar sind - richtet sich nach
