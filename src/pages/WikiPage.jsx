@@ -1,9 +1,20 @@
 import Navbar from "../components/Navbar";
 import { wikiThemenMock } from "../mockData";
-import { useState } from "react";
+import { useState,useEffect } from "react";
+import { holeAlleKarteikarten } from "../api";
 
 function WikiPage (){
     const [seitenIndex,setSeitenIndex] = useState(0);
+
+    const [alleKarten, setAlleKarten] = useState([]);
+
+    useEffect(()=>{
+        holeAlleKarteikarten()
+        .then((karten)=> setAlleKarten(karten))
+        .catch((error)=> console.error("Karteikarten laden fehlgeschlagen:", error))
+    }, []);
+
+    
     const[suchbegriff,setSuchbegriff] = useState("");
     const gefilterteThemen = wikiThemenMock.filter((thema)=>
         thema.titel.toLowerCase().includes(suchbegriff.toLowerCase()) ||
@@ -51,14 +62,24 @@ function WikiPage (){
             </>
         )
     }else {
-        const aktuellesThema = wikiThemenMock[seitenIndex - 1];
-        seitenInhalt = (
-            <>
-                <h2>{aktuellesThema.titel}</h2>
-                <p>{aktuellesThema.inhalt || "Noch kein Inhalt hinterlegt."}</p>
-            </>
-        )
-    }
+    const aktuellesThema = wikiThemenMock[seitenIndex - 1];
+    const themaKarten = alleKarten.filter((karte)=> karte.topic.name === aktuellesThema.titel);
+    seitenInhalt = (
+        <>
+            <h2>{aktuellesThema.titel}</h2>
+            {themaKarten.length === 0 && <p>Noch kein Inhalt geladen.</p>}
+            <ul>
+                {themaKarten.map((karte)=>(
+                    <li key={karte.id}>
+                        <strong>{karte.question}</strong>
+                        <p>{karte.answer}</p>
+                    </li>
+                ))}
+            </ul>
+        </>
+    )
+}
+
 
      return(
         <div>

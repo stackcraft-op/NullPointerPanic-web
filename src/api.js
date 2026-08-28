@@ -94,3 +94,20 @@ export async function holeProfil() {
     }
     return daten;
 }
+
+export async function holeAlleKarteikarten() {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`${API_URL}/api/flashcards`,{
+        method: "GET",
+        headers: {
+            "Authorization": `Bearer ${token}`,
+            "ngrok-skip-browser-warning": "true"
+        },
+    })
+
+    const daten = await response.json();
+    if(!response.ok){
+        throw new Error(daten.error);
+    }
+    return daten;
+}
