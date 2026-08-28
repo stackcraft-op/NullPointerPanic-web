@@ -23,3 +23,14 @@ export const tagesKartenMock = [
         topic: { id: 5, name: "Scrum" },
     },
 ];
+
+//testdaten für die wiki-seite - inhaltsverzeichnis der 6. ihk prüfungsbereiche, inhalt absichtlich leer
+
+export const wikiThemenMock = [
+    { id: 1, titel: "IT-Infrastruktur & Netzwerke", inhalt: "" },
+    { id: 2, titel: "Softwareentwicklung & Programmierung", inhalt: "" },
+    { id: 3, titel: "Datenbanken & Datenanalyse", inhalt: "" },
+    { id: 4, titel: "IT-Sicherheit & Datenschutz", inhalt: "" },
+    { id: 5, titel: "Projektmanagement & Qualitätssicherung", inhalt: "" },
+    { id: 6, titel: "BWL, Wirtschaft & Organisation", inhalt: "Kevin" },
+];
