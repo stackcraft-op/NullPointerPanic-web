@@ -11,13 +11,15 @@ function RegisterPage(){
     const[serverFehler, setServerFehler] = useState("");
 
     const navigate = useNavigate();
+    const [versucht, setVersucht] = useState(false);
     let fehlerText = null;
-    if(passwort !== passwortWiederholung && passwortWiederholung !== ""){
+    if(versucht && passwort !== passwortWiederholung){
         fehlerText = <p>Passwörter stimmen nicht überein</p>
     }
 
-    
+
     async function kontoErstellen(){
+            setVersucht(true);
             if(passwort !== passwortWiederholung){
                 return
             }

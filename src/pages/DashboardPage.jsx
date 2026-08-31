@@ -1,9 +1,6 @@
-import XPBar from "../components/XPBar";
-import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Leaderboard from "../components/Leaderboard";
-import { holeTagesKarten } from "../api";
 
 function DashboardPage({tagesKarten, setTagesKarten, quizFreigeschaltet}){
     

@@ -32,13 +32,21 @@ function App() {
   const [tagesKarten,setTagesKarten] = useState([]);
   const [verbleibendeKarten,setVerbleibendeKarten] = useState([]);
 
-  useEffect(()=>{
+  // eigene Funktion statt Code direkt im useEffect, damit LoginPage sie nach
+  // einem erfolgreichen Login zusaetzlich aufrufen kann (gleiches Prinzip wie
+  // ladeProfil weiter unten) - sonst sieht man die Tageskarten erst nach einem
+  // Seiten-Reload, weil der useEffect mit [] nur einmal beim allerersten Mount laeuft
+  function ladeTagesKarten(){
     holeTagesKarten()
       .then((karten)=>{
         setTagesKarten(karten);
         setVerbleibendeKarten(karten);
       })
       .catch((error)=> console.error("Tageskarten laden fehlgeschlagen:", error))
+  }
+
+  useEffect(()=>{
+    ladeTagesKarten();
   }, []);
 
 const quizFreigeschaltet = tagesKarten.length > 0 && verbleibendeKarten.length === 0;
@@ -58,6 +66,11 @@ const quizFreigeschaltet = tagesKarten.length > 0 && verbleibendeKarten.length =
 
 
   const [gespeicherteKarten,setGespeicherteKarten] = useState([]);
+  const [dailyLearningKarten, setDailyLearningKarten] = useState([
+    { id: 1, titel: "Verschlüsselung", info: "Verschlüsselung macht Daten unlesbar für alle, die den passenden Schlüssel nicht haben." },
+    { id: 2, titel: "Firewall", info: "Eine Firewall kontrolliert, welcher Netzwerk-Verkehr rein und raus darf, nach festgelegten Regeln." },
+    { id: 3, titel: "Phishing", info: "Betrugsversuch per gefälschter Nachricht/Website, um an Passwörter oder Daten zu kommen." },
+  ]);
   const [profilDaten, setProfilDaten] = useState({
     vorname: "",
     nachname:"",
@@ -68,10 +81,10 @@ const quizFreigeschaltet = tagesKarten.length > 0 && verbleibendeKarten.length =
 
   return(
     <BrowserRouter>
-      <UserContext.Provider value={{eingeloggterName, setEingeloggterName, currency, aktuelleStufe, setProfilDaten}}>
+      <UserContext.Provider value={{eingeloggterName, setEingeloggterName, currency, aktuelleStufe, setProfilDaten, setGespeicherteKarten}}>
       <Routes>
         <Route path = "/" element={<StartPage/>} />
-        <Route path="/login" element={<LoginPage setEingeloggterName={setEingeloggterName} ladeProfil={ladeProfil}/>} />
+        <Route path="/login" element={<LoginPage setEingeloggterName={setEingeloggterName} ladeProfil={ladeProfil} ladeTagesKarten={ladeTagesKarten}/>} />
 
         <Route path="/dashboard" element={<DashboardPage tagesKarten={verbleibendeKarten} setTagesKarten={setVerbleibendeKarten} quizFreigeschaltet={quizFreigeschaltet}/>}/>
 
@@ -83,9 +96,9 @@ const quizFreigeschaltet = tagesKarten.length > 0 && verbleibendeKarten.length =
 
         <Route path="/wiki" element={<WikiPage/>}/>
         <Route path="/registrieren" element={<RegisterPage/>}/>
-        <Route path="/learning" element={<DailyLearningPage gespeicherteKarten = {gespeicherteKarten} setGespeicherteKarten = {setGespeicherteKarten}/>}/>
+        <Route path="/learning" element={<DailyLearningPage gespeicherteKarten = {gespeicherteKarten} setGespeicherteKarten = {setGespeicherteKarten} karten={dailyLearningKarten} setKarten={setDailyLearningKarten}/>}/>
         <Route path="/profil/bearbeiten" element ={<ProfilBearbeitenPage profilDaten={profilDaten} setProfilDaten={setProfilDaten}/>}/>
-        
+
       </Routes>
       </UserContext.Provider>
     </BrowserRouter>

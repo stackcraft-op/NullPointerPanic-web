@@ -1,15 +1,14 @@
 import { useState } from "react";
 import Navbar from "../components/Navbar";
-import { Link } from "react-router-dom"; 
+import { Link } from "react-router-dom";
 
-function DailyLearningPage({ gespeicherteKarten, setGespeicherteKarten}){
+// karten/setKarten kommen jetzt als Props aus App.jsx (State-Lifting) statt
+// lokal mit useState - sonst wurde der Fortschritt (welche Punkte schon
+// entfernt wurden) bei jedem Seitenwechsel weg und zurueck verloren, weil die
+// Komponente jedes Mal neu gemountet wird
+function DailyLearningPage({ gespeicherteKarten, setGespeicherteKarten, karten, setKarten}){
 
     const ueberbegriff = "IT-Security";
-    const[karten, setKarten] = useState([
-        { id: 1, titel: "Verschlüsselung", info: "Verschlüsselung macht Daten unlesbar für alle, die den passenden Schlüssel nicht haben." },
-        { id: 2, titel: "Firewall", info: "Eine Firewall kontrolliert, welcher Netzwerk-Verkehr rein und raus darf, nach festgelegten Regeln." },
-        { id: 3, titel: "Phishing", info: "Betrugsversuch per gefälschter Nachricht/Website, um an Passwörter oder Daten zu kommen." },
-    ])
 
     const [offeneKarteId, setOffeneKarteId] = useState(null);
 

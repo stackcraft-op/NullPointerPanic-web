@@ -1,25 +1,28 @@
 import Navbar from "../components/Navbar";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { profilSpeichern, holeProfil } from "../api";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 function ProfilBearbeitenPage ({profilDaten, setProfilDaten}){
     const navigate = useNavigate();
+    const [serverFehler, setServerFehler] = useState("");
 
     // Beim Öffnen der Seite automatisch die echten, gespeicherten Profildaten
     // des eingeloggten Nutzers laden (nicht in einer Klick-Funktion, weil es
     // von selbst beim Öffnen passieren soll - dafür ist useEffect da).
     useEffect(() => {
-        holeProfil().then((daten) => {
-            setProfilDaten({
-                vorname: daten.first_name || "",
-                nachname: daten.last_name || "",
-                fachbereich: daten.specialization || "",
-                stadt: daten.city || "",
-                bundesland: daten.state || "",
-            });
-        });
-    }, []);
+        holeProfil()
+            .then((daten) => {
+                setProfilDaten({
+                    vorname: daten.first_name || "",
+                    nachname: daten.last_name || "",
+                    fachbereich: daten.specialization || "",
+                    stadt: daten.city || "",
+                    bundesland: daten.state || "",
+                });
+            })
+            .catch((fehler) => setServerFehler(fehler.message));
+    }, [setProfilDaten]);
 
     async  function speichern() {
         try{
@@ -27,9 +30,9 @@ function ProfilBearbeitenPage ({profilDaten, setProfilDaten}){
             navigate("/profil");
         }
         catch(fehler){
-            console.log(fehler.message);
+            setServerFehler(fehler.message);
         }
-        
+
     }
 
     function zurueck() {
@@ -85,6 +88,7 @@ function ProfilBearbeitenPage ({profilDaten, setProfilDaten}){
                 <option value="Thüringen">Thüringen</option>
             </select>
 
+            {serverFehler && <p>{serverFehler}</p>}
             <button onClick={()=> zurueck()}>Zurück</button>
             <button onClick={()=> speichern()}>Speichern</button>
         </div>

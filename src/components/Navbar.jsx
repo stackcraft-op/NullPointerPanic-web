@@ -4,7 +4,7 @@ import UserContext from "../UserContext";
 
 
 function Navbar(){
-    const {eingeloggterName, setEingeloggterName, currency, aktuelleStufe, setProfilDaten} = useContext(UserContext)
+    const {eingeloggterName, setEingeloggterName, currency, aktuelleStufe, setProfilDaten, setGespeicherteKarten} = useContext(UserContext)
     const navigate = useNavigate();
 
     function logout(){
@@ -17,6 +17,7 @@ function Navbar(){
             stadt: "",
             bundesland: "",
         });
+        setGespeicherteKarten([]);
         navigate("/login");
     }
 

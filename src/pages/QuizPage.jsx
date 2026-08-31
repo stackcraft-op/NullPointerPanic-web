@@ -22,7 +22,6 @@ function QuizPage({tagesKarten, quizFreigeschaltet, ladeProfil}){
     // neu berechnet (sonst wuerde die gerade erst beantwortete Frage sofort
     // uebersprungen werden, bevor die Farb-Rueckmeldung sichtbar war)
     const [aktuelleFrage,setAktuelleFrage] = useState(() => findeNaechsteOffene(0, JSON.parse(localStorage.getItem(`beantwortete_fragen_${new Date().toISOString().slice(0,10)}`) || "[]")));
-    const [feedback, setFeedback] = useState("");
     const [ausgewaehlteOptionId, setAusgewaehlteOptionId] = useState(null);
     const [korrekteOptionId, setKorrekteOptionId] = useState(null);
     const [warRichtig, setWarRichtig] = useState(null);
@@ -47,10 +46,7 @@ function QuizPage({tagesKarten, quizFreigeschaltet, ladeProfil}){
             const daten = await beantworten(optionId);
             setAusgewaehlteOptionId(optionId);
             setWarRichtig(daten.correct);
-            if(daten.correct){
-                setFeedback("Richtig!!!");
-            } else {
-                setFeedback("Falsch, richtig wäre " + daten.correct_option.text);
+            if(!daten.correct){
                 setKorrekteOptionId(daten.correct_option.id);
             }
             const heute = new Date().toISOString().slice(0,10);
@@ -60,13 +56,12 @@ function QuizPage({tagesKarten, quizFreigeschaltet, ladeProfil}){
             ladeProfil();
         }
         catch(fehler){
-            setFeedback("Fehler beim Beantworten: " + fehler.message);
+            console.error("Antwort konnte nicht gesendet werden:", fehler.message);
         }
     }
 
     function naechsteFrage(){
         setAktuelleFrage(findeNaechsteOffene(aktuelleFrage+1, beantworteteIds));
-        setFeedback("");
         setAusgewaehlteOptionId(null);
         setKorrekteOptionId(null);
         setWarRichtig(null);
