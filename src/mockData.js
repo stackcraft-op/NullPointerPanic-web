@@ -32,5 +32,5 @@ export const wikiThemenMock = [
     { id: 3, titel: "Datenbanken & Datenanalyse", inhalt: "" },
     { id: 4, titel: "IT-Sicherheit & Datenschutz", inhalt: "" },
     { id: 5, titel: "Projektmanagement & Qualitätssicherung", inhalt: "" },
-    { id: 6, titel: "BWL, Wirtschaft & Organisation", inhalt: "Kevin" },
+    { id: 6, titel: "BWL, Wirtschaft & Organisation", inhalt: "" },
 ];

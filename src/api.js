@@ -1,6 +1,23 @@
 
 const API_URL = import.meta.env.VITE_API_URL;
 
+// Gemeinsame Auswertung fuer jede fetch()-Antwort: faengt zusaetzlich den Fall
+// ab, dass der Server (z.B. wegen ngrok/Serverfehler) mal HTML statt JSON
+// liefert - ohne das wuerde response.json() mit einem kryptischen
+// "Unexpected token <" abstuerzen, statt einer verstaendlichen Fehlermeldung.
+async function parseAntwort(response){
+    let daten;
+    try{
+        daten = await response.json();
+    } catch {
+        throw new Error(`Antwort vom Server war kein gültiges JSON (Status ${response.status})`);
+    }
+    if(!response.ok){
+        throw new Error(daten.error);
+    }
+    return daten;
+}
+
 export async function registrieren(username,email,password) {
     const response = await fetch(`${API_URL}/api/register`, {
         method : "POST",
@@ -11,11 +28,7 @@ export async function registrieren(username,email,password) {
         body:JSON.stringify({ username, email, password})
     });
 
-    const daten = await response.json();
-    if(!response.ok){
-        throw new Error(daten.error);
-    }
-    return daten;
+    return parseAntwort(response);
 }
 
 export async function einloggen(username, password){
@@ -28,11 +41,7 @@ export async function einloggen(username, password){
         body: JSON.stringify({username,password})
     });
 
-    const daten = await response.json();
-    if(!response.ok){
-        throw new Error(daten.error);
-    }
-    return daten;
+    return parseAntwort(response);
 }
 
 export async function profilSpeichern(profilDaten){
@@ -54,11 +63,7 @@ export async function profilSpeichern(profilDaten){
         body: JSON.stringify(body),
     });
 
-    const daten = await response.json();
-    if(!response.ok){
-        throw new Error(daten.error)
-    }
-    return daten;
+    return parseAntwort(response);
 }
 
 export async function holeTagesKarten() {
@@ -71,11 +76,7 @@ export async function holeTagesKarten() {
         },
     })
 
-    const daten = await response.json();
-    if(!response.ok){
-        throw new Error(daten.error);
-    }
-    return daten;
+    return parseAntwort(response);
 }
 
 export async function holeProfil() {
@@ -88,11 +89,7 @@ export async function holeProfil() {
         },
     });
 
-    const daten = await response.json();
-    if (!response.ok) {
-        throw new Error(daten.error);
-    }
-    return daten;
+    return parseAntwort(response);
 }
 
 export async function holeAlleKarteikarten() {
@@ -105,11 +102,7 @@ export async function holeAlleKarteikarten() {
         },
     })
 
-    const daten = await response.json();
-    if(!response.ok){
-        throw new Error(daten.error);
-    }
-    return daten;
+    return parseAntwort(response);
 }
 
 export async function beantworten(answerOptionId) {
@@ -122,9 +115,5 @@ export async function beantworten(answerOptionId) {
         },
     })
 
-    const daten = await response.json();
-    if(!response.ok){
-        throw new Error(daten.error);
-    }
-    return daten;
+    return parseAntwort(response);
 }

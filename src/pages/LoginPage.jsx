@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { einloggen } from "../api";
 
 
-function LoginPage({setEingeloggterName, ladeProfil}){
+function LoginPage({setEingeloggterName, ladeProfil, ladeTagesKarten}){
     const [username,setUsername] = useState("");
     const [passwort, setPasswort] = useState("");
     const navigate = useNavigate();
@@ -14,6 +14,7 @@ function LoginPage({setEingeloggterName, ladeProfil}){
             const daten = await einloggen(username,passwort);
             localStorage.setItem("token", daten.token)
             ladeProfil();
+            ladeTagesKarten();
             setEingeloggterName(username);
             navigate("/dashboard")
         }
@@ -36,7 +37,6 @@ function LoginPage({setEingeloggterName, ladeProfil}){
                 value={passwort}
                 onChange={(event)=> setPasswort(event.target.value)}
                 placeholder="Passwort"/>
-                <p>du tippst gerade: {username}</p>
                 {serverFehler && <p>{serverFehler}</p>}
                 <button onClick={() => login()}>Einloggen</button>
                 <p>
