@@ -1,10 +1,11 @@
 import XPBar from "../components/XPBar";
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Leaderboard from "../components/Leaderboard";
 import { holeTagesKarten } from "../api";
 
-function DashboardPage({tagesKarten, setTagesKarten}){
+function DashboardPage({tagesKarten, setTagesKarten, quizFreigeschaltet}){
     
 
 
@@ -53,7 +54,10 @@ function DashboardPage({tagesKarten, setTagesKarten}){
                     </div>
                 </div>
                 ) : (
-                <p>Keine Karten mehr für heute </p>
+                <div>
+                    <p>Keine Karten mehr für heute </p>
+                    {quizFreigeschaltet && <Link to="/quiz">Zum Quiz</Link>}
+                </div>
                 )}
 
             

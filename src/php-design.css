@@ -176,6 +176,28 @@ th {
   color: var(--php-muted);
 }
 
+/* Leaderboard als Karte statt nackter Tabelle - border-collapse: separate
+   ist noetig, damit der border-radius unten per overflow:hidden greift
+   (bei "collapse" wuerden die Ecken nicht sauber abgerundet). */
+.leaderboard {
+  border-collapse: separate;
+  border-spacing: 0;
+  background: var(--php-bg);
+  border: 1px solid var(--php-line);
+  border-radius: 4px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.leaderboard th,
+.leaderboard td {
+  padding: 12px 20px;
+}
+
+.leaderboard tbody tr:hover {
+  background: var(--php-line);
+}
+
 /* ===== Wiki-Buchseite (Reader-Look) ===== */
 .buch-seite {
   max-width: 620px;
@@ -214,5 +236,45 @@ th {
 
 .suche-ergebnisse li:hover {
   color: var(--php-danger);
+}
+
+/* ===== Quiz ===== */
+.quiz-karte {
+  max-width: 560px;
+  margin: 24px auto;
+  padding: 32px 40px;
+  background: var(--php-bg);
+  border: 1px solid var(--php-line);
+  border-radius: 4px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  text-align: center;
+}
+
+.quiz-karte h2 {
+  margin-bottom: 24px;
+  text-transform: none;
+  letter-spacing: normal;
+  font-family: inherit;
+}
+
+.quiz-antworten {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.quiz-antworten li {
+  border-bottom: none;
+  padding: 0;
+}
+
+.quiz-antworten button {
+  width: 100%;
+  text-align: left;
+  padding: 14px 18px;
+  text-transform: none;
+  letter-spacing: normal;
+  font-size: 14px;
 }
 

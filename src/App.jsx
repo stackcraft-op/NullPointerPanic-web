@@ -73,7 +73,7 @@ const quizFreigeschaltet = tagesKarten.length > 0 && verbleibendeKarten.length =
         <Route path = "/" element={<StartPage/>} />
         <Route path="/login" element={<LoginPage setEingeloggterName={setEingeloggterName} ladeProfil={ladeProfil}/>} />
 
-        <Route path="/dashboard" element={<DashboardPage tagesKarten={verbleibendeKarten} setTagesKarten={setVerbleibendeKarten}/>}/>
+        <Route path="/dashboard" element={<DashboardPage tagesKarten={verbleibendeKarten} setTagesKarten={setVerbleibendeKarten} quizFreigeschaltet={quizFreigeschaltet}/>}/>
 
         <Route path="/ranking" element={<RankingPage/>}/>
         <Route path="/profil" element={<ProfilPage/>}/>
