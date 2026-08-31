@@ -4,16 +4,16 @@ import { Link } from "react-router-dom";
 import { einloggen } from "../api";
 
 
-function LoginPage({setEingeloggterName}){
+function LoginPage({setEingeloggterName, ladeProfil}){
     const [username,setUsername] = useState("");
     const [passwort, setPasswort] = useState("");
     const navigate = useNavigate();
     const [serverFehler,setServerFehler] = useState("");
-
     async function login(){
         try{
             const daten = await einloggen(username,passwort);
             localStorage.setItem("token", daten.token)
+            ladeProfil();
             setEingeloggterName(username);
             navigate("/dashboard")
         }
@@ -21,6 +21,7 @@ function LoginPage({setEingeloggterName}){
             setServerFehler(fehler.message)
         }
     }
+
 
     return(
         <div>

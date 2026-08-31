@@ -1,35 +1,35 @@
 import Navbar from "../components/Navbar";
 import { useState } from "react";
+import { beantworten } from "../api";
 
-function QuizPage(){
-    const [fragen, setFragen] = useState([
-        {
-            id:1,
-            frage:"Was ist eine Primärschlüssel-Eigenschaft?",
-            antworten:["Muss eindeutig sein", "Darf mehrfach vorkommen", "Ist immer ein Text"],
-            richtig:"Muss eindeutig sein",
-        },
-        {
-            id:2,
-            frage:"Was macht HTTP-Status 404?",
-            antworten: ["Ressource nicht gefunden", "Server-Fehler", "Erfolgreich"],
-            richtig:"Ressource nicht gefunden",
-        },
-        {
-            id:3,
-            frage:"Was ist ein Sprint?",
-            antworten: ["Ein fester Zeitabschnitt in Scrum", "Ein Datenbanktyp", "Ein CSS-Framework"],
-            richtig:"Ein fester Zeitabschnitt in Scrum"
-        }
-    ])
-    const[aktuelleFrage,setAktuelleFrage] = useState(0);
-    const[feedback, setFeedback] = useState("");
+function QuizPage({tagesKarten, quizFreigeschaltet, ladeProfil}){
 
-    const frage = fragen[aktuelleFrage];
-
-    function antwortKlick(antwort){
-        antwort === frage.richtig? setFeedback("Richtig!!!"):setFeedback("Falsch,richtig wäre " + frage.richtig);
+    if(!quizFreigeschaltet){
+        return (
+            <div>
+                <Navbar/>
+                <h1>Quiz</h1>
+                <p>Schließe erst alle heutigen Karten im Dashboard ab ("Kann ich"), dann wird das Quiz freigeschaltet.</p>
+            </div>
+        )
     }
+    const [aktuelleFrage,setAktuelleFrage] = useState(0);
+    const [feedback, setFeedback] = useState("");
+
+    const karte = tagesKarten[aktuelleFrage];
+    const frage = karte ? karte.multiple_choice_question : undefined;
+
+    async function antwortKlick(optionId){
+        try{
+            const daten = await beantworten(optionId);
+            daten.correct ? setFeedback("Richtig!!!") : setFeedback("Falsch, richtig wäre " + daten.correct_option.text);
+            ladeProfil();
+        }
+        catch(fehler){
+            setFeedback("Fehler beim Beantworten: " + fehler.message);
+        }
+    }
+
     function naechsteFrage(){
         setAktuelleFrage(aktuelleFrage+1);
         setFeedback("");
@@ -49,11 +49,11 @@ function QuizPage(){
         <div>
         <Navbar/>
         <h1>Quiz</h1>
-        <h2>{frage.frage}</h2>
+        <h2>{frage.question_text}</h2>
         <ul>
-            {frage.antworten.map((antwort)=>(
-                <li key={antwort}>
-                    <button onClick={()=> antwortKlick(antwort)}>{antwort}</button>
+            {frage.answer_options.map((option)=>(
+                <li key={option.id}>
+                    <button onClick={()=> antwortKlick(option.id)}>{option.text}</button>
                 </li>
             ))}
         </ul>

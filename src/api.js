@@ -111,3 +111,20 @@ export async function holeAlleKarteikarten() {
     }
     return daten;
 }
+
+export async function beantworten(answerOptionId) {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`${API_URL}/api/answer_options/${answerOptionId}/submit`, {
+        method: "POST",
+        headers: {
+            "Authorization": `Bearer ${token}`,
+            "ngrok-skip-browser-warning": "true"
+        },
+    })
+
+    const daten = await response.json();
+    if(!response.ok){
+        throw new Error(daten.error);
+    }
+    return daten;
+}
