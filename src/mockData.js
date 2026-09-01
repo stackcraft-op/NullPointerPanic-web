@@ -34,3 +34,55 @@ export const wikiThemenMock = [
     { id: 5, titel: "Projektmanagement & Qualitätssicherung", inhalt: "" },
     { id: 6, titel: "BWL, Wirtschaft & Organisation", inhalt: "" },
 ];
+
+// ---------------------------------------------------------------------------
+// Daily Learning (Neuentscheidung mit Kollege, 01.09): Thema auswählen -> Stapel
+// Karteikarten -> nach 20 abgearbeiteten Karten Quiz freigeschaltet. Gleiche
+// Themen-IDs/Titel wie wikiThemenMock (identische 6 IHK-Bereiche, passt später
+// nahtlos auf GET /api/topics/progress). Jede Karte hat zusätzlich eine
+// quizFrage - die wird erst gebraucht, sobald die Karte "abgearbeitet" ist.
+//
+// Noch keine 100 Karten pro Thema von Hand getippt: "IT-Sicherheit" hat 24
+// Testkarten (genug, um die 20er-Schwelle wirklich auszulösen), die anderen 5
+// Themen nur ein paar Platzhalter, damit die Themenliste nicht leer aussieht.
+function machKarte(id, frage, antwort, quizAntworten, korrekteIndex) {
+    return {
+        id,
+        frage,
+        antwort,
+        quizFrage: {
+            frageText: `Frage zur Karte: ${frage}`,
+            antworten: quizAntworten,
+            korrekteIndex,
+        },
+    };
+}
+
+function machPlatzhalterKarten(kuerzel, anzahl, startId = 1) {
+    return Array.from({ length: anzahl }, (_, i) => {
+        const nr = startId + i;
+        return machKarte(
+            nr,
+            `${kuerzel}-Testkarte ${nr}: Platzhalter-Begriff`,
+            `Platzhalter-Erklärung ${nr}`,
+            ["Antwort A", "Antwort B", "Antwort C", "Antwort D"],
+            0
+        );
+    });
+}
+
+const itSicherheitKarten = [
+    machKarte(1, "Was ist Phishing?", "Betrugsversuch, um über gefälschte Nachrichten/Seiten an Zugangsdaten zu kommen.", ["Ein Computervirus", "Betrug über gefälschte Nachrichten/Seiten", "Ein Verschlüsselungsverfahren", "Ein Firewall-Typ"], 1),
+    machKarte(2, "Was bedeutet 'Zwei-Faktor-Authentifizierung'?", "Anmeldung mit zwei unabhängigen Nachweisen, z.B. Passwort + Code auf dem Handy.", ["Zwei Passwörter hintereinander", "Login mit zwei unabhängigen Nachweisen", "Zwei Nutzerkonten gleichzeitig", "Doppelte Verschlüsselung der Daten"], 1),
+    machKarte(3, "Was ist eine Firewall?", "System, das Netzwerkverkehr nach Regeln filtert und unerwünschte Zugriffe blockiert.", ["Ein Virenscanner", "Ein System, das Netzwerkverkehr nach Regeln filtert", "Ein Backup-Verfahren", "Ein Passwort-Manager"], 1),
+    machKarte(4, "Was ist Ransomware?", "Schadsoftware, die Daten verschlüsselt und Lösegeld für die Freigabe fordert.", ["Werbesoftware", "Schadsoftware, die Daten verschlüsselt und Lösegeld fordert", "Ein Backup-Tool", "Ein Netzwerkprotokoll"], 1),
+    machKarte(5, "Was regelt die DSGVO?", "Den Schutz personenbezogener Daten innerhalb der EU.", ["Urheberrecht an Software", "Schutz personenbezogener Daten in der EU", "Steuerpflichten von Unternehmen", "Netzwerksicherheit von Servern"], 1),
+    machKarte(6, "Was ist ein 'Man-in-the-Middle'-Angriff?", "Angreifer schaltet sich unbemerkt in die Kommunikation zweier Parteien ein.", ["Ein Angriff auf physische Server", "Angreifer belauscht/manipuliert Kommunikation zwischen zwei Parteien", "Ein Passwort-Rate-Angriff", "Ein Virus, der sich per USB verbreitet"], 1),
+    ...machPlatzhalterKarten("ITSec", 18, 7), // IDs 7-24, damit sie nicht mit 1-6 oben kollidieren
+];
+
+export const dailyLearningThemenMock = wikiThemenMock.map((thema) => ({
+    id: thema.id,
+    titel: thema.titel,
+    karten: thema.id === 4 ? itSicherheitKarten : machPlatzhalterKarten(thema.titel.slice(0, 4), 6),
+}));
