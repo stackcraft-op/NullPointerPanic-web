@@ -445,10 +445,121 @@ th {
   margin: 0;
 }
 
-/* ===== Profil: Lernfortschritt-Balken ===== */
-.fortschritt-liste {
-  max-width: 560px;
+/* ===== Profil ===== */
+/* Diese Seite bewusst NICHT im Serifen/Versalien-Look der restlichen App -
+   Feedback: "PROFIL"/"LERNFORTSCHRITT" wirkten wie eine Magazin-Titelseite.
+   Nur hier ueberschrieben, der Rest der App (Startseite-Zertifikat etc.)
+   behaelt den Cinzel-Stil. */
+.profil-seite h1,
+.profil-seite h2 {
+  font-family: inherit;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+/* Deutlich breiter als die anderen Karten-Seiten (Login/Quiz/Themenliste) -
+   die Profilseite hat viel horizontalen Platz zu verteilen (breite Karte +
+   breite Balken), 960px statt der sonst ueblichen 400-560px. */
+.profil-inhalt {
+  max-width: 960px;
   margin: 0 auto;
+}
+
+/* Horizontal statt vertikal: Avatar links, Name/Stufe daneben,
+   Bearbeiten-Button rechts (margin-left: auto) - kompakter und
+   professioneller als ein grosses Foto mittig in einer hohen Karte. */
+.profil-kopf {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  width: 100%;
+  padding: 24px 32px;
+  margin-bottom: 32px;
+  box-sizing: border-box;
+  background: var(--php-bg);
+  border: 1px solid var(--php-line);
+  border-radius: 4px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.profil-info {
+  flex: 1;
+}
+
+.profil-name {
+  color: var(--php-text);
+  font-size: 18px;
+  margin: 0 0 4px;
+}
+
+.profil-stufe {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--php-muted);
+}
+
+/* Sekundärer Button (duenner Rahmen, gedeckte Farbe) - "Profil bearbeiten"
+   ist keine Hauptaktion auf dieser Seite, soll entsprechend zurueckhaltend
+   wirken, nicht wie ein Haupt-CTA (siehe .cta-button auf der Startseite). */
+.profil-bearbeiten-link {
+  display: inline-block;
+  flex-shrink: 0;
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  padding: 8px 20px;
+  border: 1px solid var(--php-line);
+  border-radius: 999px;
+  color: var(--php-muted);
+  text-decoration: none;
+}
+
+.profil-bearbeiten-link:hover {
+  border-color: var(--php-text);
+  color: var(--php-text);
+}
+
+/* Gesamtfortschritt: eigener, groesserer Block - soll als Hauptkennzahl der
+   Seite sofort auffallen, nicht nur die erste Zeile einer gleichfoermigen
+   Liste sein (starke Gewichtung vs. normale Kategorien darunter). */
+.gesamtfortschritt-karte {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 32px 36px;
+  margin-bottom: 20px;
+  background: var(--php-bg);
+  border: 1px solid var(--php-line);
+  border-radius: 4px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.gesamtfortschritt-kopf {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 14px;
+}
+
+.gesamtfortschritt-kopf span:first-child {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--php-text);
+}
+
+.gesamtfortschritt-prozent {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--php-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.fortschritt-balken-gross {
+  height: 18px;
+}
+
+.fortschritt-liste {
+  width: 100%;
+  box-sizing: border-box;
   padding: 32px 36px;
   background: var(--php-bg);
   border: 1px solid var(--php-line);
@@ -456,39 +567,44 @@ th {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
-/* Grid statt Flex: feste Spaltenbreiten, damit ALLE Balken exakt gleich
-   breit sind, egal wie lang der Themenname ist (Flex mit nur min-width
-   liess die Spalte je nach Textlaenge wandern - Balken waren dadurch
-   unterschiedlich lang). */
+/* Name+Prozent auf einer Zeile ueber dem Balken statt daneben - der Balken
+   bekommt dadurch die VOLLE Kartenbreite (vorher per Grid-Spalte begrenzt
+   und bei langen Namen sogar abgeschnitten). Kategorien-Namen sind normal
+   gewichtet, Prozentwerte bewusst sekundaer/gedeckt (siehe Hierarchie:
+   Gesamtfortschritt stark, Kategorien normal, Prozent sekundaer). */
 .fortschritt-zeile {
-  display: grid;
-  grid-template-columns: 210px 1fr 40px;
-  align-items: center;
-  gap: 14px;
-  margin-bottom: 16px;
+  margin-bottom: 22px;
 }
 
-.fortschritt-zeile span:first-child {
-  font-size: 13px;
+.fortschritt-zeile:last-child {
+  margin-bottom: 0;
+}
+
+.fortschritt-zeile-kopf {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 8px;
+}
+
+.fortschritt-name {
+  font-size: 14px;
   color: var(--php-text);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
-.fortschritt-zeile span:last-child {
-  text-align: right;
+.fortschritt-prozent {
   font-size: 13px;
-  font-variant-numeric: tabular-nums;
   color: var(--php-muted);
+  font-variant-numeric: tabular-nums;
 }
 
 .fortschritt-balken {
-  flex: 1;
+  width: 100%;
   height: 10px;
   background: var(--php-line);
   border-radius: 999px;
   overflow: hidden;
+  box-sizing: border-box;
 }
 
 .fortschritt-balken-fuellung {
@@ -498,64 +614,5 @@ th {
      farbeFuerProzent() in ProfilPage.jsx) - hier nur die Animation beim
      ersten Anzeigen/Aendern des Fortschritts. */
   transition: width 0.5s ease;
-}
-
-/* Gesamt-Zeile etwas kraeftiger als die einzelnen Themen-Zeilen darunter,
-   damit sie als Hauptkennzahl heraussticht. */
-.fortschritt-zeile-gesamt {
-  margin-bottom: 24px;
-}
-
-.fortschritt-zeile-gesamt span:first-child {
-  font-weight: 700;
-}
-
-.fortschritt-zeile-gesamt .fortschritt-balken {
-  height: 16px;
-}
-
-/* ===== Profil: Kopfbereich (Avatar/Name/Stufe/Bearbeiten) ===== */
-.profil-kopf {
-  max-width: 400px;
-  margin: 0 auto 40px;
-  padding: 32px;
-  text-align: center;
-  background: var(--php-bg);
-  border: 1px solid var(--php-line);
-  border-radius: 4px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-}
-
-.profil-name {
-  color: var(--php-text);
-  font-size: 20px;
-  margin: 16px 0 4px;
-}
-
-.profil-stufe {
-  /* inline-block statt inline, sonst greift margin-bottom nicht (vertikale
-     margins wirken bei display:inline nicht) */
-  display: inline-block;
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: var(--php-muted);
-  margin-bottom: 20px;
-}
-
-.profil-bearbeiten-link {
-  display: inline-block;
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  padding: 8px 22px;
-  border: 1px solid var(--php-text);
-  border-radius: 999px;
-  text-decoration: none;
-}
-
-.profil-bearbeiten-link:hover {
-  background: var(--php-text);
-  color: #fff;
 }
 

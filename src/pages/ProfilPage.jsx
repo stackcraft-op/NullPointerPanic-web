@@ -35,58 +35,70 @@ function ProfilPage(){
         );
 
     return (
-        <div>
+        <div className="profil-seite">
             <Navbar></Navbar>
-            <h1>
-                Profil
-            </h1>
-            <div className="profil-kopf">
-                <img
-                    src={aktuelleStufe.avatarBild}
-                    alt={aktuelleStufe.name}
-                    style={{
-                        width : "88px",
-                        height : "88px",
-                        borderRadius: "50%",
-                        border: `4px solid ${aktuelleStufe.rahmenFarbe}`,
-                        objectFit: "cover"
-                    }}
-                    />
-                <p className="profil-name">{eingeloggterName}</p>
-                <span className="profil-stufe">{aktuelleStufe.name}</span>
-                <div>
+            <h1>Profil</h1>
+
+            <div className="profil-inhalt">
+                <div className="profil-kopf">
+                    <img
+                        src={aktuelleStufe.avatarBild}
+                        alt={aktuelleStufe.name}
+                        style={{
+                            width : "88px",
+                            height : "88px",
+                            borderRadius: "50%",
+                            border: "3px solid var(--php-text)",
+                            objectFit: "cover"
+                        }}
+                        />
+                    <div className="profil-info">
+                        <p className="profil-name">{eingeloggterName}</p>
+                        <span className="profil-stufe">{aktuelleStufe.name}</span>
+                    </div>
                     <Link to="/profil/bearbeiten" className="profil-bearbeiten-link">Profil bearbeiten</Link>
                 </div>
-            </div>
 
-            <h2>Lernfortschritt</h2>
-            {ladeFehler && <p className="auth-fehler">{ladeFehler}</p>}
-            {themenFortschritt.length === 0 && !ladeFehler && <p>Lädt...</p>}
-            <div className="fortschritt-liste">
+                <h2>Lernfortschritt</h2>
+                {ladeFehler && <p className="auth-fehler">{ladeFehler}</p>}
+                {themenFortschritt.length === 0 && !ladeFehler && <p>Lädt...</p>}
+
                 {themenFortschritt.length > 0 && (
-                    <div className="fortschritt-zeile fortschritt-zeile-gesamt">
-                        <span>Gesamt</span>
-                        <div className="fortschritt-balken">
-                            <div
-                                className="fortschritt-balken-fuellung"
-                                style={{ width: `${gesamtProzent}%`, background: farbeFuerProzent(gesamtProzent) }}
-                            ></div>
+                    <>
+                        {/* Gesamtfortschritt bewusst als eigener, groesserer Block VOR der
+                            Kategorien-Liste - soll als Hauptkennzahl sofort ins Auge fallen,
+                            nicht nur die erste Zeile einer gleichförmigen Liste sein. */}
+                        <div className="gesamtfortschritt-karte">
+                            <div className="gesamtfortschritt-kopf">
+                                <span>Gesamtfortschritt</span>
+                                <span className="gesamtfortschritt-prozent">{gesamtProzent}%</span>
+                            </div>
+                            <div className="fortschritt-balken fortschritt-balken-gross">
+                                <div
+                                    className="fortschritt-balken-fuellung"
+                                    style={{ width: `${gesamtProzent}%`, background: farbeFuerProzent(gesamtProzent) }}
+                                ></div>
+                            </div>
                         </div>
-                        <span>{gesamtProzent}%</span>
-                    </div>
+
+                        <div className="fortschritt-liste">
+                            {themenFortschritt.map((thema) => (
+                                <div className="fortschritt-zeile" key={thema.id}>
+                                    <div className="fortschritt-zeile-kopf">
+                                        <span className="fortschritt-name">{thema.name}</span>
+                                        <span className="fortschritt-prozent">{thema.progress_percent}%</span>
+                                    </div>
+                                    <div className="fortschritt-balken">
+                                        <div
+                                            className="fortschritt-balken-fuellung"
+                                            style={{ width: `${thema.progress_percent}%`, background: farbeFuerProzent(thema.progress_percent) }}
+                                        ></div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </>
                 )}
-                {themenFortschritt.map((thema) => (
-                    <div className="fortschritt-zeile" key={thema.id}>
-                        <span title={thema.name}>{thema.name}</span>
-                        <div className="fortschritt-balken">
-                            <div
-                                className="fortschritt-balken-fuellung"
-                                style={{ width: `${thema.progress_percent}%`, background: farbeFuerProzent(thema.progress_percent) }}
-                            ></div>
-                        </div>
-                        <span>{thema.progress_percent}%</span>
-                    </div>
-                ))}
             </div>
         </div>
     )
