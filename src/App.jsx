@@ -81,7 +81,15 @@ const quizFreigeschaltet = tagesKarten.length > 0 && verbleibendeKarten.length =
 
   return(
     <BrowserRouter>
-      <UserContext.Provider value={{eingeloggterName, setEingeloggterName, currency, aktuelleStufe, setProfilDaten, setGespeicherteKarten}}>
+      <UserContext.Provider value={{
+        eingeloggterName, setEingeloggterName,
+        currency, aktuelleStufe,
+        setProfilDaten, setGespeicherteKarten,
+        // fuer den Logout-Reset (siehe Navbar.jsx) - ohne diese Setter blieben
+        // xp/currency/tagesKarten/verbleibendeKarten des vorherigen Nutzers
+        // kurz sichtbar, bis der naechste Login sie ueberschreibt
+        setXp, setCurrency, setTagesKarten, setVerbleibendeKarten,
+      }}>
       <Routes>
         <Route path = "/" element={<StartPage/>} />
         <Route path="/login" element={<LoginPage setEingeloggterName={setEingeloggterName} ladeProfil={ladeProfil} ladeTagesKarten={ladeTagesKarten}/>} />

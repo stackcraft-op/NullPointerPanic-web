@@ -4,7 +4,12 @@ import UserContext from "../UserContext";
 
 
 function Navbar(){
-    const {eingeloggterName, setEingeloggterName, currency, aktuelleStufe, setProfilDaten, setGespeicherteKarten} = useContext(UserContext)
+    const {
+        eingeloggterName, setEingeloggterName,
+        currency, aktuelleStufe,
+        setProfilDaten, setGespeicherteKarten,
+        setXp, setCurrency, setTagesKarten, setVerbleibendeKarten,
+    } = useContext(UserContext)
     const navigate = useNavigate();
 
     function logout(){
@@ -18,6 +23,13 @@ function Navbar(){
             bundesland: "",
         });
         setGespeicherteKarten([]);
+        // Ohne das hier wuerden xp/currency/Tageskarten des vorherigen Nutzers
+        // kurz weiter angezeigt, bis der naechste Login sie ueberschreibt -
+        // gleiche Datenleck-Klasse wie bei profilDaten/gespeicherteKarten oben.
+        setXp(0);
+        setCurrency(0);
+        setTagesKarten([]);
+        setVerbleibendeKarten([]);
         navigate("/login");
     }
 
