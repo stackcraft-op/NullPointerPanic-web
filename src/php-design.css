@@ -610,7 +610,7 @@ th {
 .fortschritt-balken-fuellung {
   height: 100%;
   border-radius: 999px;
-  /* Farbe kommt inline (rot/orange/gruen je nach Prozentwert, siehe
+  /* Farbe kommt inline (Lila->Gruen interpoliert nach Prozentwert, siehe
      farbeFuerProzent() in ProfilPage.jsx) - hier nur die Animation beim
      ersten Anzeigen/Aendern des Fortschritts. */
   transition: width 0.5s ease;

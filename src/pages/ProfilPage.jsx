@@ -4,13 +4,16 @@ import { useContext, useState, useEffect } from "react";
 import UserContext from "../UserContext";
 import { holeThemenFortschritt } from "../api";
 
-// Ab welchem Prozentwert welche Farbe - gleiches Ampel-Prinzip wie bei
-// Skill-Anzeigen in echten Apps (z.B. LinkedIn-Skill-Balken): rot = grad
-// erst angefangen, orange = auf dem Weg, gruen = gut drauf.
+// Kein Rot/Ampel-Schema mehr (wirkte zu aggressiv) - stattdessen eine
+// sanfte Einfaerbung, die zwischen Lila (App-Akzentfarbe, wie schon beim
+// Dashboard-Themen-Tag) und Gruen interpoliert. 0% = reines Lila, 100% =
+// reines Gruen, dazwischen linear gemischt.
 function farbeFuerProzent(prozent) {
-    if (prozent < 34) return "#ef4444";
-    if (prozent < 67) return "#f59e0b";
-    return "#22c55e";
+    const anteil = Math.min(Math.max(prozent, 0), 100) / 100;
+    const lila = [170, 59, 255];
+    const gruen = [34, 197, 94];
+    const [r, g, b] = lila.map((start, i) => Math.round(start + (gruen[i] - start) * anteil));
+    return `rgb(${r}, ${g}, ${b})`;
 }
 
 function ProfilPage(){
