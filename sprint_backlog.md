@@ -360,3 +360,59 @@ reine Reihenfolge-Änderung im JSX, keine Logik-Änderung.
 - [ ] Testen, sobald /api/flashcards/daily beim Kollegen deployed ist
 - [ ] Quiz-Teil (multiple_choice_question) mit echtem POST-Submit-Flow - später, nicht im
       Dashboard
+
+## 01.09
+
+## Daily Learning – Neuentscheidung mit Kollege (Feature-Redesign)
+
+Absprache mit dem Kollegen: der bestehende "Daily Learning"-Menüpunkt (`/learning`,
+`DailyLearningPage.jsx`) ist aktuell nur ein Prototyp (fest "IT-Security", 3 statische
+Karten aus App.jsx-State) und wird komplett neu gebaut. Wichtig: das ist ein ANDERES
+Feature als der globale Tages-Quiz (Dashboard + `/quiz`, echte XP/Currency über
+`/api/flashcards/daily`) - der bleibt unangetastet, genau wie er ist.
+
+Neue Regeln für Daily Learning:
+- Themenliste (6 IHK-Bereiche, wie schon in `wikiThemenMock`/`GET /api/topics/progress`)
+  → Thema auswählen → Stapel Karteikarten zu diesem Thema (reiner Lerninhalt, KEIN
+  Quiz auf der Karte selbst)
+- Karte anschauen + "Weiter" = "abgearbeitet", zählt in einem 0→20-Zähler pro Thema
+- Bei 20 abgearbeiteten Karten: Quiz wird freigeschaltet. Der Fragenpool sind ALLE
+  bisher abgearbeiteten Karten des Themas (nicht nur die letzten 20 - wächst mit
+  fortschreitendem Lernstand)
+- Falsche Antwort im Quiz → zugehörige Karte kehrt in den Stapel zurück (gilt wieder
+  als "nicht abgearbeitet")
+- Nach Quiz-Ende: 20er-Zähler wird auf 0 zurückgesetzt, unabhängig vom Ergebnis
+- KEINE Currency für Daily Learning (anders als beim Dashboard-Tagesquiz) - stattdessen
+  beeinflusst das Quiz-Ergebnis Achievements (Anbindung folgt in einem späteren Schritt,
+  aktuell sind Achievements in ProfilPage.jsx noch rein XP-basiert/hart codiert)
+- "In Karteikarten speichern"-Button (Bridge zur separaten `/karteikarten`-Seite)
+  entfällt ersatzlos - FlashcardsPage.jsx bleibt als eigenständiges Feature bestehen,
+  bekommt aber keinen Input mehr aus Daily Learning
+
+Backend hat für die Themenliste schon `GET /api/topics/progress` (id/name/progress
+in %), aber noch KEINEN Endpoint für "Stapel Karteikarten pro Thema" - das ist ein
+API-Contract-Gap, den der Kollege noch bauen muss. Bis dahin: Mock-Daten
+(`dailyLearningThemenMock` in mockData.js), 1:1 austauschbar sobald der Endpoint da ist
+(gleiches Prinzip wie schon bei `tagesKartenMock`).
+
+`dailyLearningThemenMock` in mockData.js angelegt: 6 Themen (gleiche IDs/Titel wie
+`wikiThemenMock`), jede Karte hat `frage`/`antwort` (Lerninhalt) + `quizFrage`
+(Multiple-Choice, wird erst bei Quiz-Freischaltung gebraucht). Nicht alle 100 Karten pro
+Thema von Hand getippt - "IT-Sicherheit" hat 24 Testkarten (genug für die 20er-Schwelle),
+die anderen 5 Themen nur Platzhalter.
+
+- [x] `dailyLearningThemenMock` in mockData.js angelegt (6 Themen, IT-Sicherheit mit 24
+      echten Testkarten inkl. Quiz-Frage, Rest Platzhalter)
+- [ ] Route `/learning` + DailyLearningPage: Themenliste statt hart codiertem
+      Einzelthema anzeigen (Fortschritt X/Y Karten übrig)
+- [ ] Themen-Klick → Kartenansicht (Stapel des gewählten Themas, "Weiter" blättert durch)
+- [ ] State hochheben (App.jsx): abgearbeitete Karten-IDs + 20er-Zähler pro Thema
+- [ ] Bei Zähler = 20: Quiz-Button/Freischaltung anzeigen
+- [ ] Eigene Quiz-Variante für Daily Learning (Pool = alle abgearbeiteten Karten des
+      Themas), getrennt vom bestehenden `/quiz` (XP-Feature)
+- [ ] Falsche Antwort im Quiz → Karte wieder aus "abgearbeitet" raus (zurück in Stapel)
+- [ ] Nach Quiz-Ende: 20er-Zähler auf 0
+- [ ] Achievement-Anbindung für Daily-Learning-Ergebnisse (später, sobald
+      Achievement-Mechanik in ProfilPage über reines XP hinausgeht)
+- [ ] Mit Kollege abstimmen: neuer Endpoint "Karteikarten-Stapel pro Thema" (Ersatz/
+      Ergänzung zu `/api/flashcards/daily` für dieses Feature)
