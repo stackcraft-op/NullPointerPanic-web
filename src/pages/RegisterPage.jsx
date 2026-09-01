@@ -1,5 +1,5 @@
 import {useState} from "react"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, Link } from "react-router-dom"
 import { registrieren } from "../api";
 
 
@@ -14,7 +14,7 @@ function RegisterPage(){
     const [versucht, setVersucht] = useState(false);
     let fehlerText = null;
     if(versucht && passwort !== passwortWiederholung){
-        fehlerText = <p>Passwörter stimmen nicht überein</p>
+        fehlerText = <p className="auth-fehler">Passwörter stimmen nicht überein</p>
     }
 
 
@@ -33,9 +33,9 @@ function RegisterPage(){
     
 
     return(
-        <div>
+        <div className="auth-karte">
             <h1>Konto erstellen</h1>
-            <input 
+            <input
                 type = "text"
                 value={benutzername}
                 onChange={(event)=> setBenutzername(event.target.value)}
@@ -46,7 +46,7 @@ function RegisterPage(){
                 onChange={(event)=> setEmail
                 (event.target.value)}
                 placeholder="Email"/>
-            <input 
+            <input
                 type = "password"
                 value={passwort}
                 onChange={(event) => setPasswort(event.target.value)}
@@ -57,8 +57,11 @@ function RegisterPage(){
                 onChange={(event) => setPasswortWiederholung(event.target.value)}
                 placeholder="Passwort wiederholen"/>
             {fehlerText}
-            {serverFehler && <p>{serverFehler}</p>}
+            {serverFehler && <p className="auth-fehler">{serverFehler}</p>}
             <button onClick={() => kontoErstellen()}>Konto erstellen</button>
+            <p className="auth-link">
+                <Link to="/login">Schon ein Konto? Zurück zum Login</Link>
+            </p>
         </div>
     )
 }

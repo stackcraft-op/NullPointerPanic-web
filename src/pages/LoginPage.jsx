@@ -25,23 +25,23 @@ function LoginPage({setEingeloggterName, ladeProfil, ladeTagesKarten}){
 
 
     return(
-        <div>
+        <div className="auth-karte">
             <h1>Login</h1>
-            <input 
+            <input
                 type="text"
                 value={username}
                 onChange={(event) => setUsername(event.target.value)}
                 placeholder="Dein Username"/>
-            <input 
+            <input
                 type="password"
                 value={passwort}
                 onChange={(event)=> setPasswort(event.target.value)}
                 placeholder="Passwort"/>
-                {serverFehler && <p>{serverFehler}</p>}
+                {serverFehler && <p className="auth-fehler">{serverFehler}</p>}
                 <button onClick={() => login()}>Einloggen</button>
-                <p>
+                <p className="auth-link">
                     <Link to="/registrieren">
-                    Noch kein Konto? Jetzt registrieren 
+                    Noch kein Konto? Jetzt registrieren
                     </Link>
                 </p>
         </div>
