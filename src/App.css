@@ -165,7 +165,11 @@
   position: relative;
   z-index: 0;
   max-width: 480px;
-  margin: 0 auto 24px;
+  /* 24px normaler Abstand + 24px Puffer: die .geisterkarte-Elemente sind absolut
+     positioniert und per transform bis zu 24px (3 Karten * 8px) nach unten
+     verschoben - das zaehlt nicht zur Hoehe des Containers, "frisst" also sonst
+     den margin-bottom optisch komplett auf. */
+  margin: 0 auto 48px;
 }
 
 .geisterkarte {
