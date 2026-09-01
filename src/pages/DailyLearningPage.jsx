@@ -33,10 +33,18 @@ function DailyLearningPage() {
     const [warRichtig, setWarRichtig] = useState(null);
     const [quizRichtigCount, setQuizRichtigCount] = useState(0);
 
-    useEffect(() => {
+    // Eigene Funktion statt Code direkt im useEffect, damit themaVerlassen()
+    // sie zusaetzlich aufrufen kann - sonst zeigt die Themenliste nach einem
+    // Quiz weiterhin den alten Prozentwert, bis die Seite komplett neu
+    // geladen wird (gleiches Prinzip wie ladeTagesKarten() in App.jsx).
+    function ladeThemen() {
         holeThemenFortschritt()
             .then((daten) => setThemen(daten))
             .catch((error) => setLadeFehler(error.message));
+    }
+
+    useEffect(() => {
+        ladeThemen();
     }, []);
 
     function themaOeffnen(thema) {
@@ -56,6 +64,7 @@ function DailyLearningPage() {
         setAlleKarten([]);
         setStapelKarten([]);
         setQuizModus(false);
+        ladeThemen();
     }
 
     if (ausgewaehltesThema) {
