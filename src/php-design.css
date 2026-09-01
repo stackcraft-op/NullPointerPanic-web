@@ -465,6 +465,18 @@ th {
   margin: 0 auto;
 }
 
+/* Gemeinsame Basis fuer .profil-kopf/.gesamtfortschritt-karte/.fortschritt-
+   liste - waren zuvor 3x derselbe Block (background/border/radius/shadow),
+   jetzt an einer Stelle gepflegt. */
+.profil-karte {
+  width: 100%;
+  box-sizing: border-box;
+  background: var(--php-bg);
+  border: 1px solid var(--php-line);
+  border-radius: 4px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
 /* Horizontal statt vertikal: Avatar links, Name/Stufe daneben,
    Bearbeiten-Button rechts (margin-left: auto) - kompakter und
    professioneller als ein grosses Foto mittig in einer hohen Karte. */
@@ -472,14 +484,8 @@ th {
   display: flex;
   align-items: center;
   gap: 24px;
-  width: 100%;
   padding: 24px 32px;
   margin-bottom: 32px;
-  box-sizing: border-box;
-  background: var(--php-bg);
-  border: 1px solid var(--php-line);
-  border-radius: 4px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
 .profil-info {
@@ -523,14 +529,8 @@ th {
    Seite sofort auffallen, nicht nur die erste Zeile einer gleichfoermigen
    Liste sein (starke Gewichtung vs. normale Kategorien darunter). */
 .gesamtfortschritt-karte {
-  width: 100%;
-  box-sizing: border-box;
   padding: 32px 36px;
   margin-bottom: 20px;
-  background: var(--php-bg);
-  border: 1px solid var(--php-line);
-  border-radius: 4px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
 .gesamtfortschritt-kopf {
@@ -558,13 +558,7 @@ th {
 }
 
 .fortschritt-liste {
-  width: 100%;
-  box-sizing: border-box;
   padding: 32px 36px;
-  background: var(--php-bg);
-  border: 1px solid var(--php-line);
-  border-radius: 4px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
 /* Name+Prozent auf einer Zeile ueber dem Balken statt daneben - der Balken

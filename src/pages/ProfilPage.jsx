@@ -4,12 +4,22 @@ import { useContext, useState, useEffect } from "react";
 import UserContext from "../UserContext";
 import { holeThemenFortschritt } from "../api";
 
+// Rails liefert Prozentwerte manchmal als String statt Zahl (z.B. bei
+// Decimal-Spalten) - Number(...) erzwingt eine echte Zahl. || 0 faengt
+// zusaetzlich undefined/NaN ab. Danach auf [0, 100] geklemmt, damit ein
+// kaputter/ungewoehnlicher Wert weder die Balkenbreite noch die Farbe
+// durcheinanderbringt - beide nutzen jetzt denselben, sicheren Wert.
+function prozentSicher(wert) {
+    const zahl = Number(wert) || 0;
+    return Math.min(Math.max(zahl, 0), 100);
+}
+
 // Kein Rot/Ampel-Schema mehr (wirkte zu aggressiv) - stattdessen eine
 // sanfte Einfaerbung, die zwischen Lila (App-Akzentfarbe, wie schon beim
 // Dashboard-Themen-Tag) und Gruen interpoliert. 0% = reines Lila, 100% =
 // reines Gruen, dazwischen linear gemischt.
 function farbeFuerProzent(prozent) {
-    const anteil = Math.min(Math.max(prozent, 0), 100) / 100;
+    const anteil = prozentSicher(prozent) / 100;
     const lila = [170, 59, 255];
     const gruen = [34, 197, 94];
     const [r, g, b] = lila.map((start, i) => Math.round(start + (gruen[i] - start) * anteil));
@@ -22,19 +32,27 @@ function ProfilPage(){
 
     const [themenFortschritt, setThemenFortschritt] = useState([]);
     const [ladeFehler, setLadeFehler] = useState("");
+    // Eigenes Flag statt nur "themenFortschritt.length === 0" zu pruefen -
+    // sonst ist "noch am Laden" und "Server hat leere Liste geliefert"
+    // nicht unterscheidbar, die Seite wuerde bei einer echten Leerliste
+    // dauerhaft "Lädt..." zeigen.
+    const [geladen, setGeladen] = useState(false);
 
     useEffect(() => {
         holeThemenFortschritt()
             .then((daten) => setThemenFortschritt(daten))
-            .catch((error) => setLadeFehler(error.message));
+            .catch((error) => setLadeFehler(error.message))
+            .finally(() => setGeladen(true));
     }, []);
 
     // Durchschnitt ueber alle Themen - "wie viel hast du insgesamt drauf",
-    // unabhaengig von der einzelnen Stufe/XP.
+    // unabhaengig von der einzelnen Stufe/XP. Number(...) erzwingt echte
+    // Addition statt String-Verkettung, falls progress_percent mal als
+    // String ankommt.
     const gesamtProzent = themenFortschritt.length === 0
         ? 0
         : Math.round(
-            themenFortschritt.reduce((summe, thema) => summe + thema.progress_percent, 0) / themenFortschritt.length
+            themenFortschritt.reduce((summe, thema) => summe + Number(thema.progress_percent), 0) / themenFortschritt.length
         );
 
     return (
@@ -43,7 +61,7 @@ function ProfilPage(){
             <h1>Profil</h1>
 
             <div className="profil-inhalt">
-                <div className="profil-kopf">
+                <div className="profil-kopf profil-karte">
                     <img
                         src={aktuelleStufe.avatarBild}
                         alt={aktuelleStufe.name}
@@ -64,14 +82,17 @@ function ProfilPage(){
 
                 <h2>Lernfortschritt</h2>
                 {ladeFehler && <p className="auth-fehler">{ladeFehler}</p>}
-                {themenFortschritt.length === 0 && !ladeFehler && <p>Lädt...</p>}
+                {!geladen && !ladeFehler && <p>Lädt...</p>}
+                {geladen && themenFortschritt.length === 0 && !ladeFehler && (
+                    <p>Noch kein Lernfortschritt vorhanden.</p>
+                )}
 
                 {themenFortschritt.length > 0 && (
                     <>
                         {/* Gesamtfortschritt bewusst als eigener, groesserer Block VOR der
                             Kategorien-Liste - soll als Hauptkennzahl sofort ins Auge fallen,
                             nicht nur die erste Zeile einer gleichförmigen Liste sein. */}
-                        <div className="gesamtfortschritt-karte">
+                        <div className="gesamtfortschritt-karte profil-karte">
                             <div className="gesamtfortschritt-kopf">
                                 <span>Gesamtfortschritt</span>
                                 <span className="gesamtfortschritt-prozent">{gesamtProzent}%</span>
@@ -79,12 +100,12 @@ function ProfilPage(){
                             <div className="fortschritt-balken fortschritt-balken-gross">
                                 <div
                                     className="fortschritt-balken-fuellung"
-                                    style={{ width: `${gesamtProzent}%`, background: farbeFuerProzent(gesamtProzent) }}
+                                    style={{ width: `${prozentSicher(gesamtProzent)}%`, background: farbeFuerProzent(gesamtProzent) }}
                                 ></div>
                             </div>
                         </div>
 
-                        <div className="fortschritt-liste">
+                        <div className="fortschritt-liste profil-karte">
                             {themenFortschritt.map((thema) => (
                                 <div className="fortschritt-zeile" key={thema.id}>
                                     <div className="fortschritt-zeile-kopf">
@@ -94,7 +115,7 @@ function ProfilPage(){
                                     <div className="fortschritt-balken">
                                         <div
                                             className="fortschritt-balken-fuellung"
-                                            style={{ width: `${thema.progress_percent}%`, background: farbeFuerProzent(thema.progress_percent) }}
+                                            style={{ width: `${prozentSicher(thema.progress_percent)}%`, background: farbeFuerProzent(thema.progress_percent) }}
                                         ></div>
                                     </div>
                                 </div>
