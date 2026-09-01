@@ -16,16 +16,38 @@ function WikiPage (){
 
     
     const[suchbegriff,setSuchbegriff] = useState("");
-    const gefilterteThemen = wikiThemenMock.filter((thema)=>
-        thema.titel.toLowerCase().includes(suchbegriff.toLowerCase()) ||
-        thema.inhalt.toLowerCase().includes(suchbegriff.toLowerCase())
-    );
+    const [zielKarteId, setZielKarteId] = useState(null);
+    const gefilterteThemen = wikiThemenMock.filter((thema)=>{
+        const titelPasst = thema.titel.toLowerCase().includes(suchbegriff.toLowerCase());
+        const kartePasst = alleKarten.some((karte)=>
+            karte.topic.name === thema.titel &&
+            (karte.question.toLowerCase().includes(suchbegriff.toLowerCase()) ||
+             karte.answer.toLowerCase().includes(suchbegriff.toLowerCase()))
+        );
+        return titelPasst || kartePasst;
+    });
 
     function zuSeiteSpringen(thema){
         const index = wikiThemenMock.findIndex((t)=> t.id === thema.id)
         setSeitenIndex(index +1)
+
+        const treffer = alleKarten.find((karte)=>
+            karte.topic.name === thema.titel &&
+            (karte.question.toLowerCase().includes(suchbegriff.toLowerCase()) ||
+             karte.answer.toLowerCase().includes(suchbegriff.toLowerCase()))
+        );
+        setZielKarteId(treffer ? treffer.id : null);
+
         setSuchbegriff("");
     }
+
+    useEffect(()=>{
+        if(zielKarteId === null) return;
+        const element = document.getElementById(`karte-${zielKarteId}`);
+        if(element){
+            element.scrollIntoView({behavior:"smooth", block:"center"});
+        }
+    }, [seitenIndex, zielKarteId]);
     let sucheErgebnisse = null;
     if(suchbegriff !== "") {
         sucheErgebnisse = (
@@ -70,7 +92,11 @@ function WikiPage (){
             {themaKarten.length === 0 && <p>Noch kein Inhalt geladen.</p>}
             <ul>
                 {themaKarten.map((karte)=>(
-                    <li key={karte.id}>
+                    <li
+                        key={karte.id}
+                        id={`karte-${karte.id}`}
+                        className={karte.id === zielKarteId ? "wiki-treffer" : undefined}
+                    >
                         <strong>{karte.question}</strong>
                         <p>{karte.answer}</p>
                     </li>
