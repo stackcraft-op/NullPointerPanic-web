@@ -117,3 +117,29 @@ export async function beantworten(answerOptionId) {
 
     return parseAntwort(response);
 }
+
+export async function holeRankingGesamt() {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`${API_URL}/api/rankings/overall`,{
+        method: "GET",
+        headers: {
+            "Authorization": `Bearer ${token}`,
+            "ngrok-skip-browser-warning": "true"
+        },
+    })
+
+    return parseAntwort(response);
+}
+
+export async function holeRankingWoche() {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`${API_URL}/api/rankings/weekly`,{
+        method: "GET",
+        headers: {
+            "Authorization": `Bearer ${token}`,
+            "ngrok-skip-browser-warning": "true"
+        },
+    })
+
+    return parseAntwort(response);
+}
