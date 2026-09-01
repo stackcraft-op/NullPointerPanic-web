@@ -323,3 +323,39 @@ th {
   white-space: nowrap;
 }
 
+/* ===== Login / Registrierung ===== */
+.auth-karte {
+  max-width: 400px;
+  margin: 60px auto;
+  padding: 40px 36px;
+  background: var(--php-bg);
+  border: 1px solid var(--php-line);
+  border-radius: 4px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.auth-karte h1 {
+  margin-bottom: 28px;
+}
+
+/* Button auf dieselbe Breite wie die Inputs (max-width: 320px, s.o.) statt
+   der schmalen, am Text klebenden Standardbreite - wirkt sonst schief neben
+   den vollbreiten Eingabefeldern. */
+.auth-karte button {
+  display: block;
+  width: 100%;
+  max-width: 320px;
+  margin: 4px auto 20px;
+}
+
+.auth-fehler {
+  color: var(--php-danger);
+  font-size: 13px;
+  margin: -6px 0 16px;
+}
+
+.auth-link {
+  font-size: 13px;
+  margin: 0;
+}
+
