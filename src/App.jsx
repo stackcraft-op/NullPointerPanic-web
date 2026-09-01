@@ -96,7 +96,8 @@ const quizFreigeschaltet = tagesKarten.length > 0 && verbleibendeKarten.length =
 
         <Route path="/wiki" element={<WikiPage/>}/>
         <Route path="/registrieren" element={<RegisterPage/>}/>
-        <Route path="/learning" element={<DailyLearningPage gespeicherteKarten = {gespeicherteKarten} setGespeicherteKarten = {setGespeicherteKarten} karten={dailyLearningKarten} setKarten={setDailyLearningKarten}/>}/>
+        <Route path="/learning" element={<DailyLearningPage/>}/>
+
         <Route path="/profil/bearbeiten" element ={<ProfilBearbeitenPage profilDaten={profilDaten} setProfilDaten={setProfilDaten}/>}/>
 
       </Routes>

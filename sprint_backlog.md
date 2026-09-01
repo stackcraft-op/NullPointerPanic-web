@@ -416,3 +416,120 @@ die anderen 5 Themen nur Platzhalter.
       Achievement-Mechanik in ProfilPage über reines XP hinausgeht)
 - [ ] Mit Kollege abstimmen: neuer Endpoint "Karteikarten-Stapel pro Thema" (Ersatz/
       Ergänzung zu `/api/flashcards/daily` für dieses Feature)
+
+## Kollege hat den fehlenden Endpoint bereits gebaut
+
+`GET /api/topics/:id/flashcards` (Karten eines Themas inkl. `checked`-Status pro
+Nutzer), `POST /api/flashcards/:id/check` (an/abhaken, Toggle), `POST /api/quiz`
+(Body `{topic_id}`, generiert Quiz aus 20 zufälligen abgehakten Karten, braucht
+min. 20 abgehakte Karten in genau diesem Thema) und
+`POST /api/answer_options/:id/quiz_submit` (prüft Antwort, kein Tageslimit, keine
+Currency, hakt bei falscher Antwort die Karte automatisch wieder ab, zählt in
+Themenfortschritt aber NICHT im Wochen-Ranking). Damit ist der 20er-Stapel-
+Mechanismus server-seitig getrackt, kein reiner Frontend-State wie ursprünglich
+angenommen.
+
+- [x] Neue Endpoints im Contract gefunden/geprüft (`git fetch` in
+      NullPointerPanic-api, Commits 1386359/5c9244a)
+
+## Klärung mit Kollege: kein Reset nach Quiz nötig
+
+Rückfrage beantwortet: richtig beantwortete Karten bleiben dauerhaft "abgehakt".
+Die einzige Bedingung fürs Quiz ist ">= 20 abgehakte Karten im Thema"
+(GET /api/topics/:id/flashcards + POST /api/quiz) - kein Frontend-Zähler, kein
+Reset nötig. Nur eine falsche Quiz-Antwort hakt eine Karte automatisch wieder ab
+(macht der Server schon, POST /api/answer_options/:id/quiz_submit).
+
+- [x] Geklärt: kein 20er-Reset-Mechanismus im Frontend nötig, Server-Zustand
+      (`checked`) reicht als einzige Quelle der Wahrheit
+
+## DailyLearningPage – Themenliste (gleiches Muster wie FlashcardsPage)
+
+`ausgewaehltesThema`-State + `if`-Check mit früherem `return` schaltet zwischen
+Themenliste und (Platzhalter für) Kartenansicht um - kein Routing nötig für
+Zwischenschritte innerhalb eines Features. Mock-Daten (`dailyLearningThemenMock`)
+diesmal direkt importiert statt über Props gereicht, weil aktuell kein anderer
+Screen sie braucht. Route `/learning` in App.jsx vereinfacht (keine Props mehr
+nötig), alte `dailyLearningKarten`/`gespeicherteKarten`-Props entfernt.
+
+- [x] DailyLearningPage.jsx: Themenliste statt hartcodiertem Einzelthema, Route
+      in App.jsx vereinfacht
+
+## DailyLearningPage – Kartenansicht (Stapel durchblättern)
+
+Neuer State `karteIndex` (wie `frageIndex` im Quiz), `karte = ausgewaehltesThema.
+karten[karteIndex]` als normale Variable (kein State). "Weiter" zählt Index hoch,
+Stapel-Ende per früherem `return`/ternärem Rendering abgefangen (`fertig`-Check).
+Karten zeigen Frage+Antwort direkt zusammen (kein Aufdecken wie bei FlashcardsPage -
+reiner Lerninhalt, kein Abfragen an dieser Stelle). `themaVerlassen()` setzt
+`karteIndex` explizit auf 0 zurück, sonst würde man beim nächsten Thema mitten im
+fremden Stapel landen.
+
+- [x] Kartenansicht gebaut: `karteIndex`-State, Weiter-Button, Stapel-Ende-Meldung,
+      `themaVerlassen()` resettet den Index
+
+## DailyLearningPage – Abhaken, Quiz-Freischaltung, Quiz mit Rückgabe-Mechanik
+
+**Ausnahme (01.09):** Diesen Teil hat Claude auf expliziten Wunsch ("ausnahmsweise
+heute kannst du das alles implementieren") direkt selbst per Write umgesetzt, inkl.
+`npm run build` zur Kontrolle - Grundregel (User tippt sonst selbst) gilt danach
+unverändert weiter, siehe [[teaching-style-feedback]] Auslöser 5.
+
+- `abgehakteKartenIds` (Objekt `{themaId: [karteId, ...]}`) trackt pro Thema, welche
+  Karten schon "gelernt" sind - Klick auf "Weiter" trägt die Karte ein, BEVOR der
+  Index hochgezählt wird. Gleiche Idee wie das echte `checked`-Feld vom Server.
+- `KARTEN_PRO_QUIZ = 20`: sobald `abgehaktFuerThema.length >= 20`, erscheint ein
+  "Quiz starten"-Button (auch mitten im Stapel, nicht erst am Ende).
+- Quiz-Fragenpool = ALLE abgehakten Karten des Themas (nicht nur die letzten 20),
+  `gemischt()` zieht daraus zufällig bis zu 20 - entspricht `POST /api/quiz`.
+- Falsche Antwort im Quiz → `karteAusStapelEntfernen()` nimmt die Karten-ID wieder
+  aus `abgehakteKartenIds` raus → Karte gilt wieder als offen, taucht beim nächsten
+  Kartendurchgang erneut auf. Richtige Antworten bleiben dauerhaft abgehakt (siehe
+  Klärung oben) - kein Reset nach Quiz-Ende nötig, `quizVerfuegbar` kann danach aber
+  unter 20 fallen, wenn genug falsch beantwortet wurde.
+- Mock zeigt Korrektheit clientseitig an (`korrekteIndex` liegt in `mockData.js`) -
+  das ist eine bewusste Vereinfachung, weil wir noch nicht gegen den echten
+  `POST /api/answer_options/:id/quiz_submit`-Endpoint spielen. Beim Umstieg auf
+  echte Daten muss `korrekteIndex` aus den Client-Daten verschwinden (Server prüft).
+
+- [x] Abhaken-Tracking (`abgehakteKartenIds`) + Fortschrittsanzeige gebaut
+- [x] Quiz-Freischaltung ab 20 abgehakten Karten pro Thema
+- [x] Eigene Daily-Learning-Quiz-Ansicht: Fragenpool aus allen abgehakten Karten,
+      Feedback-Farben (grün/rot), falsche Antwort gibt Karte zurück in den Stapel
+- [ ] Achievement-Anbindung an Quiz-Ergebnis (weiterhin verschoben, ProfilPage nur
+      rein-XP-basiert)
+- [ ] Sobald Kollege deployed: Mock durch `GET /api/topics/:id/flashcards`,
+      `POST /api/flashcards/:id/check`, `POST /api/quiz`,
+      `POST /api/answer_options/:id/quiz_submit` ersetzen
+
+## DailyLearningPage – Design angeglichen an Dashboard/Quiz + "Kann ich"-Mechanik
+
+Auf Wunsch: gleiches Look&Feel wie die bestehenden Features, keine neuen CSS-Klassen
+nötig, nur bestehende wiederverwendet.
+- Kartenansicht nutzt jetzt `.kartenstapel`/`.geisterkarte`/`.tageskarte`/
+  `.tageskarte-buttons` (identisch zum Dashboard-Tageskarten-Look, `App.css`).
+- Quiz-Ansicht nutzt `.quiz-karte`/`.quiz-antworten` (identisch zu `QuizPage.jsx`,
+  `php-design.css`), inkl. gleicher Grün/Orange-Farb-Rückmeldung nach Antwort-Klick.
+- Statt reinem "Weiter"-Button jetzt echte Entscheidung wie im Dashboard: `stapelKarten`
+  ist eine Warteschlange (State, kein Index mehr) - "Kann ich" haktab (`.filter()`,
+  Karte gilt als abgehakt), "Kann ich noch nicht" schickt die Karte per `.filter()`+
+  `.concat()` ans Ende der Warteschlange, bleibt aber offen (nicht abgehakt).
+  `offeneKartenFuer(thema)` baut die Warteschlange beim Öffnen eines Themas frisch aus
+  `thema.karten` minus bereits abgehakten IDs auf.
+
+- [x] Design an Dashboard/Quiz angeglichen (bestehende CSS-Klassen wiederverwendet)
+- [x] "Kann ich" / "Kann ich noch nicht" statt reinem Weiter-Klick (Warteschlange
+      statt Index, gleiches Prinzip wie im Dashboard)
+
+## Themenliste – eigene Karten-Optik statt nackter Buttons
+
+Screenshot-Feedback: die Themenliste sah im Vergleich zu Ranking-Tabelle/Wiki-
+Buchseite lieblos aus (nackte, global gestylte Buttons). Neue Klassen
+`.themen-liste`/`.themen-karte`/`.themen-karte-fortschritt` in `php-design.css`
+(gleicher Stil wie `.leaderboard`: Schatten, abgerundet, dezenter Rahmen,
+Hover-Highlight). Jede Themenkarte zeigt jetzt zusätzlich den echten
+Abhak-Fortschritt (`X / Y abgehakt` aus `abgehakteKartenIds`) statt nur der
+Kartenanzahl - nutzt State, der eh schon da war.
+
+- [x] `.themen-liste`/`.themen-karte`-Styles ergänzt, Themenliste zeigt
+      Fortschritt statt nur Kartenanzahl
