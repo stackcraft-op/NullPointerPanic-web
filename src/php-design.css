@@ -445,3 +445,168 @@ th {
   margin: 0;
 }
 
+/* ===== Profil ===== */
+/* Diese Seite bewusst NICHT im Serifen/Versalien-Look der restlichen App -
+   Feedback: "PROFIL"/"LERNFORTSCHRITT" wirkten wie eine Magazin-Titelseite.
+   Nur hier ueberschrieben, der Rest der App (Startseite-Zertifikat etc.)
+   behaelt den Cinzel-Stil. */
+.profil-seite h1,
+.profil-seite h2 {
+  font-family: inherit;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+/* Deutlich breiter als die anderen Karten-Seiten (Login/Quiz/Themenliste) -
+   die Profilseite hat viel horizontalen Platz zu verteilen (breite Karte +
+   breite Balken), 960px statt der sonst ueblichen 400-560px. */
+.profil-inhalt {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+/* Gemeinsame Basis fuer .profil-kopf/.gesamtfortschritt-karte/.fortschritt-
+   liste - waren zuvor 3x derselbe Block (background/border/radius/shadow),
+   jetzt an einer Stelle gepflegt. */
+.profil-karte {
+  width: 100%;
+  box-sizing: border-box;
+  background: var(--php-bg);
+  border: 1px solid var(--php-line);
+  border-radius: 4px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* Horizontal statt vertikal: Avatar links, Name/Stufe daneben,
+   Bearbeiten-Button rechts (margin-left: auto) - kompakter und
+   professioneller als ein grosses Foto mittig in einer hohen Karte. */
+.profil-kopf {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 24px 32px;
+  margin-bottom: 32px;
+}
+
+.profil-info {
+  flex: 1;
+}
+
+.profil-name {
+  color: var(--php-text);
+  font-size: 18px;
+  margin: 0 0 4px;
+}
+
+.profil-stufe {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--php-muted);
+}
+
+/* Sekundärer Button (duenner Rahmen, gedeckte Farbe) - "Profil bearbeiten"
+   ist keine Hauptaktion auf dieser Seite, soll entsprechend zurueckhaltend
+   wirken, nicht wie ein Haupt-CTA (siehe .cta-button auf der Startseite). */
+.profil-bearbeiten-link {
+  display: inline-block;
+  flex-shrink: 0;
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  padding: 8px 20px;
+  border: 1px solid var(--php-line);
+  border-radius: 999px;
+  color: var(--php-muted);
+  text-decoration: none;
+}
+
+.profil-bearbeiten-link:hover {
+  border-color: var(--php-text);
+  color: var(--php-text);
+}
+
+/* Gesamtfortschritt: eigener, groesserer Block - soll als Hauptkennzahl der
+   Seite sofort auffallen, nicht nur die erste Zeile einer gleichfoermigen
+   Liste sein (starke Gewichtung vs. normale Kategorien darunter). */
+.gesamtfortschritt-karte {
+  padding: 32px 36px;
+  margin-bottom: 20px;
+}
+
+.gesamtfortschritt-kopf {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 14px;
+}
+
+.gesamtfortschritt-kopf span:first-child {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--php-text);
+}
+
+.gesamtfortschritt-prozent {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--php-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.fortschritt-balken-gross {
+  height: 18px;
+}
+
+.fortschritt-liste {
+  padding: 32px 36px;
+}
+
+/* Name+Prozent auf einer Zeile ueber dem Balken statt daneben - der Balken
+   bekommt dadurch die VOLLE Kartenbreite (vorher per Grid-Spalte begrenzt
+   und bei langen Namen sogar abgeschnitten). Kategorien-Namen sind normal
+   gewichtet, Prozentwerte bewusst sekundaer/gedeckt (siehe Hierarchie:
+   Gesamtfortschritt stark, Kategorien normal, Prozent sekundaer). */
+.fortschritt-zeile {
+  margin-bottom: 22px;
+}
+
+.fortschritt-zeile:last-child {
+  margin-bottom: 0;
+}
+
+.fortschritt-zeile-kopf {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 8px;
+}
+
+.fortschritt-name {
+  font-size: 14px;
+  color: var(--php-text);
+}
+
+.fortschritt-prozent {
+  font-size: 13px;
+  color: var(--php-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.fortschritt-balken {
+  width: 100%;
+  height: 10px;
+  background: var(--php-line);
+  border-radius: 999px;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.fortschritt-balken-fuellung {
+  height: 100%;
+  border-radius: 999px;
+  /* Farbe kommt inline (Lila->Gruen interpoliert nach Prozentwert, siehe
+     farbeFuerProzent() in ProfilPage.jsx) - hier nur die Animation beim
+     ersten Anzeigen/Aendern des Fortschritts. */
+  transition: width 0.5s ease;
+}
+

@@ -1,52 +1,129 @@
 import Navbar from "../components/Navbar";
 import { Link } from "react-router-dom";
-import { useContext } from "react";
+import { useContext, useState, useEffect } from "react";
 import UserContext from "../UserContext";
+import { holeThemenFortschritt } from "../api";
+
+// Rails liefert Prozentwerte manchmal als String statt Zahl (z.B. bei
+// Decimal-Spalten) - Number(...) erzwingt eine echte Zahl. || 0 faengt
+// zusaetzlich undefined/NaN ab. Danach auf [0, 100] geklemmt, damit ein
+// kaputter/ungewoehnlicher Wert weder die Balkenbreite noch die Farbe
+// durcheinanderbringt - beide nutzen jetzt denselben, sicheren Wert.
+function prozentSicher(wert) {
+    const zahl = Number(wert) || 0;
+    return Math.min(Math.max(zahl, 0), 100);
+}
+
+// Kein Rot/Ampel-Schema mehr (wirkte zu aggressiv) - stattdessen eine
+// sanfte Einfaerbung, die zwischen Lila (App-Akzentfarbe, wie schon beim
+// Dashboard-Themen-Tag) und Gruen interpoliert. 0% = reines Lila, 100% =
+// reines Gruen, dazwischen linear gemischt.
+function farbeFuerProzent(prozent) {
+    const anteil = prozentSicher(prozent) / 100;
+    const lila = [170, 59, 255];
+    const gruen = [34, 197, 94];
+    const [r, g, b] = lila.map((start, i) => Math.round(start + (gruen[i] - start) * anteil));
+    return `rgb(${r}, ${g}, ${b})`;
+}
 
 function ProfilPage(){
-    
+
     const { eingeloggterName, aktuelleStufe} = useContext(UserContext);
-    const xp = 200;
-   
 
-    const achievements = [
-        { id: 1, titel : "Erste Schritte", schwelle: 10, icon: "🥉"},
-        { id: 2, titel : "Auf Kurs", schwelle: 20, icon: "🥈"},
-        { id: 3, titel : "Prüfungsreif", schwelle: 30, icon: "🥇"},        
-    ];
+    const [themenFortschritt, setThemenFortschritt] = useState([]);
+    const [ladeFehler, setLadeFehler] = useState("");
+    // Eigenes Flag statt nur "themenFortschritt.length === 0" zu pruefen -
+    // sonst ist "noch am Laden" und "Server hat leere Liste geliefert"
+    // nicht unterscheidbar, die Seite wuerde bei einer echten Leerliste
+    // dauerhaft "Lädt..." zeigen.
+    const [geladen, setGeladen] = useState(false);
 
-    
+    useEffect(() => {
+        holeThemenFortschritt()
+            .then((daten) => setThemenFortschritt(daten))
+            .catch((error) => setLadeFehler(error.message))
+            .finally(() => setGeladen(true));
+    }, []);
 
-
-
+    // Durchschnitt ueber alle Themen - "wie viel hast du insgesamt drauf",
+    // unabhaengig von der einzelnen Stufe/XP. Number(...) erzwingt echte
+    // Addition statt String-Verkettung, falls progress_percent mal als
+    // String ankommt.
+    const gesamtProzent = themenFortschritt.length === 0
+        ? 0
+        : Math.round(
+            themenFortschritt.reduce((summe, thema) => summe + Number(thema.progress_percent), 0) / themenFortschritt.length
+        );
 
     return (
-        <div>
+        <div className="profil-seite">
             <Navbar></Navbar>
-            <h1>
-                Profil
-            </h1>
-            <img
-                src={aktuelleStufe.avatarBild}
-                alt={aktuelleStufe.name}
-                style={{
-                    width : "80px",
-                    height : "80px",
-                    borderRadius: "50px",
-                    border: `4px solid ${aktuelleStufe.rahmenFarbe}`,
-                    objectFit: "cover"
-                }}
-                />
-                <p>{eingeloggterName}</p>
-            <p>{aktuelleStufe.name}</p>
-            <Link to="/profil/bearbeiten">Profil Bearbeiten</Link>
-            <ul>
-                {achievements.map((achievement)=>(
-                    <li key={achievement.id}>{achievement.titel}(ab {achievement.schwelle} XP)-{" "}
-                    {xp >= achievement.schwelle ? "✅ freigeschaltet" : "🔒 gesperrt"}
-                    </li>
-                ))}
-            </ul>
+            <h1>Profil</h1>
+
+            <div className="profil-inhalt">
+                <div className="profil-kopf profil-karte">
+                    <img
+                        src={aktuelleStufe.avatarBild}
+                        alt={aktuelleStufe.name}
+                        style={{
+                            width : "88px",
+                            height : "88px",
+                            borderRadius: "50%",
+                            border: "3px solid var(--php-text)",
+                            objectFit: "cover"
+                        }}
+                        />
+                    <div className="profil-info">
+                        <p className="profil-name">{eingeloggterName}</p>
+                        <span className="profil-stufe">{aktuelleStufe.name}</span>
+                    </div>
+                    <Link to="/profil/bearbeiten" className="profil-bearbeiten-link">Profil bearbeiten</Link>
+                </div>
+
+                <h2>Lernfortschritt</h2>
+                {ladeFehler && <p className="auth-fehler">{ladeFehler}</p>}
+                {!geladen && !ladeFehler && <p>Lädt...</p>}
+                {geladen && themenFortschritt.length === 0 && !ladeFehler && (
+                    <p>Noch kein Lernfortschritt vorhanden.</p>
+                )}
+
+                {themenFortschritt.length > 0 && (
+                    <>
+                        {/* Gesamtfortschritt bewusst als eigener, groesserer Block VOR der
+                            Kategorien-Liste - soll als Hauptkennzahl sofort ins Auge fallen,
+                            nicht nur die erste Zeile einer gleichförmigen Liste sein. */}
+                        <div className="gesamtfortschritt-karte profil-karte">
+                            <div className="gesamtfortschritt-kopf">
+                                <span>Gesamtfortschritt</span>
+                                <span className="gesamtfortschritt-prozent">{gesamtProzent}%</span>
+                            </div>
+                            <div className="fortschritt-balken fortschritt-balken-gross">
+                                <div
+                                    className="fortschritt-balken-fuellung"
+                                    style={{ width: `${prozentSicher(gesamtProzent)}%`, background: farbeFuerProzent(gesamtProzent) }}
+                                ></div>
+                            </div>
+                        </div>
+
+                        <div className="fortschritt-liste profil-karte">
+                            {themenFortschritt.map((thema) => (
+                                <div className="fortschritt-zeile" key={thema.id}>
+                                    <div className="fortschritt-zeile-kopf">
+                                        <span className="fortschritt-name">{thema.name}</span>
+                                        <span className="fortschritt-prozent">{thema.progress_percent}%</span>
+                                    </div>
+                                    <div className="fortschritt-balken">
+                                        <div
+                                            className="fortschritt-balken-fuellung"
+                                            style={{ width: `${prozentSicher(thema.progress_percent)}%`, background: farbeFuerProzent(thema.progress_percent) }}
+                                        ></div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </>
+                )}
+            </div>
         </div>
     )
 }
