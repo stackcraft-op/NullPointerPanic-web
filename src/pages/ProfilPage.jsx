@@ -77,7 +77,7 @@ function ProfilPage(){
                 )}
                 {themenFortschritt.map((thema) => (
                     <div className="fortschritt-zeile" key={thema.id}>
-                        <span>{thema.name}</span>
+                        <span title={thema.name}>{thema.name}</span>
                         <div className="fortschritt-balken">
                             <div
                                 className="fortschritt-balken-fuellung"

@@ -456,21 +456,27 @@ th {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
+/* Grid statt Flex: feste Spaltenbreiten, damit ALLE Balken exakt gleich
+   breit sind, egal wie lang der Themenname ist (Flex mit nur min-width
+   liess die Spalte je nach Textlaenge wandern - Balken waren dadurch
+   unterschiedlich lang). */
 .fortschritt-zeile {
-  display: flex;
+  display: grid;
+  grid-template-columns: 210px 1fr 40px;
   align-items: center;
   gap: 14px;
   margin-bottom: 16px;
 }
 
 .fortschritt-zeile span:first-child {
-  min-width: 190px;
   font-size: 13px;
   color: var(--php-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .fortschritt-zeile span:last-child {
-  min-width: 36px;
   text-align: right;
   font-size: 13px;
   font-variant-numeric: tabular-nums;
