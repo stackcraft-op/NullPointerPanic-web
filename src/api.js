@@ -143,3 +143,70 @@ export async function holeRankingWoche() {
 
     return parseAntwort(response);
 }
+
+export async function holeThemenFortschritt() {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`${API_URL}/api/topics/progress`, {
+        method: "GET",
+        headers: {
+            "Authorization": `Bearer ${token}`,
+            "ngrok-skip-browser-warning": "true"
+        },
+    })
+
+    return parseAntwort(response);
+}
+
+export async function holeKartenFuerThema(themaId) {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`${API_URL}/api/topics/${themaId}/flashcards`, {
+        method: "GET",
+        headers: {
+            "Authorization": `Bearer ${token}`,
+            "ngrok-skip-browser-warning": "true"
+        },
+    })
+
+    return parseAntwort(response);
+}
+
+export async function karteAbhaken(flashcardId) {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`${API_URL}/api/flashcards/${flashcardId}/check`, {
+        method: "POST",
+        headers: {
+            "Authorization": `Bearer ${token}`,
+            "ngrok-skip-browser-warning": "true"
+        },
+    })
+
+    return parseAntwort(response);
+}
+
+export async function starteQuiz(themaId) {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`${API_URL}/api/quiz`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+            "ngrok-skip-browser-warning": "true"
+        },
+        body: JSON.stringify({ topic_id: themaId }),
+    })
+
+    return parseAntwort(response);
+}
+
+export async function quizAntwortEinreichen(answerOptionId) {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`${API_URL}/api/answer_options/${answerOptionId}/quiz_submit`, {
+        method: "POST",
+        headers: {
+            "Authorization": `Bearer ${token}`,
+            "ngrok-skip-browser-warning": "true"
+        },
+    })
+
+    return parseAntwort(response);
+}
