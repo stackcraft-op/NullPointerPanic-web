@@ -14,12 +14,6 @@ function StartPage() {
                 </p>
                 <Link to="/login" className="cta-button">Los geht's →</Link>
             </div>
-
-            <ul className="start-features">
-                <li><span className="start-feature-icon">🗂️</span>Karteikarten</li>
-                <li><span className="start-feature-icon">🧠</span>Quiz</li>
-                <li><span className="start-feature-icon">🏆</span>Ranking</li>
-            </ul>
         </div>
     )
 }
