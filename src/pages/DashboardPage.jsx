@@ -4,7 +4,7 @@ import Navbar from "../components/Navbar";
 import Leaderboard from "../components/Leaderboard";
 import { holeRankingWoche } from "../api";
 
-function DashboardPage({tagesKarten, setTagesKarten, quizFreigeschaltet}){
+function DashboardPage({tagesKarten, setTagesKarten, quizFreigeschaltet, tagesKartenGeladen}){
 
     const [wochenRanking, setWochenRanking] = useState({ top: [], me: null });
     useEffect(()=>{
@@ -51,11 +51,13 @@ function DashboardPage({tagesKarten, setTagesKarten, quizFreigeschaltet}){
                         </div>
                     </div>
                 </div>
-                ) : (
+                ) : tagesKartenGeladen ? (
                 <div>
                     <p>Keine Karten mehr für heute </p>
                     {quizFreigeschaltet && <Link to="/quiz">Zum Quiz</Link>}
                 </div>
+                ) : (
+                <p>Lädt...</p>
                 )}
 
             
