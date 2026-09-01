@@ -31,6 +31,11 @@ function App() {
   const [eingeloggterName,setEingeloggterName] = useState("");
   const [tagesKarten,setTagesKarten] = useState([]);
   const [verbleibendeKarten,setVerbleibendeKarten] = useState([]);
+  // Eigenes Flag statt im Dashboard nur "tagesKarten.length === 0" zu pruefen -
+  // sonst ist "laedt noch" und "heute wirklich keine Karten mehr" nicht
+  // unterscheidbar, das Dashboard wuerde waehrend des Ladens faelschlich
+  // "Keine Karten mehr für heute" zeigen.
+  const [tagesKartenGeladen, setTagesKartenGeladen] = useState(false);
 
   // eigene Funktion statt Code direkt im useEffect, damit LoginPage sie nach
   // einem erfolgreichen Login zusaetzlich aufrufen kann (gleiches Prinzip wie
@@ -43,6 +48,7 @@ function App() {
         setVerbleibendeKarten(karten);
       })
       .catch((error)=> console.error("Tageskarten laden fehlgeschlagen:", error))
+      .finally(() => setTagesKartenGeladen(true))
   }
 
   useEffect(()=>{
@@ -94,7 +100,7 @@ const quizFreigeschaltet = tagesKarten.length > 0 && verbleibendeKarten.length =
         <Route path = "/" element={<StartPage/>} />
         <Route path="/login" element={<LoginPage setEingeloggterName={setEingeloggterName} ladeProfil={ladeProfil} ladeTagesKarten={ladeTagesKarten}/>} />
 
-        <Route path="/dashboard" element={<DashboardPage tagesKarten={verbleibendeKarten} setTagesKarten={setVerbleibendeKarten} quizFreigeschaltet={quizFreigeschaltet}/>}/>
+        <Route path="/dashboard" element={<DashboardPage tagesKarten={verbleibendeKarten} setTagesKarten={setVerbleibendeKarten} quizFreigeschaltet={quizFreigeschaltet} tagesKartenGeladen={tagesKartenGeladen}/>}/>
 
         <Route path="/ranking" element={<RankingPage/>}/>
         <Route path="/profil" element={<ProfilPage/>}/>
