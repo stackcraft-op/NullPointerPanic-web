@@ -449,6 +449,11 @@ th {
 .fortschritt-liste {
   max-width: 560px;
   margin: 0 auto;
+  padding: 32px 36px;
+  background: var(--php-bg);
+  border: 1px solid var(--php-line);
+  border-radius: 4px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
 .fortschritt-zeile {
@@ -501,5 +506,50 @@ th {
 
 .fortschritt-zeile-gesamt .fortschritt-balken {
   height: 16px;
+}
+
+/* ===== Profil: Kopfbereich (Avatar/Name/Stufe/Bearbeiten) ===== */
+.profil-kopf {
+  max-width: 400px;
+  margin: 0 auto 40px;
+  padding: 32px;
+  text-align: center;
+  background: var(--php-bg);
+  border: 1px solid var(--php-line);
+  border-radius: 4px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.profil-name {
+  color: var(--php-text);
+  font-size: 20px;
+  margin: 16px 0 4px;
+}
+
+.profil-stufe {
+  /* inline-block statt inline, sonst greift margin-bottom nicht (vertikale
+     margins wirken bei display:inline nicht) */
+  display: inline-block;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--php-muted);
+  margin-bottom: 20px;
+}
+
+.profil-bearbeiten-link {
+  display: inline-block;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 8px 22px;
+  border: 1px solid var(--php-text);
+  border-radius: 999px;
+  text-decoration: none;
+}
+
+.profil-bearbeiten-link:hover {
+  background: var(--php-text);
+  color: #fff;
 }
 

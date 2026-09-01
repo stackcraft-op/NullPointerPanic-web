@@ -40,20 +40,24 @@ function ProfilPage(){
             <h1>
                 Profil
             </h1>
-            <img
-                src={aktuelleStufe.avatarBild}
-                alt={aktuelleStufe.name}
-                style={{
-                    width : "80px",
-                    height : "80px",
-                    borderRadius: "50px",
-                    border: `4px solid ${aktuelleStufe.rahmenFarbe}`,
-                    objectFit: "cover"
-                }}
-                />
-                <p>{eingeloggterName}</p>
-            <p>{aktuelleStufe.name}</p>
-            <Link to="/profil/bearbeiten">Profil Bearbeiten</Link>
+            <div className="profil-kopf">
+                <img
+                    src={aktuelleStufe.avatarBild}
+                    alt={aktuelleStufe.name}
+                    style={{
+                        width : "88px",
+                        height : "88px",
+                        borderRadius: "50%",
+                        border: `4px solid ${aktuelleStufe.rahmenFarbe}`,
+                        objectFit: "cover"
+                    }}
+                    />
+                <p className="profil-name">{eingeloggterName}</p>
+                <span className="profil-stufe">{aktuelleStufe.name}</span>
+                <div>
+                    <Link to="/profil/bearbeiten" className="profil-bearbeiten-link">Profil bearbeiten</Link>
+                </div>
+            </div>
 
             <h2>Lernfortschritt</h2>
             {ladeFehler && <p className="auth-fehler">{ladeFehler}</p>}
