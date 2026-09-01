@@ -1,10 +1,17 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Leaderboard from "../components/Leaderboard";
+import { holeRankingWoche } from "../api";
 
 function DashboardPage({tagesKarten, setTagesKarten, quizFreigeschaltet}){
-    
 
+    const [wochenRanking, setWochenRanking] = useState({ top: [], me: null });
+    useEffect(()=>{
+        holeRankingWoche()
+            .then((daten)=> setWochenRanking(daten))
+            .catch((error)=> console.error("Wochen-Ranking laden fehlgeschlagen:", error));
+    }, []);
 
     const aktuelleKarte = tagesKarten[0];
     // wie viele "Geisterkarten" hinter der echten Karte sichtbar sind - richtet sich nach
@@ -20,12 +27,6 @@ function DashboardPage({tagesKarten, setTagesKarten, quizFreigeschaltet}){
     }
 
 
-
-    const weeklySpieler = [
-        { id: 1, name: "Ben", xp: 90 },
-        { id: 2, name: "Aylin", xp: 75 },
-        { id: 3, name: "Chris", xp: 40 },
-    ];
 
     return(
         <div>
@@ -58,8 +59,8 @@ function DashboardPage({tagesKarten, setTagesKarten, quizFreigeschaltet}){
                 )}
 
             
-            <h2>Weakly Ranking</h2>
-            <Leaderboard spieler={weeklySpieler}/>
+            <h2>Wöchentlich</h2>
+            <Leaderboard spieler={wochenRanking.top}/>
         </div>
     )
 }
