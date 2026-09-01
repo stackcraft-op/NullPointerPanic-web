@@ -1,141 +1,170 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
-import { dailyLearningThemenMock } from "../mockData";
+import {
+    holeThemenFortschritt,
+    holeKartenFuerThema,
+    karteAbhaken,
+    starteQuiz,
+    quizAntwortEinreichen,
+} from "../api";
 
 const KARTEN_PRO_QUIZ = 20;
 
-// Einfache Mischfunktion (nicht kryptographisch fair, reicht fuer ein Quiz) -
-// baut eine neue, zufaellig sortierte Kopie des Arrays, Original bleibt unveraendert.
-function gemischt(array) {
-    return [...array].sort(() => Math.random() - 0.5);
-}
-
 function DailyLearningPage() {
+    const [themen, setThemen] = useState([]);
+    const [ladeFehler, setLadeFehler] = useState("");
+
     const [ausgewaehltesThema, setAusgewaehltesThema] = useState(null);
-    // Warteschlange der noch offenen Karten des gewählten Themas (gleiches
+    // Vollstaendige Kartenliste des gewaehlten Themas (mit checked vom Server) -
+    // getrennt von stapelKarten, weil wir daraus den Abhak-Fortschritt zaehlen,
+    // auch waehrend stapelKarten sich beim Durchklicken veraendert.
+    const [alleKarten, setAlleKarten] = useState([]);
+    // Warteschlange der noch offenen (nicht abgehakten) Karten - gleiches
     // Muster wie tagesKarten im Dashboard: karte = stapelKarten[0], "Kann ich"
     // entfernt sie per .filter(), "Kann ich noch nicht" haengt sie per
-    // .filter()+.concat() wieder hinten an).
+    // .filter()+.concat() wieder hinten an.
     const [stapelKarten, setStapelKarten] = useState([]);
-    // Objekt statt einzelner Werte, weil wir pro THEMA eine eigene Liste
-    // abgehakter Karten-IDs brauchen: { [themaId]: [karteId, karteId, ...] }
-    const [abgehakteKartenIds, setAbgehakteKartenIds] = useState({});
 
     const [quizModus, setQuizModus] = useState(false);
     const [quizFragen, setQuizFragen] = useState([]);
     const [quizIndex, setQuizIndex] = useState(0);
-    const [gewaehlteAntwort, setGewaehlteAntwort] = useState(null);
+    const [ausgewaehlteOptionId, setAusgewaehlteOptionId] = useState(null);
+    const [korrekteOptionId, setKorrekteOptionId] = useState(null);
+    const [warRichtig, setWarRichtig] = useState(null);
     const [quizRichtigCount, setQuizRichtigCount] = useState(0);
 
-    // Baut die Warteschlange fuer ein Thema frisch auf: alle Karten, die laut
-    // abgehakteKartenIds noch NICHT abgehakt sind.
-    function offeneKartenFuer(thema) {
-        const abgehaktIds = abgehakteKartenIds[thema.id] || [];
-        return thema.karten.filter((karte) => !abgehaktIds.includes(karte.id));
-    }
+    useEffect(() => {
+        holeThemenFortschritt()
+            .then((daten) => setThemen(daten))
+            .catch((error) => setLadeFehler(error.message));
+    }, []);
 
     function themaOeffnen(thema) {
         setAusgewaehltesThema(thema);
-        setStapelKarten(offeneKartenFuer(thema));
         setQuizModus(false);
+        setLadeFehler("");
+        holeKartenFuerThema(thema.id)
+            .then((karten) => {
+                setAlleKarten(karten);
+                setStapelKarten(karten.filter((karte) => !karte.checked));
+            })
+            .catch((error) => setLadeFehler(error.message));
     }
 
     function themaVerlassen() {
         setAusgewaehltesThema(null);
+        setAlleKarten([]);
         setStapelKarten([]);
         setQuizModus(false);
     }
 
     if (ausgewaehltesThema) {
-        const abgehaktFuerThema = abgehakteKartenIds[ausgewaehltesThema.id] || [];
-        const quizVerfuegbar = abgehaktFuerThema.length >= KARTEN_PRO_QUIZ;
+        const abgehaktAnzahl = alleKarten.filter((karte) => karte.checked).length;
+        // Deckt nur den client-seitig sichtbaren Fall ab (>= 20 abgehakt).
+        // Der Server prueft zusaetzlich, ob genug abgehakte Karten auch eine
+        // Multiple-Choice-Frage haben - schlaegt das fehl, zeigen wir die
+        // Serverfehlermeldung (siehe quizStarten) statt hier zu raten.
+        const quizVerfuegbar = abgehaktAnzahl >= KARTEN_PRO_QUIZ;
 
-        function kartenAlsAbgehaktEintragen(karteId) {
-            const bisherigeIds = abgehakteKartenIds[ausgewaehltesThema.id] || [];
-            setAbgehakteKartenIds({
-                ...abgehakteKartenIds,
-                [ausgewaehltesThema.id]: [...bisherigeIds, karteId],
-            });
+        function kannIch() {
+            const karte = stapelKarten[0];
+            karteAbhaken(karte.id)
+                .then(() => {
+                    setAlleKarten(alleKarten.map((k) => (k.id === karte.id ? { ...k, checked: true } : k)));
+                    setStapelKarten(stapelKarten.filter((k) => k.id !== karte.id));
+                })
+                .catch((error) => setLadeFehler(error.message));
         }
 
-        // Wird bei falscher Quiz-Antwort gebraucht: Karte gilt wieder als
-        // "nicht abgehakt", taucht beim naechsten Oeffnen des Themas wieder
-        // im Stapel auf ("kehrt in den Stapel zurueck").
-        function karteAusAbgehaktEntfernen(karteId) {
-            const bisherigeIds = abgehakteKartenIds[ausgewaehltesThema.id] || [];
-            setAbgehakteKartenIds({
-                ...abgehakteKartenIds,
-                [ausgewaehltesThema.id]: bisherigeIds.filter((id) => id !== karteId),
-            });
+        function kannIchNicht() {
+            const karte = stapelKarten[0];
+            const restKarten = stapelKarten.filter((k) => k.id !== karte.id);
+            setStapelKarten(restKarten.concat([karte]));
         }
 
         function quizStarten() {
-            const kartenFuerQuiz = gemischt(abgehaktFuerThema)
-                .slice(0, KARTEN_PRO_QUIZ)
-                .map((id) => ausgewaehltesThema.karten.find((karte) => karte.id === id));
-            setQuizFragen(kartenFuerQuiz);
-            setQuizIndex(0);
-            setGewaehlteAntwort(null);
-            setQuizRichtigCount(0);
-            setQuizModus(true);
+            starteQuiz(ausgewaehltesThema.id)
+                .then((fragen) => {
+                    setQuizFragen(fragen);
+                    setQuizIndex(0);
+                    setAusgewaehlteOptionId(null);
+                    setKorrekteOptionId(null);
+                    setWarRichtig(null);
+                    setQuizRichtigCount(0);
+                    setQuizModus(true);
+                })
+                .catch((error) => setLadeFehler(error.message));
+        }
+
+        function zurueckZuKarten() {
+            setQuizModus(false);
+            themaOeffnen(ausgewaehltesThema); // frisch laden - Server kennt neuen checked-Stand
         }
 
         if (quizModus) {
             const aktuelleQuizKarte = quizFragen[quizIndex];
             const quizFertig = quizIndex >= quizFragen.length;
 
-            function antwortKlick(index) {
-                if (gewaehlteAntwort !== null) return; // schon beantwortet
-                setGewaehlteAntwort(index);
-                if (index === aktuelleQuizKarte.quizFrage.korrekteIndex) {
-                    setQuizRichtigCount(quizRichtigCount + 1);
-                } else {
-                    karteAusAbgehaktEntfernen(aktuelleQuizKarte.id);
+            async function antwortKlick(optionId) {
+                if (ausgewaehlteOptionId !== null) return; // schon beantwortet
+                try {
+                    const daten = await quizAntwortEinreichen(optionId);
+                    setAusgewaehlteOptionId(optionId);
+                    setWarRichtig(daten.correct);
+                    if (daten.correct) {
+                        setQuizRichtigCount(quizRichtigCount + 1);
+                    } else {
+                        setKorrekteOptionId(daten.correct_option.id);
+                    }
+                } catch (fehler) {
+                    setLadeFehler(fehler.message);
                 }
             }
 
             function naechsteQuizFrage() {
                 setQuizIndex(quizIndex + 1);
-                setGewaehlteAntwort(null);
+                setAusgewaehlteOptionId(null);
+                setKorrekteOptionId(null);
+                setWarRichtig(null);
             }
 
-            function optionFarbe(index) {
-                if (gewaehlteAntwort === null) return {};
-                if (index === aktuelleQuizKarte.quizFrage.korrekteIndex) return { borderColor: "#22c55e", color: "#22c55e" };
-                if (index === gewaehlteAntwort) return { borderColor: "#f97316", color: "#f97316" };
+            function optionFarbe(optionId) {
+                if (optionId === korrekteOptionId) return { border: "3px solid #39ff14" };
+                if (optionId === ausgewaehlteOptionId) return { border: warRichtig ? "3px solid #39ff14" : "3px solid red" };
                 return {};
             }
 
             return (
                 <div>
                     <Navbar />
-                    <h1>{ausgewaehltesThema.titel} — Quiz</h1>
+                    <h1>{ausgewaehltesThema.name} — Quiz</h1>
                     <div className="quiz-karte">
                         {quizFertig ? (
                             <>
                                 <h2>{quizRichtigCount} von {quizFragen.length} richtig</h2>
                                 <p>Falsch beantwortete Karten sind zurück im Stapel.</p>
-                                <button onClick={() => themaOeffnen(ausgewaehltesThema)}>Zurück zu den Karten</button>
+                                <button onClick={() => zurueckZuKarten()}>Zurück zu den Karten</button>
                             </>
                         ) : (
                             <>
                                 <p>Frage {quizIndex + 1} von {quizFragen.length}</p>
-                                <h2>{aktuelleQuizKarte.quizFrage.frageText}</h2>
+                                <h2>{aktuelleQuizKarte.multiple_choice_question.question_text}</h2>
                                 <ul className="quiz-antworten">
-                                    {aktuelleQuizKarte.quizFrage.antworten.map((antwort, index) => (
-                                        <li key={index}>
-                                            <button style={optionFarbe(index)} onClick={() => antwortKlick(index)}>
-                                                {antwort}
+                                    {aktuelleQuizKarte.multiple_choice_question.answer_options.map((option) => (
+                                        <li key={option.id}>
+                                            <button style={optionFarbe(option.id)} onClick={() => antwortKlick(option.id)}>
+                                                {option.text}
                                             </button>
                                         </li>
                                     ))}
                                 </ul>
-                                {gewaehlteAntwort !== null && (
+                                {ausgewaehlteOptionId !== null && (
                                     <button onClick={() => naechsteQuizFrage()}>Nächste Frage</button>
                                 )}
                             </>
                         )}
                     </div>
+                    {ladeFehler && <p>{ladeFehler}</p>}
                     <button onClick={() => themaVerlassen()}>zurück zu den Themen</button>
                 </div>
             );
@@ -146,21 +175,12 @@ function DailyLearningPage() {
         // sonst sieht der Stapel bei vielen Karten absurd aus
         const anzahlGeisterkarten = Math.min(stapelKarten.length - 1, 3);
 
-        function kannIch() {
-            kartenAlsAbgehaktEintragen(aktuelleKarte.id);
-            setStapelKarten(stapelKarten.filter((karte) => karte.id !== aktuelleKarte.id));
-        }
-
-        function kannIchNicht() {
-            const restKarten = stapelKarten.filter((karte) => karte.id !== aktuelleKarte.id);
-            setStapelKarten(restKarten.concat([aktuelleKarte]));
-        }
-
         return (
             <div>
                 <Navbar />
-                <h1>{ausgewaehltesThema.titel}</h1>
-                <p>{abgehaktFuerThema.length} von {ausgewaehltesThema.karten.length} abgehakt</p>
+                <h1>{ausgewaehltesThema.name}</h1>
+                <p>{abgehaktAnzahl} von {alleKarten.length} abgehakt</p>
+                {ladeFehler && <p>{ladeFehler}</p>}
 
                 {aktuelleKarte ? (
                     <div className="kartenstapel">
@@ -173,8 +193,8 @@ function DailyLearningPage() {
                         ))}
                         <div className="tageskarte">
                             <span className="tageskarte-thema">noch {stapelKarten.length} im Stapel</span>
-                            <h2 style={{ textTransform: "none", letterSpacing: "normal" }}>{aktuelleKarte.frage}</h2>
-                            <p className="tageskarte-antwort">{aktuelleKarte.antwort}</p>
+                            <h2 style={{ textTransform: "none", letterSpacing: "normal" }}>{aktuelleKarte.question}</h2>
+                            <p className="tageskarte-antwort">{aktuelleKarte.answer}</p>
                             <div className="tageskarte-buttons">
                                 <button onClick={() => kannIch()}>Kann ich</button>
                                 <button onClick={() => kannIchNicht()}>Kann ich noch nicht</button>
@@ -182,12 +202,12 @@ function DailyLearningPage() {
                         </div>
                     </div>
                 ) : (
-                    <p>Stapel für heute durch!</p>
+                    <p>{alleKarten.length === 0 ? "Lädt..." : "Stapel für heute durch!"}</p>
                 )}
 
                 {quizVerfuegbar && (
                     <button onClick={() => quizStarten()}>
-                        Quiz starten ({abgehaktFuerThema.length} Karten bereit)
+                        Quiz starten ({abgehaktAnzahl} Karten bereit)
                     </button>
                 )}
 
@@ -200,20 +220,19 @@ function DailyLearningPage() {
         <div>
             <Navbar />
             <h1>Daily Learning</h1>
+            {ladeFehler && <p>{ladeFehler}</p>}
+            {themen.length === 0 && !ladeFehler && <p>Lädt Themen...</p>}
             <ul className="themen-liste">
-                {dailyLearningThemenMock.map((thema) => {
-                    const abgehaktAnzahl = (abgehakteKartenIds[thema.id] || []).length;
-                    return (
-                        <li key={thema.id}>
-                            <button className="themen-karte" onClick={() => themaOeffnen(thema)}>
-                                <span>{thema.titel}</span>
-                                <span className="themen-karte-fortschritt">
-                                    {abgehaktAnzahl} / {thema.karten.length} abgehakt
-                                </span>
-                            </button>
-                        </li>
-                    );
-                })}
+                {themen.map((thema) => (
+                    <li key={thema.id}>
+                        <button className="themen-karte" onClick={() => themaOeffnen(thema)}>
+                            <span>{thema.name}</span>
+                            <span className="themen-karte-fortschritt">
+                                {thema.progress_percent}% gelernt
+                            </span>
+                        </button>
+                    </li>
+                ))}
             </ul>
         </div>
     );
