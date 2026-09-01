@@ -25,6 +25,7 @@ function QuizPage({tagesKarten, quizFreigeschaltet, ladeProfil}){
     const [ausgewaehlteOptionId, setAusgewaehlteOptionId] = useState(null);
     const [korrekteOptionId, setKorrekteOptionId] = useState(null);
     const [warRichtig, setWarRichtig] = useState(null);
+    const [serverFehler, setServerFehler] = useState("");
 
     if(!quizFreigeschaltet){
         return (
@@ -44,6 +45,7 @@ function QuizPage({tagesKarten, quizFreigeschaltet, ladeProfil}){
     async function antwortKlick(optionId){
         try{
             const daten = await beantworten(optionId);
+            setServerFehler("");
             setAusgewaehlteOptionId(optionId);
             setWarRichtig(daten.correct);
             if(!daten.correct){
@@ -56,7 +58,7 @@ function QuizPage({tagesKarten, quizFreigeschaltet, ladeProfil}){
             ladeProfil();
         }
         catch(fehler){
-            console.error("Antwort konnte nicht gesendet werden:", fehler.message);
+            setServerFehler(fehler.message);
         }
     }
 
@@ -65,6 +67,7 @@ function QuizPage({tagesKarten, quizFreigeschaltet, ladeProfil}){
         setAusgewaehlteOptionId(null);
         setKorrekteOptionId(null);
         setWarRichtig(null);
+        setServerFehler("");
     }
 
     function optionFarbe(optionId){
@@ -98,6 +101,7 @@ function QuizPage({tagesKarten, quizFreigeschaltet, ladeProfil}){
                     </li>
                 ))}
             </ul>
+            {serverFehler && <p className="auth-fehler">{serverFehler}</p>}
             <button onClick={()=> naechsteFrage()}>Nächste Frage</button>
         </div>
         </div>
