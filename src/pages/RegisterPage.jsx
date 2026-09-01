@@ -1,5 +1,5 @@
 import {useState} from "react"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, Link } from "react-router-dom"
 import { registrieren } from "../api";
 
 
@@ -59,6 +59,9 @@ function RegisterPage(){
             {fehlerText}
             {serverFehler && <p className="auth-fehler">{serverFehler}</p>}
             <button onClick={() => kontoErstellen()}>Konto erstellen</button>
+            <p className="auth-link">
+                <Link to="/login">Schon ein Konto? Zurück zum Login</Link>
+            </p>
         </div>
     )
 }
