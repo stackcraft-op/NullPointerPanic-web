@@ -105,6 +105,11 @@ export const shopItemsMock = [
   // (siehe .shop-karte-vorschau-rahmen). image_url ist bewusst derselbe
   // Beispiel-Avatar wie oben (Avatar 1) statt eines generischen Icons - so
   // sieht man sofort, was der Rahmen am echten Avatar veraendert.
-  { id: 5, type: "frame", name: "Gold-Rahmen", price: 200, image_url: "/avatare/avatar-1.avif", farbe: "#c9a227", owned: false },
-  { id: 6, type: "frame", name: "Feuer-Rahmen", price: 300, image_url: "/avatare/avatar-1.avif", farbe: "#c0392b", owned: false },
+  // abzeichen (optional): kleines Emoji-Badge oben auf dem Ring, aktuell nur
+  // fuer den Kronen-Rahmen - Platzhalter bis es echte Rahmen-Grafiken statt
+  // Farbring+Badge gibt (siehe Chat: game-icons.net/Kenney.nl als Quellen).
+  { id: 5, type: "frame", name: "Silber-Rahmen", price: 100, image_url: "/avatare/avatar-1.avif", farbe: "#adb5bd", owned: false },
+  { id: 6, type: "frame", name: "Gold-Rahmen", price: 200, image_url: "/avatare/avatar-1.avif", farbe: "#c9a227", owned: false },
+  { id: 7, type: "frame", name: "Feuer-Rahmen", price: 300, image_url: "/avatare/avatar-1.avif", farbe: "#c0392b", owned: false },
+  { id: 8, type: "frame", name: "Kronen-Rahmen", price: 500, image_url: "/avatare/avatar-1.avif", farbe: "#7c3aed", abzeichen: "👑", owned: false },
 ];

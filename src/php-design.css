@@ -500,16 +500,25 @@ th {
    Farbe kommt inline aus dem ausgewaehlten Rahmen (aktiverRahmen.farbe in
    ProfilPage.jsx), ohne Rahmen bleibt sie beim normalen --php-text. */
 .profil-avatar-shop {
+  position: relative;
   width: 88px;
   height: 88px;
   flex-shrink: 0;
+}
+
+/* Eigener innerer Kreis (statt overflow:hidden direkt auf .profil-avatar-
+   shop) - aus demselben Grund wie .shop-karte-vorschau-rahmen-kreis: das
+   Kronen-Badge darf nicht mit abgeschnitten werden. */
+.profil-avatar-shop-kreis {
+  width: 100%;
+  height: 100%;
   overflow: hidden;
   background: var(--php-line);
   border: 3px solid var(--php-text);
   border-radius: 50%;
 }
 
-.profil-avatar-shop img {
+.profil-avatar-shop-kreis img {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -792,19 +801,40 @@ th {
    nicht nur als Icon daneben (siehe Feedback "Rahmen wirklich als Rahmen
    anzeigen"). Farbe kommt inline aus item.farbe. */
 .shop-karte-vorschau-rahmen {
+  position: relative;
   width: 128px;
   height: 128px;
+  margin-bottom: 16px;
+}
+
+/* Innerer Kreis schneidet das Bild rund zu (overflow: hidden) - liegt in
+   einem eigenen Wrapper statt direkt auf .shop-karte-vorschau-rahmen, weil
+   das Kronen-Badge (.shop-karte-abzeichen) ueber den Rand hinausragen soll
+   und dafuer NICHT mit abgeschnitten werden darf. */
+.shop-karte-vorschau-rahmen-kreis {
+  width: 100%;
+  height: 100%;
   overflow: hidden;
   background: var(--php-line);
   border: 5px solid var(--php-line);
   border-radius: 50%;
-  margin-bottom: 16px;
 }
 
-.shop-karte-vorschau-rahmen img {
+.shop-karte-vorschau-rahmen-kreis img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+/* Kleines Emoji-Badge, ragt bewusst oben etwas ueber den Ring hinaus - wie
+   eine kleine Krone "auf" dem Rahmen, nicht nur ein Icon daneben. */
+.shop-karte-abzeichen {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 26px;
+  line-height: 1;
 }
 
 .shop-karte-name {
