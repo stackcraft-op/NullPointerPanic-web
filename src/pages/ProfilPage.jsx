@@ -90,7 +90,7 @@ function ProfilPage(){
                             className="profil-avatar-shop"
                             style={{ borderColor: aktiverRahmen ? aktiverRahmen.farbe : "var(--php-text)" }}
                         >
-                            <span>{aktiverAvatar.image_url}</span>
+                            <img src={aktiverAvatar.image_url} alt={aktiverAvatar.name}/>
                         </div>
                     ) : (
                         <img

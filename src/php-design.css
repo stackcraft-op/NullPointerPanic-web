@@ -503,13 +503,16 @@ th {
   width: 88px;
   height: 88px;
   flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 40px;
+  overflow: hidden;
   background: var(--php-line);
   border: 3px solid var(--php-text);
   border-radius: 50%;
+}
+
+.profil-avatar-shop img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .profil-info {
@@ -766,35 +769,42 @@ th {
   box-shadow: 0 10px 28px rgba(0, 0, 0, 0.14);
 }
 
-/* Vorschau-Flaeche - dezent getoentes Feld statt frei schwebendem Emoji,
-   damit auch ein Platzhalter-Icon wie eine "Produktabbildung" wirkt. */
+/* Vorschau-Flaeche - rundes Feld mit echtem Avatar-Bild (object-fit: cover
+   schneidet ein nicht-quadratisches Bild sauber rund zu, statt es zu
+   verzerren). */
 .shop-karte-vorschau {
   width: 128px;
   height: 128px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 54px;
+  overflow: hidden;
   background: var(--php-line);
   border-radius: 50%;
   margin-bottom: 16px;
 }
 
+.shop-karte-vorschau img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 /* Rahmen-Vorschau: derselbe Kreis, aber mit farbigem Ring statt getoentem
    Hintergrund - zeigt den Rahmen tatsaechlich um denselben Beispiel-Avatar,
-   nicht nur als Emoji daneben (siehe Feedback "Rahmen wirklich als Rahmen
+   nicht nur als Icon daneben (siehe Feedback "Rahmen wirklich als Rahmen
    anzeigen"). Farbe kommt inline aus item.farbe. */
 .shop-karte-vorschau-rahmen {
   width: 128px;
   height: 128px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 50px;
+  overflow: hidden;
   background: var(--php-line);
   border: 5px solid var(--php-line);
   border-radius: 50%;
   margin-bottom: 16px;
+}
+
+.shop-karte-vorschau-rahmen img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .shop-karte-name {

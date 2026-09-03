@@ -99,10 +99,12 @@ function ShopPage() {
             <div className="shop-karte">
                 {item.type === "frame" ? (
                     <div className="shop-karte-vorschau-rahmen" style={{ borderColor: item.farbe }}>
-                        <span>{item.image_url}</span>
+                        <img src={item.image_url} alt={item.name}/>
                     </div>
                 ) : (
-                    <div className="shop-karte-vorschau">{item.image_url}</div>
+                    <div className="shop-karte-vorschau">
+                        <img src={item.image_url} alt={item.name}/>
+                    </div>
                 )}
                 <p className="shop-karte-name">{item.name}</p>
                 <p className="shop-karte-preis">{CURRENCY_ICON} {item.price}</p>
