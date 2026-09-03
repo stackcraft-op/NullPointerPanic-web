@@ -11,6 +11,24 @@ import { holeProfil, statusTextAendern } from "../api";
 // getauscht, sobald der Endpoint da ist. Gleiches gilt fuers "Ausruesten" -
 // welcher Avatar/Rahmen aktiv ist, wird erst dauerhaft, sobald PATCH
 // /api/profile die Felder avatar_id/frame_id kennt.
+// Ein Symbol fuer Currency, ueberall im Shop gleich (Guthaben-Badge UND
+// Produktpreise) - vorher stand oben ein Muenz-Emoji, unten "Currency" als
+// Wort, das wirkte inkonsistent.
+const CURRENCY_ICON = "🌑";
+
+// api.js wirft zwei Arten von Fehlern (siehe parseAntwort()): eine echte,
+// verstaendliche Server-Meldung ("Nicht genug Currency") - die zeigen wir
+// 1:1 an - oder einen technischen Fall wie "kein gueltiges JSON" (z.B. bei
+// einem 500er/Internal Server Error, wo der Server gar kein JSON liefert).
+// Letzteres soll der Nutzer nicht im Klartext sehen, deshalb hier durch
+// eine freundliche Standardmeldung ersetzt.
+function nutzerFreundlicheFehlermeldung(fehler, standardText) {
+    if (!fehler.message || fehler.message.includes("JSON")) {
+        return standardText;
+    }
+    return fehler.message;
+}
+
 function ShopPage() {
     const { currency, setCurrency } = useContext(UserContext);
     const [items, setItems] = useState(shopItemsMock);
@@ -24,7 +42,10 @@ function ShopPage() {
     useEffect(() => {
         holeProfil()
             .then((daten) => setStatusText(daten.status_text || ""))
-            .catch((error) => setStatusFehler(error.message));
+            .catch((error) => {
+                console.error("Status laden fehlgeschlagen:", error);
+                setStatusFehler(nutzerFreundlicheFehlermeldung(error, "Status konnte nicht geladen werden."));
+            });
     }, []);
 
     function kaufen(itemId) {
@@ -60,7 +81,8 @@ function ShopPage() {
             setNeuerStatusText("");
             setStatusFehler("");
         } catch (fehler) {
-            setStatusFehler(fehler.message);
+            console.error("Status ändern fehlgeschlagen:", fehler);
+            setStatusFehler(nutzerFreundlicheFehlermeldung(fehler, "Status konnte nicht geändert werden. Bitte erneut versuchen."));
         }
     }
 
@@ -78,7 +100,7 @@ function ShopPage() {
                     <div className="shop-karte-vorschau">{item.image_url}</div>
                 )}
                 <p className="shop-karte-name">{item.name}</p>
-                <p className="shop-karte-preis">{item.price} Currency</p>
+                <p className="shop-karte-preis">{CURRENCY_ICON} {item.price}</p>
                 {!item.owned && <button onClick={() => kaufen(item.id)}>Kaufen</button>}
                 {item.owned && !istAusgeruestet(item) && (
                     <button onClick={() => auswaehlen(item)}>Auswählen</button>
@@ -102,7 +124,7 @@ function ShopPage() {
                 <div style={{ textAlign: "center" }}>
                     <div className="shop-guthaben">
                         <span className="shop-guthaben-label">Dein Guthaben</span>
-                        <span className="shop-guthaben-wert">🪙 {currency}</span>
+                        <span className="shop-guthaben-wert">{CURRENCY_ICON} {currency}</span>
                     </div>
                 </div>
 
@@ -119,8 +141,8 @@ function ShopPage() {
                             placeholder="Neuer Status"/>
                         <button onClick={() => statusAendern()}>Ändern</button>
                     </div>
-                    <p className="shop-status-preis">Änderung kostet 100 Currency</p>
                     {statusFehler && <p className="auth-fehler">{statusFehler}</p>}
+                    <p className="shop-status-preis">Ändern kostet {CURRENCY_ICON} 100</p>
                 </div>
 
                 <h2 className="shop-abschnitt-titel">Avatare</h2>
