@@ -684,14 +684,10 @@ th {
 
 /* Status bewusst als eigene Karte VOR den Produkt-Grids - ist kein
    klassischer Shop-Artikel (kein Kauf-Button, andere Kostenlogik), soll
-   deshalb auch visuell nicht wie eine Produktkarte aussehen. Deutlich
-   kompakter als der erste Wurf: alles in einer Zeile wo moeglich, keine
-   grosszuegigen Abstaende wie bei den Produkt-Karten. */
+   deshalb auch visuell nicht wie eine Produktkarte aussehen. Kompakt:
+   zwei Spalten (Aktuell / Aendern) statt mehrerer Textzeilen
+   untereinander. */
 .shop-status-karte {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 8px 24px;
   padding: 14px 24px;
   margin-bottom: 32px;
 }
@@ -702,40 +698,47 @@ th {
   letter-spacing: normal;
   font-size: 13px;
   color: var(--php-muted);
-  margin: 0;
-  flex-basis: 100%;
+  margin: 0 0 12px;
+}
+
+/* Zwei Spalten nebeneinander, faellt auf schmalen Bildschirmen automatisch
+   untereinander (wie .shop-grid). */
+.shop-status-spalten {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px 32px;
+}
+
+.shop-status-spalte {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Kleines, dezentes Label ueber jeder Spalte - gleiches Muster wie
+   .shop-guthaben-label/.profil-stufe. */
+.shop-status-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--php-muted);
 }
 
 .shop-status-aktuell {
   color: var(--php-text);
   margin: 0;
-  flex: 1;
-  min-width: 160px;
 }
 
-.shop-status-eingabe {
-  display: flex;
-  gap: 10px;
-  flex: 1;
-  min-width: 240px;
+/* Der Preis steckt jetzt direkt im Button-Text ("Für ● 100 ändern") statt
+   in einer eigenen Zeile - kein redundanter Preis-Hinweis mehr noetig. */
+.shop-status-spalte button {
+  align-self: flex-start;
 }
 
-.shop-status-eingabe input {
-  flex: 1;
-}
-
-.shop-status-preis {
-  flex-basis: 100%;
-  font-size: 12px;
-  color: var(--php-muted);
-  margin: 0;
-}
-
-/* Eigene Fehlerzeile direkt unter Eingabe/Button statt eines rohen
-   Server-Fehlertexts irgendwo in der Karte - siehe statusAendern() in
-   ShopPage.jsx, dort wird bewusst nicht fehler.message angezeigt. */
-.shop-status-karte .auth-fehler {
-  flex-basis: 100%;
+/* Passt die globale .auth-fehler-Zeile (negativer Top-Margin, fuer
+   Auth-Formulare gedacht) an das flex-column-Layout hier an, sonst
+   ueberlappt/verspringt sie leicht zwischen Input und Button. */
+.shop-status-spalte .auth-fehler {
   margin: 0;
 }
 

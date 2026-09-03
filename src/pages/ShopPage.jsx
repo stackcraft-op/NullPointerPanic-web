@@ -140,19 +140,24 @@ function ShopPage() {
 
                 <div className="shop-status-karte profil-karte">
                     <h2>Dein Status</h2>
-                    <p className="shop-status-aktuell">
-                        {statusText ? `„${statusText}“` : "Noch kein Status gesetzt"}
-                    </p>
-                    <div className="shop-status-eingabe">
-                        <input
-                            type="text"
-                            value={neuerStatusText}
-                            onChange={(event) => setNeuerStatusText(event.target.value)}
-                            placeholder="Neuer Status"/>
-                        <button onClick={() => statusAendern()}>Ändern</button>
+                    <div className="shop-status-spalten">
+                        <div className="shop-status-spalte">
+                            <span className="shop-status-label">Aktuell</span>
+                            <p className="shop-status-aktuell">
+                                {statusText ? `„${statusText}“` : "Noch kein Status gesetzt"}
+                            </p>
+                        </div>
+                        <div className="shop-status-spalte">
+                            <span className="shop-status-label">Status ändern</span>
+                            <input
+                                type="text"
+                                value={neuerStatusText}
+                                onChange={(event) => setNeuerStatusText(event.target.value)}
+                                placeholder="Neuer Status"/>
+                            {statusFehler && <p className="auth-fehler">{statusFehler}</p>}
+                            <button onClick={() => statusAendern()}>Für {CURRENCY_ICON} 100 ändern</button>
+                        </div>
                     </div>
-                    {statusFehler && <p className="auth-fehler">{statusFehler}</p>}
-                    <p className="shop-status-preis">Ändern kostet {CURRENCY_ICON} 100</p>
                 </div>
 
                 <h2 className="shop-abschnitt-titel">Avatare</h2>
