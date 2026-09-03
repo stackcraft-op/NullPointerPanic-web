@@ -86,3 +86,17 @@ export const dailyLearningThemenMock = wikiThemenMock.map((thema) => ({
     titel: thema.titel,
     karten: thema.id === 4 ? itSicherheitKarten : machPlatzhalterKarten(thema.titel.slice(0, 4), 6),
 }));
+
+// ---------------------------------------------------------------------------
+// Shop: kaufbare Avatare + Rahmen
+// ---------------------------------------------------------------------------
+// Feldnamen (type/price/image_url/owned) sind absichtlich 1:1 aus dem
+// geplanten Backend-Contract (GET /api/shop/items) übernommen - siehe
+// API_CONTRACT.md, sobald der Endpoint gebaut ist.
+export const shopItemsMock = [
+  { id: 1, type: "avatar", name: "Roboter", price: 50, image_url: "🤖", owned: false },
+  { id: 2, type: "avatar", name: "Katze", price: 50, image_url: "🐱", owned: false },
+  { id: 3, type: "avatar", name: "Ninja", price: 150, image_url: "🥷", owned: false },
+  { id: 4, type: "frame", name: "Gold-Rahmen", price: 200, image_url: "🟡", owned: false },
+  { id: 5, type: "frame", name: "Feuer-Rahmen", price: 300, image_url: "🔥", owned: false },
+];

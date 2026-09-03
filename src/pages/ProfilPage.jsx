@@ -2,7 +2,7 @@ import Navbar from "../components/Navbar";
 import { Link } from "react-router-dom";
 import { useContext, useState, useEffect } from "react";
 import UserContext from "../UserContext";
-import { holeThemenFortschritt } from "../api";
+import { holeThemenFortschritt, holeProfil } from "../api";
 
 // Rails liefert Prozentwerte manchmal als String statt Zahl (z.B. bei
 // Decimal-Spalten) - Number(...) erzwingt eine echte Zahl. || 0 faengt
@@ -38,11 +38,24 @@ function ProfilPage(){
     // dauerhaft "Lädt..." zeigen.
     const [geladen, setGeladen] = useState(false);
 
+    // Status-Text: nur Anzeige hier - aendern kann man ihn nur im Shop
+    // (kostet Currency, gehoert deshalb dort hin, nicht in die Profilseite).
+    const [statusText, setStatusText] = useState("");
+    const [statusFehler, setStatusFehler] = useState("");
+
     useEffect(() => {
         holeThemenFortschritt()
             .then((daten) => setThemenFortschritt(daten))
             .catch((error) => setLadeFehler(error.message))
             .finally(() => setGeladen(true));
+    }, []);
+
+    // Eigener useEffect statt in den obigen reingemischt - laedt eine andere
+    // Sache (Status-Text) unabhaengig vom Themenfortschritt.
+    useEffect(() => {
+        holeProfil()
+            .then((daten) => setStatusText(daten.status_text || ""))
+            .catch((error) => setStatusFehler(error.message));
     }, []);
 
     // Durchschnitt ueber alle Themen - "wie viel hast du insgesamt drauf",
@@ -76,9 +89,11 @@ function ProfilPage(){
                     <div className="profil-info">
                         <p className="profil-name">{eingeloggterName}</p>
                         <span className="profil-stufe">{aktuelleStufe.name}</span>
+                        {statusText && <p className="profil-status">„{statusText}“</p>}
                     </div>
                     <Link to="/profil/bearbeiten" className="profil-bearbeiten-link">Profil bearbeiten</Link>
                 </div>
+                {statusFehler && <p className="auth-fehler">{statusFehler}</p>}
 
                 <h2>Lernfortschritt</h2>
                 {ladeFehler && <p className="auth-fehler">{ladeFehler}</p>}

@@ -7,7 +7,7 @@ function Navbar(){
     const {
         eingeloggterName, setEingeloggterName,
         currency, aktuelleStufe,
-        setProfilDaten, setGespeicherteKarten,
+        setProfilDaten,
         setXp, setCurrency, setTagesKarten, setVerbleibendeKarten,
     } = useContext(UserContext)
     const navigate = useNavigate();
@@ -22,7 +22,6 @@ function Navbar(){
             stadt: "",
             bundesland: "",
         });
-        setGespeicherteKarten([]);
         // Ohne das hier wuerden xp/currency/Tageskarten des vorherigen Nutzers
         // kurz weiter angezeigt, bis der naechste Login sie ueberschreibt -
         // gleiche Datenleck-Klasse wie bei profilDaten/gespeicherteKarten oben.
@@ -37,7 +36,7 @@ function Navbar(){
         <nav>
             <NavLink to="/dashboard">Dashboard</NavLink>
             <NavLink to="/ranking">Ranking</NavLink>
-            <NavLink to="/karteikarten">Karteikarten(feature)</NavLink>
+            <NavLink to="/shop">Shop</NavLink>
             <NavLink to="/quiz">Quiz</NavLink>
             <NavLink to="/wiki">Wiki</NavLink>
             <NavLink to="/learning">Daily Learning</NavLink>
