@@ -712,7 +712,16 @@ th {
 .shop-status-spalte {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   gap: 8px;
+}
+
+/* Ohne explizite Breite faellt das Input auf seine winzige Standardgroesse
+   zurueck (und "flex-start" oben laesst es dann nicht auf Container-Breite
+   wachsen) - dadurch stand es zuletzt nicht direkt ueber dem Button. */
+.shop-status-spalte input {
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* Kleines, dezentes Label ueber jeder Spalte - gleiches Muster wie
