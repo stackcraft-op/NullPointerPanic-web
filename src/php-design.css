@@ -524,35 +524,6 @@ th {
   object-fit: cover;
 }
 
-/* Gleiches Prinzip wie .shop-karte-vorschau-bild-rahmen, nur in 88px statt
-   128px (Profilkopf-Groesse) - Rahmen mit echter Bild-Grafik statt Farbring. */
-.profil-avatar-bild-rahmen {
-  position: relative;
-  width: 88px;
-  height: 88px;
-  flex-shrink: 0;
-}
-
-.profil-avatar-bild-rahmen-avatar {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 62%;
-  height: 62%;
-  object-fit: cover;
-  border-radius: 50%;
-}
-
-.profil-avatar-bild-rahmen-grafik {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  pointer-events: none;
-}
-
 .profil-info {
   flex: 1;
 }
@@ -880,37 +851,6 @@ th {
   transform: translateX(-50%);
   font-size: 26px;
   line-height: 1;
-}
-
-/* Rahmen mit echter Bild-Grafik (rahmen_bild) statt Farbring: die Grafik
-   hat eine transparente Mitte und liegt ueber dem Avatar-Bild, statt nur
-   dessen Rand einzufaerben. Avatar deutlich kleiner als der Container,
-   damit er innerhalb der transparenten Mitte der Rahmen-Grafik sitzt. */
-.shop-karte-vorschau-bild-rahmen {
-  position: relative;
-  width: 128px;
-  height: 128px;
-  margin-bottom: 16px;
-}
-
-.shop-karte-vorschau-bild-rahmen-avatar {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 62%;
-  height: 62%;
-  object-fit: cover;
-  border-radius: 50%;
-}
-
-.shop-karte-vorschau-bild-rahmen-grafik {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  pointer-events: none;
 }
 
 .shop-karte-name {
