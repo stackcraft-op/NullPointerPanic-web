@@ -616,3 +616,169 @@ th {
   transition: width 0.5s ease;
 }
 
+/* ===== Shop ===== */
+/* Gleiche Breite/Zentrierung wie .profil-inhalt - Shop ist inhaltlich
+   aehnlich "viel horizontaler Platz fuer Karten" wie die Profilseite. */
+.shop-inhalt {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+/* Guthaben-Badge direkt unter der Ueberschrift - eigene, kleine Karte statt
+   nur eine nackte Zahl im Fliesstext, damit sie als Kennzahl auffaellt
+   (gleiches Prinzip wie .gesamtfortschritt-karte auf der Profilseite). */
+.shop-guthaben {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 16px 32px;
+  margin: 0 auto 32px;
+  background: var(--php-bg);
+  border: 1px solid var(--php-line);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.shop-guthaben-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--php-muted);
+}
+
+.shop-guthaben-wert {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--php-text);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Status bewusst als eigene Karte VOR den Produkt-Grids - ist kein
+   klassischer Shop-Artikel (kein Kauf-Button, andere Kostenlogik), soll
+   deshalb auch visuell nicht wie eine Produktkarte aussehen. */
+.shop-status-karte {
+  padding: 24px 32px;
+  margin-bottom: 40px;
+}
+
+.shop-status-karte h2 {
+  font-family: inherit;
+  text-transform: none;
+  letter-spacing: normal;
+  font-size: 15px;
+  margin: 0 0 12px;
+}
+
+.shop-status-aktuell {
+  color: var(--php-text);
+  margin: 0 0 16px;
+}
+
+.shop-status-eingabe {
+  display: flex;
+  gap: 12px;
+}
+
+.shop-status-eingabe input {
+  flex: 1;
+}
+
+.shop-status-preis {
+  font-size: 12px;
+  color: var(--php-muted);
+  margin: 12px 0 0;
+}
+
+.shop-abschnitt-titel {
+  margin-bottom: 20px;
+}
+
+/* Karten-Grid statt Liste - so viele Spalten wie passen, jede Karte
+   mindestens 220px breit. */
+.shop-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+.shop-karte {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 24px 20px;
+  background: var(--php-bg);
+  border: 1px solid var(--php-line);
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.shop-karte:hover {
+  border-color: var(--php-text);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* Vorschau-Flaeche - dezent getoentes Feld statt frei schwebendem Emoji,
+   damit auch ein Platzhalter-Icon wie eine "Produktabbildung" wirkt. */
+.shop-karte-vorschau {
+  width: 96px;
+  height: 96px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  background: var(--php-line);
+  border-radius: 50%;
+  margin-bottom: 16px;
+}
+
+/* Rahmen-Vorschau: derselbe Kreis, aber mit farbigem Ring statt getoentem
+   Hintergrund - zeigt den Rahmen tatsaechlich um einen Avatar-Platzhalter,
+   nicht nur als Emoji daneben (siehe Feedback "Rahmen wirklich als Rahmen
+   anzeigen"). Farbe kommt inline aus item.farbe. */
+.shop-karte-vorschau-rahmen {
+  width: 96px;
+  height: 96px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  background: var(--php-bg);
+  border: 4px solid var(--php-line);
+  border-radius: 50%;
+  margin-bottom: 16px;
+}
+
+.shop-karte-name {
+  color: var(--php-text);
+  font-weight: 600;
+  margin: 0 0 4px;
+}
+
+.shop-karte-preis {
+  font-size: 13px;
+  color: var(--php-muted);
+  margin: 0 0 16px;
+  font-variant-numeric: tabular-nums;
+}
+
+.shop-karte button {
+  width: 100%;
+  margin-top: auto;
+}
+
+/* Bereits ausgeruestetes Item: keine Aktion mehr moeglich, deshalb kein
+   Button, sondern ein zurueckhaltendes Label - unterscheidet sich bewusst
+   von "gekauft, aber waehlbar" (dort steht weiter ein echter Button). */
+.shop-karte-ausgeruestet {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--php-muted);
+  margin-top: auto;
+  padding-top: 8px;
+}
+

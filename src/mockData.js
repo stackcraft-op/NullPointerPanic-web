@@ -97,6 +97,8 @@ export const shopItemsMock = [
   { id: 1, type: "avatar", name: "Roboter", price: 50, image_url: "🤖", owned: false },
   { id: 2, type: "avatar", name: "Katze", price: 50, image_url: "🐱", owned: false },
   { id: 3, type: "avatar", name: "Ninja", price: 150, image_url: "🥷", owned: false },
-  { id: 4, type: "frame", name: "Gold-Rahmen", price: 200, image_url: "🟡", owned: false },
-  { id: 5, type: "frame", name: "Feuer-Rahmen", price: 300, image_url: "🔥", owned: false },
+  // farbe nur bei Rahmen: faerbt den Ring um den Avatar-Platzhalter im Shop
+  // (siehe .shop-karte-vorschau-rahmen), damit man sieht was man kauft.
+  { id: 4, type: "frame", name: "Gold-Rahmen", price: 200, image_url: "👤", farbe: "#c9a227", owned: false },
+  { id: 5, type: "frame", name: "Feuer-Rahmen", price: 300, image_url: "👤", farbe: "#c0392b", owned: false },
 ];
