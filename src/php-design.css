@@ -716,11 +716,15 @@ th {
   gap: 8px;
 }
 
-/* Ohne explizite Breite faellt das Input auf seine winzige Standardgroesse
-   zurueck (und "flex-start" oben laesst es dann nicht auf Container-Breite
-   wachsen) - dadurch stand es zuletzt nicht direkt ueber dem Button. */
+/* Die globale input[type="text"]-Regel (fuer die zentrierten Login/
+   Register-Formulare gedacht) setzt max-width: 320px + margin: 0 auto -
+   das zentriert das Feld unabhaengig von width: 100%. Hier beides
+   ueberschrieben, sonst steht das Input nicht an derselben linken Kante
+   wie Label/Button. */
 .shop-status-spalte input {
   width: 100%;
+  max-width: none;
+  margin: 0;
   box-sizing: border-box;
 }
 
