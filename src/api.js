@@ -138,6 +138,19 @@ export async function holeRankingGesamt() {
     return parseAntwort(response);
 }
 
+export async function holeRankingNachBundesland(bundesland) {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`${API_URL}/api/rankings/by_state?state=${encodeURIComponent(bundesland)}`, {
+        method: "GET",
+        headers: {
+            "Authorization": `Bearer ${token}`,
+            "ngrok-skip-browser-warning": "true"
+        },
+    })
+
+    return parseAntwort(response);
+}
+
 export async function holeRankingWoche() {
     const token = localStorage.getItem("token");
     const response = await fetch(`${API_URL}/api/rankings/weekly`,{
