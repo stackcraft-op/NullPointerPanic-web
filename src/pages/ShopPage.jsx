@@ -97,7 +97,12 @@ function ShopPage() {
     function Karte({ item }) {
         return (
             <div className="shop-karte">
-                {item.type === "frame" ? (
+                {item.type === "frame" && item.rahmen_bild ? (
+                    <div className="shop-karte-vorschau-bild-rahmen">
+                        <img className="shop-karte-vorschau-bild-rahmen-avatar" src={item.image_url} alt={item.name}/>
+                        <img className="shop-karte-vorschau-bild-rahmen-grafik" src={item.rahmen_bild} alt=""/>
+                    </div>
+                ) : item.type === "frame" ? (
                     <div className="shop-karte-vorschau-rahmen">
                         <div className="shop-karte-vorschau-rahmen-kreis" style={{ borderColor: item.farbe }}>
                             <img src={item.image_url} alt={item.name}/>

@@ -111,5 +111,11 @@ export const shopItemsMock = [
   { id: 5, type: "frame", name: "Silber-Rahmen", price: 100, image_url: "/avatare/avatar-1.avif", farbe: "#adb5bd", owned: false },
   { id: 6, type: "frame", name: "Gold-Rahmen", price: 200, image_url: "/avatare/avatar-1.avif", farbe: "#c9a227", owned: false },
   { id: 7, type: "frame", name: "Feuer-Rahmen", price: 300, image_url: "/avatare/avatar-1.avif", farbe: "#c0392b", owned: false },
-  { id: 8, type: "frame", name: "Kronen-Rahmen", price: 500, image_url: "/avatare/avatar-1.avif", farbe: "#7c3aed", abzeichen: "👑", owned: false },
+  // rahmen_bild (optional, nur bei echten Rahmen-Grafiken statt Farbring):
+  // ein Bild mit transparenter Mitte, wird ueber dem Avatar-Bild platziert
+  // statt nur den Rand einzufaerben - siehe .shop-karte-vorschau-bild-
+  // rahmen. farbe wird dann nicht mehr gebraucht (Grafik bringt die Farbe
+  // schon mit).
+  { id: 8, type: "frame", name: "Regenbogen-Rahmen", price: 400, image_url: "/avatare/avatar-1.avif", rahmen_bild: "/rahmen/regenbogen.avif", owned: false },
+  { id: 9, type: "frame", name: "Kronen-Rahmen", price: 500, image_url: "/avatare/avatar-1.avif", farbe: "#7c3aed", abzeichen: "👑", owned: false },
 ];

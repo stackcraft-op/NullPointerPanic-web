@@ -85,7 +85,12 @@ function ProfilPage(){
 
             <div className="profil-inhalt">
                 <div className="profil-kopf profil-karte">
-                    {aktiverAvatar ? (
+                    {aktiverAvatar && aktiverRahmen?.rahmen_bild ? (
+                        <div className="profil-avatar-bild-rahmen">
+                            <img className="profil-avatar-bild-rahmen-avatar" src={aktiverAvatar.image_url} alt={aktiverAvatar.name}/>
+                            <img className="profil-avatar-bild-rahmen-grafik" src={aktiverRahmen.rahmen_bild} alt=""/>
+                        </div>
+                    ) : aktiverAvatar ? (
                         <div className="profil-avatar-shop">
                             <div
                                 className="profil-avatar-shop-kreis"
