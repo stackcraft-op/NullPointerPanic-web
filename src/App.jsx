@@ -15,6 +15,7 @@ import "./App.css"; // war bisher nirgends importiert - unsere .tageskarte-Style
 import ProfilBearbeitenPage from "./pages/ProfilBearbeitenPage";
 import UserContext from "./UserContext";
 import WikiPage from "./pages/WikiPage";
+import { shopItemsMock } from "./mockData";
 
 function App() {
   const [xp,setXp] = useState(0);
@@ -71,6 +72,14 @@ const quizFreigeschaltet = tagesKarten.length > 0 && verbleibendeKarten.length =
   }, []);
 
 
+  // Shop-State liegt hier (nicht in ShopPage.jsx), weil ProfilPage.jsx den
+  // gekauften/ausgeruesteten Avatar+Rahmen auch braucht (ersetzt dort den
+  // Stufen-Avatar). Noch reiner Mock-State ohne Server-Persistenz - siehe
+  // Kommentar in ShopPage.jsx.
+  const [shopItems, setShopItems] = useState(shopItemsMock);
+  const [ausgewaehlterAvatarId, setAusgewaehlterAvatarId] = useState(null);
+  const [ausgewaehlterRahmenId, setAusgewaehlterRahmenId] = useState(null);
+
   const [dailyLearningKarten, setDailyLearningKarten] = useState([
     { id: 1, titel: "Verschlüsselung", info: "Verschlüsselung macht Daten unlesbar für alle, die den passenden Schlüssel nicht haben." },
     { id: 2, titel: "Firewall", info: "Eine Firewall kontrolliert, welcher Netzwerk-Verkehr rein und raus darf, nach festgelegten Regeln." },
@@ -90,6 +99,9 @@ const quizFreigeschaltet = tagesKarten.length > 0 && verbleibendeKarten.length =
         eingeloggterName, setEingeloggterName,
         currency, aktuelleStufe,
         setProfilDaten,
+        shopItems, setShopItems,
+        ausgewaehlterAvatarId, setAusgewaehlterAvatarId,
+        ausgewaehlterRahmenId, setAusgewaehlterRahmenId,
         // fuer den Logout-Reset (siehe Navbar.jsx) - ohne diese Setter blieben
         // xp/currency/tagesKarten/verbleibendeKarten des vorherigen Nutzers
         // kurz sichtbar, bis der naechste Login sie ueberschreibt

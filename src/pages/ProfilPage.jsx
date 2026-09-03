@@ -28,7 +28,17 @@ function farbeFuerProzent(prozent) {
 
 function ProfilPage(){
 
-    const { eingeloggterName, aktuelleStufe} = useContext(UserContext);
+    const {
+        eingeloggterName, aktuelleStufe,
+        shopItems, ausgewaehlterAvatarId, ausgewaehlterRahmenId,
+    } = useContext(UserContext);
+
+    // Ein im Shop gekaufter+ausgewaehlter Avatar ersetzt den XP-Stufen-Avatar
+    // komplett, wenn einer gewaehlt ist - sonst faellt man auf das alte
+    // Stufen-Bild zurueck (aktuelleStufe.avatarBild). Rahmen faerbt nur den
+    // Ring um den Avatar, unabhaengig davon ob Avatar Stufe oder Shop ist.
+    const aktiverAvatar = shopItems.find((item) => item.id === ausgewaehlterAvatarId);
+    const aktiverRahmen = shopItems.find((item) => item.id === ausgewaehlterRahmenId);
 
     const [themenFortschritt, setThemenFortschritt] = useState([]);
     const [ladeFehler, setLadeFehler] = useState("");
@@ -75,17 +85,26 @@ function ProfilPage(){
 
             <div className="profil-inhalt">
                 <div className="profil-kopf profil-karte">
-                    <img
-                        src={aktuelleStufe.avatarBild}
-                        alt={aktuelleStufe.name}
-                        style={{
-                            width : "88px",
-                            height : "88px",
-                            borderRadius: "50%",
-                            border: "3px solid var(--php-text)",
-                            objectFit: "cover"
-                        }}
-                        />
+                    {aktiverAvatar ? (
+                        <div
+                            className="profil-avatar-shop"
+                            style={{ borderColor: aktiverRahmen ? aktiverRahmen.farbe : "var(--php-text)" }}
+                        >
+                            <span>{aktiverAvatar.image_url}</span>
+                        </div>
+                    ) : (
+                        <img
+                            src={aktuelleStufe.avatarBild}
+                            alt={aktuelleStufe.name}
+                            style={{
+                                width : "88px",
+                                height : "88px",
+                                borderRadius: "50%",
+                                border: "3px solid var(--php-text)",
+                                objectFit: "cover"
+                            }}
+                            />
+                    )}
                     <div className="profil-info">
                         <p className="profil-name">{eingeloggterName}</p>
                         <span className="profil-stufe">{aktuelleStufe.name}</span>

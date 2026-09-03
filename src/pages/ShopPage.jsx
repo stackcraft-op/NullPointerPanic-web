@@ -1,16 +1,19 @@
 import { useState, useEffect, useContext } from "react";
 import Navbar from "../components/Navbar";
-import { shopItemsMock } from "../mockData";
 import UserContext from "../UserContext";
 import { holeProfil, statusTextAendern } from "../api";
 
-// Avatare/Rahmen kommen noch aus mockData.js, weil das Backend dafuer noch
-// keinen Endpoint hat (GET /api/shop/items, POST /api/shop/items/:id/purchase
-// sind im API_CONTRACT.md vorgeschlagen). Kauf aendert deshalb erstmal nur
-// lokalen State, keine echte Persistenz - wird 1:1 gegen echte fetch()-Calls
-// getauscht, sobald der Endpoint da ist. Gleiches gilt fuers "Ausruesten" -
-// welcher Avatar/Rahmen aktiv ist, wird erst dauerhaft, sobald PATCH
-// /api/profile die Felder avatar_id/frame_id kennt.
+// Avatare/Rahmen kommen noch aus mockData.js (Ursprung: shopItemsMock in
+// App.jsx, siehe dort), weil das Backend dafuer noch keinen Endpoint hat
+// (GET /api/shop/items, POST /api/shop/items/:id/purchase sind im
+// API_CONTRACT.md vorgeschlagen). Kauf aendert deshalb erstmal nur
+// State im UserContext, keine echte Persistenz - wird 1:1 gegen echte
+// fetch()-Calls getauscht, sobald der Endpoint da ist. Gleiches gilt fuers
+// "Ausruesten" - welcher Avatar/Rahmen aktiv ist, wird erst dauerhaft,
+// sobald PATCH /api/profile die Felder avatar_id/frame_id kennt.
+// items/Auswahl liegen bewusst in App.jsx statt hier lokal, weil
+// ProfilPage.jsx den ausgeruesteten Avatar/Rahmen auch braucht (ersetzt
+// dort den Stufen-Avatar).
 // Ein Symbol fuer Currency, ueberall im Shop gleich (Guthaben-Badge UND
 // Produktpreise) - vorher stand oben ein Muenz-Emoji, unten "Currency" als
 // Wort, das wirkte inkonsistent.
@@ -30,10 +33,12 @@ function nutzerFreundlicheFehlermeldung(fehler, standardText) {
 }
 
 function ShopPage() {
-    const { currency, setCurrency } = useContext(UserContext);
-    const [items, setItems] = useState(shopItemsMock);
-    const [ausgewaehlterAvatarId, setAusgewaehlterAvatarId] = useState(null);
-    const [ausgewaehlterRahmenId, setAusgewaehlterRahmenId] = useState(null);
+    const {
+        currency, setCurrency,
+        shopItems: items, setShopItems: setItems,
+        ausgewaehlterAvatarId, setAusgewaehlterAvatarId,
+        ausgewaehlterRahmenId, setAusgewaehlterRahmenId,
+    } = useContext(UserContext);
 
     const [statusText, setStatusText] = useState("");
     const [neuerStatusText, setNeuerStatusText] = useState("");
