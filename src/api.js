@@ -18,18 +18,25 @@ async function parseAntwort(response){
     return daten;
 }
 
-export async function registrieren(username,email,password) {
+export async function registrieren(username,email,password,fachbereich,bundesland) {
     const response = await fetch(`${API_URL}/api/register`, {
         method : "POST",
         headers: {
             "Content-Type": "application/json",
             "ngrok-skip-browser-warning": "true"
         },
-        body:JSON.stringify({ username, email, password})
+        body:JSON.stringify({
+            username,
+            email,
+            password,
+            specialization: fachbereich,
+            state: bundesland,
+        })
     });
 
     return parseAntwort(response);
 }
+
 
 export async function einloggen(username, password){
     const response = await fetch(`${API_URL}/api/login`,{
