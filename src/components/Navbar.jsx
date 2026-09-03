@@ -1,6 +1,7 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import UserContext from "../UserContext";
+import { shopItemsMock } from "../mockData";
 
 
 function Navbar(){
@@ -8,6 +9,7 @@ function Navbar(){
         eingeloggterName, setEingeloggterName,
         currency, aktuelleStufe,
         setProfilDaten,
+        setShopItems, setAusgewaehlterAvatarId, setAusgewaehlterRahmenId,
         setXp, setCurrency, setTagesKarten, setVerbleibendeKarten,
     } = useContext(UserContext)
     const navigate = useNavigate();
@@ -29,6 +31,12 @@ function Navbar(){
         setCurrency(0);
         setTagesKarten([]);
         setVerbleibendeKarten([]);
+        // Shop-Kaeufe sind noch reiner Mock-State (kein Server) - ohne Reset
+        // wuerde der naechste Nutzer auf demselben Geraet die gekauften
+        // Avatare/Rahmen des vorherigen Nutzers sehen.
+        setShopItems(shopItemsMock);
+        setAusgewaehlterAvatarId(null);
+        setAusgewaehlterRahmenId(null);
         navigate("/login");
     }
 
