@@ -4,7 +4,7 @@ import LoginPage from "./pages/LoginPage";
 import DashboardPage from "./pages/DashboardPage";
 import RankingPage from "./pages/RankingPage";
 import ProfilPage from "./pages/ProfilPage";
-import FlashcardsPage from "./pages/FlashcardsPage";
+import ShopPage from "./pages/ShopPage";
 import QuizPage from "./pages/QuizPage";
 import RegisterPage from "./pages/RegisterPage";
 import { useState, useEffect } from "react";
@@ -71,7 +71,6 @@ const quizFreigeschaltet = tagesKarten.length > 0 && verbleibendeKarten.length =
   }, []);
 
 
-  const [gespeicherteKarten,setGespeicherteKarten] = useState([]);
   const [dailyLearningKarten, setDailyLearningKarten] = useState([
     { id: 1, titel: "Verschlüsselung", info: "Verschlüsselung macht Daten unlesbar für alle, die den passenden Schlüssel nicht haben." },
     { id: 2, titel: "Firewall", info: "Eine Firewall kontrolliert, welcher Netzwerk-Verkehr rein und raus darf, nach festgelegten Regeln." },
@@ -90,7 +89,7 @@ const quizFreigeschaltet = tagesKarten.length > 0 && verbleibendeKarten.length =
       <UserContext.Provider value={{
         eingeloggterName, setEingeloggterName,
         currency, aktuelleStufe,
-        setProfilDaten, setGespeicherteKarten,
+        setProfilDaten,
         // fuer den Logout-Reset (siehe Navbar.jsx) - ohne diese Setter blieben
         // xp/currency/tagesKarten/verbleibendeKarten des vorherigen Nutzers
         // kurz sichtbar, bis der naechste Login sie ueberschreibt
@@ -104,7 +103,7 @@ const quizFreigeschaltet = tagesKarten.length > 0 && verbleibendeKarten.length =
 
         <Route path="/ranking" element={<RankingPage/>}/>
         <Route path="/profil" element={<ProfilPage/>}/>
-        <Route path="/karteikarten" element={<FlashcardsPage gespeicherteKarten = {gespeicherteKarten} setGespeicherteKarten = {setGespeicherteKarten}/>}/>
+        <Route path="/shop" element={<ShopPage/>}/>
         <Route path="/quiz" element={<QuizPage tagesKarten={tagesKarten} quizFreigeschaltet={quizFreigeschaltet} ladeProfil={ladeProfil}/>}/>
 
 

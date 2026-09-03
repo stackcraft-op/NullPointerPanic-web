@@ -217,3 +217,18 @@ export async function quizAntwortEinreichen(answerOptionId) {
 
     return parseAntwort(response);
 }
+
+export async function statusTextAendern(statusText){
+    const token = localStorage.getItem("token");
+    const response = await fetch(`${API_URL}/api/profile/status_text`, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+            "ngrok-skip-browser-warning": "true"
+        },
+        body: JSON.stringify({ status_text: statusText }),
+    });
+
+    return parseAntwort(response);
+}
