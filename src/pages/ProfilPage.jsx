@@ -86,11 +86,14 @@ function ProfilPage(){
             <div className="profil-inhalt">
                 <div className="profil-kopf profil-karte">
                     {aktiverAvatar ? (
-                        <div
-                            className="profil-avatar-shop"
-                            style={{ borderColor: aktiverRahmen ? aktiverRahmen.farbe : "var(--php-text)" }}
-                        >
-                            <span>{aktiverAvatar.image_url}</span>
+                        <div className="profil-avatar-shop">
+                            <div
+                                className="profil-avatar-shop-kreis"
+                                style={{ borderColor: aktiverRahmen ? aktiverRahmen.farbe : "var(--php-text)" }}
+                            >
+                                <img src={aktiverAvatar.image_url} alt={aktiverAvatar.name}/>
+                            </div>
+                            {aktiverRahmen?.abzeichen && <span className="shop-karte-abzeichen">{aktiverRahmen.abzeichen}</span>}
                         </div>
                     ) : (
                         <img

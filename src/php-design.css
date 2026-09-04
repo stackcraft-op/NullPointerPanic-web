@@ -520,16 +520,28 @@ th {
    Farbe kommt inline aus dem ausgewaehlten Rahmen (aktiverRahmen.farbe in
    ProfilPage.jsx), ohne Rahmen bleibt sie beim normalen --php-text. */
 .profil-avatar-shop {
+  position: relative;
   width: 88px;
   height: 88px;
   flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 40px;
+}
+
+/* Eigener innerer Kreis (statt overflow:hidden direkt auf .profil-avatar-
+   shop) - aus demselben Grund wie .shop-karte-vorschau-rahmen-kreis: das
+   Kronen-Badge darf nicht mit abgeschnitten werden. */
+.profil-avatar-shop-kreis {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
   background: var(--php-line);
   border: 3px solid var(--php-text);
   border-radius: 50%;
+}
+
+.profil-avatar-shop-kreis img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .profil-info {
@@ -692,14 +704,10 @@ th {
 
 /* Status bewusst als eigene Karte VOR den Produkt-Grids - ist kein
    klassischer Shop-Artikel (kein Kauf-Button, andere Kostenlogik), soll
-   deshalb auch visuell nicht wie eine Produktkarte aussehen. Deutlich
-   kompakter als der erste Wurf: alles in einer Zeile wo moeglich, keine
-   grosszuegigen Abstaende wie bei den Produkt-Karten. */
+   deshalb auch visuell nicht wie eine Produktkarte aussehen. Kompakt:
+   zwei Spalten (Aktuell / Aendern) statt mehrerer Textzeilen
+   untereinander. */
 .shop-status-karte {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 8px 24px;
   padding: 14px 24px;
   margin-bottom: 32px;
 }
@@ -710,40 +718,60 @@ th {
   letter-spacing: normal;
   font-size: 13px;
   color: var(--php-muted);
+  margin: 0 0 12px;
+}
+
+/* Zwei Spalten nebeneinander, faellt auf schmalen Bildschirmen automatisch
+   untereinander (wie .shop-grid). */
+.shop-status-spalten {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px 32px;
+}
+
+.shop-status-spalte {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+/* Die globale input[type="text"]-Regel (fuer die zentrierten Login/
+   Register-Formulare gedacht) setzt max-width: 320px + margin: 0 auto -
+   das zentriert das Feld unabhaengig von width: 100%. Hier beides
+   ueberschrieben, sonst steht das Input nicht an derselben linken Kante
+   wie Label/Button. */
+.shop-status-spalte input {
+  width: 100%;
+  max-width: none;
   margin: 0;
-  flex-basis: 100%;
+  box-sizing: border-box;
+}
+
+/* Kleines, dezentes Label ueber jeder Spalte - gleiches Muster wie
+   .shop-guthaben-label/.profil-stufe. */
+.shop-status-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--php-muted);
 }
 
 .shop-status-aktuell {
   color: var(--php-text);
   margin: 0;
-  flex: 1;
-  min-width: 160px;
 }
 
-.shop-status-eingabe {
-  display: flex;
-  gap: 10px;
-  flex: 1;
-  min-width: 240px;
+/* Der Preis steckt jetzt direkt im Button-Text ("Für ● 100 ändern") statt
+   in einer eigenen Zeile - kein redundanter Preis-Hinweis mehr noetig. */
+.shop-status-spalte button {
+  align-self: flex-start;
 }
 
-.shop-status-eingabe input {
-  flex: 1;
-}
-
-.shop-status-preis {
-  flex-basis: 100%;
-  font-size: 12px;
-  color: var(--php-muted);
-  margin: 0;
-}
-
-/* Eigene Fehlerzeile direkt unter Eingabe/Button statt eines rohen
-   Server-Fehlertexts irgendwo in der Karte - siehe statusAendern() in
-   ShopPage.jsx, dort wird bewusst nicht fehler.message angezeigt. */
-.shop-status-karte .auth-fehler {
-  flex-basis: 100%;
+/* Passt die globale .auth-fehler-Zeile (negativer Top-Margin, fuer
+   Auth-Formulare gedacht) an das flex-column-Layout hier an, sonst
+   ueberlappt/verspringt sie leicht zwischen Input und Button. */
+.shop-status-spalte .auth-fehler {
   margin: 0;
 }
 
@@ -786,35 +814,63 @@ th {
   box-shadow: 0 10px 28px rgba(0, 0, 0, 0.14);
 }
 
-/* Vorschau-Flaeche - dezent getoentes Feld statt frei schwebendem Emoji,
-   damit auch ein Platzhalter-Icon wie eine "Produktabbildung" wirkt. */
+/* Vorschau-Flaeche - rundes Feld mit echtem Avatar-Bild (object-fit: cover
+   schneidet ein nicht-quadratisches Bild sauber rund zu, statt es zu
+   verzerren). */
 .shop-karte-vorschau {
   width: 128px;
   height: 128px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 54px;
+  overflow: hidden;
   background: var(--php-line);
   border-radius: 50%;
   margin-bottom: 16px;
 }
 
+.shop-karte-vorschau img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 /* Rahmen-Vorschau: derselbe Kreis, aber mit farbigem Ring statt getoentem
    Hintergrund - zeigt den Rahmen tatsaechlich um denselben Beispiel-Avatar,
-   nicht nur als Emoji daneben (siehe Feedback "Rahmen wirklich als Rahmen
+   nicht nur als Icon daneben (siehe Feedback "Rahmen wirklich als Rahmen
    anzeigen"). Farbe kommt inline aus item.farbe. */
 .shop-karte-vorschau-rahmen {
+  position: relative;
   width: 128px;
   height: 128px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 50px;
+  margin-bottom: 16px;
+}
+
+/* Innerer Kreis schneidet das Bild rund zu (overflow: hidden) - liegt in
+   einem eigenen Wrapper statt direkt auf .shop-karte-vorschau-rahmen, weil
+   das Kronen-Badge (.shop-karte-abzeichen) ueber den Rand hinausragen soll
+   und dafuer NICHT mit abgeschnitten werden darf. */
+.shop-karte-vorschau-rahmen-kreis {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
   background: var(--php-line);
   border: 5px solid var(--php-line);
   border-radius: 50%;
-  margin-bottom: 16px;
+}
+
+.shop-karte-vorschau-rahmen-kreis img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Kleines Emoji-Badge, ragt bewusst oben etwas ueber den Ring hinaus - wie
+   eine kleine Krone "auf" dem Rahmen, nicht nur ein Icon daneben. */
+.shop-karte-abzeichen {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 26px;
+  line-height: 1;
 }
 
 .shop-karte-name {
