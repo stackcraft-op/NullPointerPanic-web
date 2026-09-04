@@ -466,6 +466,20 @@ th {
   margin: -6px 0 16px;
 }
 
+/* Live-Anzeige der Passwort-Mindestlaenge unterm Passwortfeld (Register) -
+   gleiche Breite/Zentrierung wie die Inputs, neutral solange nicht erfuellt,
+   erst bei Erfuellung gruen statt direkt als Fehler (rot) zu werten. */
+.passwort-hinweis {
+  max-width: 320px;
+  margin: -6px auto 12px;
+  font-size: 13px;
+  color: var(--php-muted);
+}
+
+.passwort-hinweis.erfuellt {
+  color: var(--php-success);
+}
+
 .auth-link {
   font-size: 13px;
   margin: 0;

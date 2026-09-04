@@ -3,6 +3,11 @@ import { useNavigate, Link } from "react-router-dom"
 import { registrieren } from "../api";
 
 
+// Backend hat noch keine Passwort-Regel festgelegt (siehe API_CONTRACT.md,
+// "Offene Punkte") - Mindestlaenge hier bewusst als reine Frontend-Vorgabe,
+// wird angepasst sobald der Kollege eine echte Regel definiert.
+const PASSWORT_MINDESTLAENGE = 8;
+
 function RegisterPage(){
     const [benutzername,setBenutzername] = useState("");
     const[passwort, setPasswort] = useState("");
@@ -12,18 +17,21 @@ function RegisterPage(){
     const[fachbereich, setFachbereich] = useState("");
     const[bundesland, setBundesland] = useState("");
 
+    const passwortLangGenug = passwort.length >= PASSWORT_MINDESTLAENGE;
 
     const navigate = useNavigate();
     const [versucht, setVersucht] = useState(false);
     let fehlerText = null;
-    if(versucht && passwort !== passwortWiederholung){
+    if(versucht && !passwortLangGenug){
+        fehlerText = <p className="auth-fehler">Passwort muss mindestens {PASSWORT_MINDESTLAENGE} Zeichen haben</p>
+    } else if(versucht && passwort !== passwortWiederholung){
         fehlerText = <p className="auth-fehler">Passwörter stimmen nicht überein</p>
     }
 
 
     async function kontoErstellen(){
         setVersucht(true);
-            if(passwort !== passwortWiederholung){
+            if(!passwortLangGenug || passwort !== passwortWiederholung){
                 return
             }
             try {
@@ -56,6 +64,11 @@ function RegisterPage(){
                 value={passwort}
                 onChange={(event) => setPasswort(event.target.value)}
                 placeholder="Passwort"/>
+            {passwort.length > 0 && (
+                <p className={`passwort-hinweis ${passwortLangGenug ? "erfuellt" : ""}`}>
+                    {passwortLangGenug ? "✓" : "○"} Mindestens {PASSWORT_MINDESTLAENGE} Zeichen
+                </p>
+            )}
             <input
                 type = "password"
                 value={passwortWiederholung}
