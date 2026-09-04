@@ -16,7 +16,8 @@
   --php-text: #111;
   --php-muted: #666;
   --php-line: #e5e5e5;
-  --php-danger: #9a2b2b;
+  --php-danger: #a93a3a;
+  --php-success: #3d8c41;
 }
 
 /* ===== Grundgerüst ===== */
@@ -284,6 +285,24 @@ th {
   font-size: 14px;
 }
 
+/* Nach der Beantwortung sollen die Buttons nur noch die Farb-Markierung
+   (richtig/falsch) zeigen - kein Hover-Effekt mehr, der ueber dieser
+   Markierung "aufblitzt", wenn die Maus zufaellig ueber einem Button steht. */
+.quiz-antworten.beantwortet button {
+  pointer-events: none;
+}
+
+.quiz-erklaerung {
+  text-align: left;
+  background: #f7f7f7;
+  border: 1px solid var(--php-line);
+  border-radius: 4px;
+  padding: 12px 16px;
+  margin: -8px 0 20px;
+  font-size: 14px;
+  color: var(--php-text);
+}
+
 /* ===== Daily Learning: Themenliste ===== */
 .themen-liste {
   display: flex;
@@ -402,6 +421,7 @@ th {
   color: #fff;
   text-decoration: none;
   padding: 14px 36px;
+  margin: 16px 0;
   border-radius: 999px;
   text-transform: uppercase;
   letter-spacing: 0.12em;

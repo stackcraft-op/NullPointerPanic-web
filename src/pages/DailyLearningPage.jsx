@@ -32,6 +32,10 @@ function DailyLearningPage() {
     const [korrekteOptionId, setKorrekteOptionId] = useState(null);
     const [warRichtig, setWarRichtig] = useState(null);
     const [quizRichtigCount, setQuizRichtigCount] = useState(0);
+    // Bei falscher Antwort schickt der Server zusaetzlich die volle Karteikarte
+    // (question/answer) mit - dient als ausfuehrlichere Erklaerung, nicht nur
+    // die kurze richtige MC-Antwort.
+    const [erklaerungsKarte, setErklaerungsKarte] = useState(null);
 
     // Eigene Funktion statt Code direkt im useEffect, damit themaVerlassen()
     // sie zusaetzlich aufrufen kann - sonst zeigt die Themenliste nach einem
@@ -100,6 +104,7 @@ function DailyLearningPage() {
                     setKorrekteOptionId(null);
                     setWarRichtig(null);
                     setQuizRichtigCount(0);
+                    setErklaerungsKarte(null);
                     setQuizModus(true);
                 })
                 .catch((error) => setLadeFehler(error.message));
@@ -124,6 +129,7 @@ function DailyLearningPage() {
                         setQuizRichtigCount(quizRichtigCount + 1);
                     } else {
                         setKorrekteOptionId(daten.correct_option.id);
+                        setErklaerungsKarte(daten.flashcard);
                     }
                 } catch (fehler) {
                     setLadeFehler(fehler.message);
@@ -135,11 +141,12 @@ function DailyLearningPage() {
                 setAusgewaehlteOptionId(null);
                 setKorrekteOptionId(null);
                 setWarRichtig(null);
+                setErklaerungsKarte(null);
             }
 
             function optionFarbe(optionId) {
-                if (optionId === korrekteOptionId) return { border: "3px solid #39ff14" };
-                if (optionId === ausgewaehlteOptionId) return { border: warRichtig ? "3px solid #39ff14" : "3px solid red" };
+                if (optionId === korrekteOptionId) return { border: "3px solid var(--php-success)" };
+                if (optionId === ausgewaehlteOptionId) return { border: warRichtig ? "3px solid var(--php-success)" : "3px solid var(--php-danger)" };
                 return {};
             }
 
@@ -158,7 +165,7 @@ function DailyLearningPage() {
                             <>
                                 <p>Frage {quizIndex + 1} von {quizFragen.length}</p>
                                 <h2>{aktuelleQuizKarte.multiple_choice_question.question_text}</h2>
-                                <ul className="quiz-antworten">
+                                <ul className={`quiz-antworten ${ausgewaehlteOptionId !== null ? "beantwortet" : ""}`}>
                                     {aktuelleQuizKarte.multiple_choice_question.answer_options.map((option) => (
                                         <li key={option.id}>
                                             <button style={optionFarbe(option.id)} onClick={() => antwortKlick(option.id)}>
@@ -167,6 +174,9 @@ function DailyLearningPage() {
                                         </li>
                                     ))}
                                 </ul>
+                                {warRichtig === false && erklaerungsKarte && (
+                                    <p className="quiz-erklaerung"><strong>Erklärung:</strong> {erklaerungsKarte.answer}</p>
+                                )}
                                 {ausgewaehlteOptionId !== null && (
                                     <button onClick={() => naechsteQuizFrage()}>Nächste Frage</button>
                                 )}
