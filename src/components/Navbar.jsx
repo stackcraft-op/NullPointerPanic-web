@@ -9,10 +9,19 @@ function Navbar(){
         eingeloggterName, setEingeloggterName,
         currency, aktuelleStufe,
         setProfilDaten,
+        shopItems, ausgewaehlterAvatarId, ausgewaehlterRahmenId,
         setShopItems, setAusgewaehlterAvatarId, setAusgewaehlterRahmenId,
         setXp, setCurrency, setTagesKarten, setVerbleibendeKarten,
     } = useContext(UserContext)
     const navigate = useNavigate();
+
+    // Gleiche Aufloesung wie in ProfilPage.jsx: ein gekaufter+ausgewaehlter
+    // Shop-Avatar ersetzt den XP-Stufen-Avatar, sonst faellt man auf das
+    // Stufen-Bild zurueck. Rahmenfarbe faerbt nur den Ring.
+    const aktiverAvatar = shopItems.find((item) => item.id === ausgewaehlterAvatarId);
+    const aktiverRahmen = shopItems.find((item) => item.id === ausgewaehlterRahmenId);
+    const avatarBild = aktiverAvatar ? aktiverAvatar.image_url : aktuelleStufe.avatarBild;
+    const rahmenFarbe = aktiverRahmen ? aktiverRahmen.farbe : "var(--php-text)";
 
     function logout(){
         localStorage.removeItem("token");
@@ -42,19 +51,22 @@ function Navbar(){
 
     return (
         <nav>
-            <NavLink to="/dashboard">Dashboard</NavLink>
-            <NavLink to="/ranking">Ranking</NavLink>
-            <NavLink to="/shop">Shop</NavLink>
-            <NavLink to="/quiz">Quiz</NavLink>
-            <NavLink to="/wiki">Wiki</NavLink>
-            <NavLink to="/learning">Daily Learning</NavLink>
-            <NavLink to= "/profil" className="profil-menu">
-                <span>{eingeloggterName}</span>
-                <span>{aktuelleStufe.name}</span>
-                <span>🪙 {currency}</span>
+            <NavLink to="/dashboard" className="nav-link">Dashboard</NavLink>
+            <NavLink to="/ranking" className="nav-link">Ranking</NavLink>
+            <NavLink to="/shop" className="nav-link">Shop</NavLink>
+            <NavLink to="/quiz" className="nav-link">Quiz</NavLink>
+            <NavLink to="/wiki" className="nav-link">Wiki</NavLink>
+            <NavLink to="/learning" className="nav-link">Daily Learning</NavLink>
+            <NavLink to="/profil" className="profil-menu">
+                <img src={avatarBild} alt={eingeloggterName} className="profil-menu-avatar" style={{ borderColor: rahmenFarbe }}/>
+                <div className="profil-menu-text">
+                    <span className="profil-menu-name">{eingeloggterName}</span>
+                    <span className="profil-menu-zeile">
+                        {aktuelleStufe.name} <span className="profil-menu-punkt"></span> {currency}
+                    </span>
+                </div>
             </NavLink>
-            <button onClick={()=> logout()}>Logout</button>
-            
+            <button className="nav-logout" onClick={()=> logout()}>Logout</button>
         </nav>
     )
 }
