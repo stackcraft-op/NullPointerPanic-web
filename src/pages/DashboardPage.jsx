@@ -54,7 +54,7 @@ function DashboardPage({tagesKarten, setTagesKarten, quizFreigeschaltet, tagesKa
                 ) : tagesKartenGeladen ? (
                 <div>
                     <p>Keine Karten mehr für heute </p>
-                    {quizFreigeschaltet && <Link to="/quiz">Zum Quiz</Link>}
+                    {quizFreigeschaltet && <Link to="/quiz" className="cta-button">Quiz starten</Link>}
                 </div>
                 ) : (
                 <p>Lädt...</p>

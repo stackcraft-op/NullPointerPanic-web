@@ -26,6 +26,10 @@ function QuizPage({tagesKarten, quizFreigeschaltet, ladeProfil}){
     const [korrekteOptionId, setKorrekteOptionId] = useState(null);
     const [warRichtig, setWarRichtig] = useState(null);
     const [serverFehler, setServerFehler] = useState("");
+    // Bei falscher Antwort schickt der Server zusaetzlich die volle Karteikarte
+    // (question/answer) mit - dient als ausfuehrlichere Erklaerung, nicht nur
+    // die kurze richtige MC-Antwort.
+    const [erklaerungsKarte, setErklaerungsKarte] = useState(null);
 
     if(!quizFreigeschaltet){
         return (
@@ -50,6 +54,7 @@ function QuizPage({tagesKarten, quizFreigeschaltet, ladeProfil}){
             setWarRichtig(daten.correct);
             if(!daten.correct){
                 setKorrekteOptionId(daten.correct_option.id);
+                setErklaerungsKarte(daten.flashcard);
             }
             const heute = new Date().toISOString().slice(0,10);
             const neueIds = [...beantworteteIds, frage.id];
@@ -68,11 +73,12 @@ function QuizPage({tagesKarten, quizFreigeschaltet, ladeProfil}){
         setKorrekteOptionId(null);
         setWarRichtig(null);
         setServerFehler("");
+        setErklaerungsKarte(null);
     }
 
     function optionFarbe(optionId){
-        if(optionId === korrekteOptionId) return { border: "3px solid #39ff14" };
-        if(optionId === ausgewaehlteOptionId) return { border: warRichtig ? "3px solid #39ff14" : "3px solid red" };
+        if(optionId === korrekteOptionId) return { border: "3px solid var(--php-success)" };
+        if(optionId === ausgewaehlteOptionId) return { border: warRichtig ? "3px solid var(--php-success)" : "3px solid var(--php-danger)" };
         return {};
     }
 
@@ -94,13 +100,16 @@ function QuizPage({tagesKarten, quizFreigeschaltet, ladeProfil}){
         <h1>Quiz</h1>
         <div className="quiz-karte">
             <h2>{frage.question_text}</h2>
-            <ul className="quiz-antworten">
+            <ul className={`quiz-antworten ${ausgewaehlteOptionId !== null ? "beantwortet" : ""}`}>
                 {frage.answer_options.map((option)=>(
                     <li key={option.id}>
                         <button style={optionFarbe(option.id)} onClick={()=> antwortKlick(option.id)}>{option.text}</button>
                     </li>
                 ))}
             </ul>
+            {warRichtig === false && erklaerungsKarte && (
+                <p className="quiz-erklaerung"><strong>Erklärung:</strong> {erklaerungsKarte.answer}</p>
+            )}
             {serverFehler && <p className="auth-fehler">{serverFehler}</p>}
             <button onClick={()=> naechsteFrage()}>Nächste Frage</button>
         </div>
