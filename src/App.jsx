@@ -63,6 +63,12 @@ const quizFreigeschaltet = tagesKarten.length > 0 && verbleibendeKarten.length =
     .then((daten) => {
       setXp(daten.experience);
       setCurrency(daten.currency);
+      // eingeloggterName wird sonst nur beim Login selbst gesetzt (siehe
+      // LoginPage.jsx) - nach einem Reload (F5) laeuft kein Login mehr, nur
+      // dieser ohnehin schon vorhandene Profil-Request. Ohne diese Zeile
+      // bleibt der Name in der Navbar nach einem Reload leer, obwohl der
+      // Token noch gueltig ist und man eingeloggt bleibt.
+      setEingeloggterName(daten.username);
     })
     .catch((error) => console.error("Profil laden fehlgeschlagen:", error));
   }
