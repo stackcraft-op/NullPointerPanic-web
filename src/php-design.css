@@ -350,8 +350,8 @@ th {
 
 /* ===== Startseite ===== */
 .start-hero {
-  max-width: 560px;
-  margin: 80px auto;
+  max-width: 620px;
+  margin: 56px auto;
   padding: 0 24px;
   text-align: center;
 }
@@ -359,11 +359,13 @@ th {
 /* Zertifikats-Look: doppelter Rahmen (aeusserer + per ::before eingerueckter
    innerer), rundes "Siegel" oben, duenne Trennlinie unterm Titel - bewusst
    dezent gehalten (kein Wappen/Logo, keine Unterschriftenzeile), nur die
-   Formalitaet klassischer IHK-Urkunden andeuten, minimalistisch. */
+   Formalitaet klassischer IHK-Urkunden andeuten, minimalistisch. Aeusserer
+   Rahmen bewusst nicht in vollem Schwarz (var(--php-text)), sonst wirkt er
+   neben der duennen inneren Linie zu hart. */
 .cert-rahmen {
   position: relative;
-  border: 1px solid var(--php-text);
-  padding: 48px 40px 40px;
+  border: 1px solid rgba(17, 17, 17, 0.55);
+  padding: 56px 48px 48px;
 }
 
 .cert-rahmen::before {
@@ -432,7 +434,16 @@ th {
 
 .cta-button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.28);
+}
+
+.cta-pfeil {
+  display: inline-block;
+  transition: transform 0.15s ease;
+}
+
+.cta-button:hover .cta-pfeil {
+  transform: translateX(4px);
 }
 
 /* ===== Login / Registrierung ===== */
