@@ -57,8 +57,8 @@ nav {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 24px;
-  padding: 16px 24px;
+  gap: 18px;
+  padding: 14px 24px;
   border-bottom: 1px solid var(--php-line);
   margin-bottom: 24px;
 }
@@ -69,34 +69,96 @@ nav span {
   text-transform: uppercase;
   letter-spacing: 0.1em;
   font-size: 12px;
-  color: var(--php-muted);
+  color: #4a4a4a;
   text-decoration: none;
 }
 
-nav a:hover,
-nav a.active {
+/* Transparente Bottom-Border auf ALLEN Menüpunkten (nicht nur .active) -
+   sonst wuerde der aktive Punkt beim Aktivieren um die Border-Hoehe
+   "springen", weil er als einziger zusaetzliche Hoehe bekommen wuerde. */
+.nav-link {
+  padding-bottom: 4px;
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.nav-link:hover,
+.nav-link.active {
   color: var(--php-text);
 }
 
-/* Profil-Link (Username/Titel/Currency, siehe Navbar.jsx) wird im
+.nav-link.active {
+  border-bottom-color: var(--php-text);
+}
+
+/* Profil-Link (Avatar+Name/Stufe/Currency, siehe Navbar.jsx) wird im
    flex-Container ganz nach rechts geschoben - alles danach (aktuell der
    Logout-Button) folgt direkt daneben. Robust gegen Reihenfolge-Änderungen,
-   weil über die feste Klasse statt Position (:last-child) angesteuert.
-   Die drei <span>s (Name/Titel/Coins) werden per flex-column untereinander
-   gestapelt statt nebeneinander, rechtsbündig zur Ecke passend. */
+   weil über die feste Klasse statt Position (:last-child) angesteuert. */
 .profil-menu {
   margin-left: auto;
   display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.profil-menu-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--php-text);
+  flex-shrink: 0;
+}
+
+/* Name mittig ueber der Stufe/Currency-Zeile statt rechtsbuendig - beide
+   Zeilen sind unterschiedlich lang, flex-end liesse den (meist kuerzeren)
+   Namen sonst schief wirken statt zentriert zwischen Stufe und Currency. */
+.profil-menu-text {
+  display: flex;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: center;
   gap: 2px;
-  text-align: right;
+  text-align: center;
   line-height: 1.3;
 }
 
-/* Name (erste Zeile) etwas kräftiger als Titel/Coins, damit klar ist,
-   welche Zeile "wer bin ich" beantwortet. */
-.profil-menu span:first-child {
+/* Name kräftiger als die Zeile darunter, damit klar ist, welche Zeile
+   "wer bin ich" beantwortet. */
+.profil-menu-name {
+  font-size: 12px;
+  color: var(--php-text);
+}
+
+.profil-menu-zeile {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+}
+
+.profil-menu-punkt {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+  display: inline-block;
+}
+
+/* Logout ist eine Nebenhandlung, keine Navigation - deutlich zurueckhaltender
+   als die uebrigen Buttons der App (kleiner, heller Rahmen, dezenter Hover
+   statt des globalen schwarzen button:hover). */
+.nav-logout {
+  padding: 6px 12px;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--php-muted);
+  border-color: var(--php-line);
+}
+
+.nav-logout:hover {
+  background: var(--php-line);
   color: var(--php-text);
 }
 
