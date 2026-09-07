@@ -533,3 +533,49 @@ Kartenanzahl - nutzt State, der eh schon da war.
 
 - [x] `.themen-liste`/`.themen-karte`-Styles ergänzt, Themenliste zeigt
       Fortschritt statt nur Kartenanzahl
+
+## 07.09 - Shop: echte API statt shopItemsMock
+
+Backend hat Shop-Katalog + Kauf + Ausrüsten inzwischen gebaut (PR #26/#27/#29
+im Backend-Repo, per `git fetch` entdeckt - lokaler Klon war vorher veraltet).
+`shopItemsMock` in `mockData.js` durch echte Endpoints ersetzt:
+`GET /api/shop/items` (Katalog inkl. `owned`), `POST /api/shop/items/:id/purchase`
+(Kauf), `PATCH /api/profile` mit `avatar_id`/`frame_id` (Ausrüsten, kostenlos).
+`GET /api/profile` liefert jetzt zusätzlich den ausgerüsteten Avatar/Rahmen
+mit, ersetzt den bisherigen rein lokalen State - bleibt jetzt auch nach
+Reload/erneutem Login erhalten. `image_url` ist überall ein relativer Pfad,
+neuer `bildUrl()`-Helper in `api.js` stellt die Basis-URL voran.
+
+- [x] `api.js`: `holeShopItems`, `itemKaufen`, `avatarAusruesten`,
+      `rahmenAusruesten`, `bildUrl`
+- [x] `App.jsx`: Shop-State kommt vom Server (`ladeShopItems`,
+      `ladeProfil` setzt jetzt auch Avatar/Rahmen-ID)
+- [x] `ShopPage.jsx`: Kaufen/Ausrüsten async, Fehler pro Item (Server prüft
+      jetzt "Nicht genug Currency"/"Item bereits im Besitz" statt Frontend)
+- [ ] Preis-Diskrepanz weiterhin offen: `STATUS_TEXT_COST` im Backend auf
+      `10`, Frontend zeigt `100` (siehe `API_CONTRACT.md`)
+
+## 07.09 - Rahmen als Bild-Overlay (Antwort auf die offene Farbe-vs-Bild-Frage)
+
+Bilder aus dem Shop kamen als kaputtes Icon an - Ursache: ngrok (kostenlose
+Stufe) zeigt ohne den Header `ngrok-skip-browser-warning` eine HTML-
+Warnseite statt der echten Antwort, ein `<img>` kann aber keine Custom-
+Header mitschicken. Fix: neue Komponente `GeschuetztesBild.jsx`, laedt
+Bilder per `fetch()` (mit Header) als Blob-URL.
+
+Danach die offene Frage "Rahmen als Farbe oder Bild" (siehe letzter
+Eintrag) mit einem echten, selbst KI-generierten Test-Rahmen (Dino-Ring,
+`public/rahmen-vorschlag/dino-rahmen.png`) beantwortet: Rahmen sind ein
+Bild-Overlay über dem Avatar, keine CSS-Randfarbe. Rendering entsprechend
+umgebaut (Avatar + optionales Rahmenbild jetzt entkoppelt, unabhaengig ob
+Stufen- oder Shop-Avatar). Per Bild-Komposit-Test (Python/Pillow, ohne
+Browser) verifiziert und die Overlay-Groesse auf 125%+zentriert kalibriert,
+weil das Rahmenbild transparenten Rand um den Ring hat (Avatar-Kante guckte
+bei 100% sonst heraus).
+
+- [x] `GeschuetztesBild.jsx` (Blob-Fetch mit ngrok-Header) in
+      `ShopPage.jsx`/`ProfilPage.jsx`/`Navbar.jsx` eingesetzt
+- [x] Rahmen-Rendering von Farbe (`item.farbe`) auf Bild-Overlay
+      (`.avatar-rahmen-overlay`) umgestellt
+- [x] `dino-rahmen.png` als Vorschlag-Asset committed, noch nicht im
+      Backend geseedet - an Kollegen weitergeben zur Entscheidung

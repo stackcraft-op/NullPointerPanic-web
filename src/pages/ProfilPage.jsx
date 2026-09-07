@@ -1,8 +1,9 @@
 import Navbar from "../components/Navbar";
+import GeschuetztesBild from "../components/GeschuetztesBild";
 import { Link } from "react-router-dom";
 import { useContext, useState, useEffect } from "react";
 import UserContext from "../UserContext";
-import { holeThemenFortschritt, holeProfil } from "../api";
+import { holeThemenFortschritt, holeProfil, bildUrl } from "../api";
 
 // Rails liefert Prozentwerte manchmal als String statt Zahl (z.B. bei
 // Decimal-Spalten) - Number(...) erzwingt eine echte Zahl. || 0 faengt
@@ -35,8 +36,9 @@ function ProfilPage(){
 
     // Ein im Shop gekaufter+ausgewaehlter Avatar ersetzt den XP-Stufen-Avatar
     // komplett, wenn einer gewaehlt ist - sonst faellt man auf das alte
-    // Stufen-Bild zurueck (aktuelleStufe.avatarBild). Rahmen faerbt nur den
-    // Ring um den Avatar, unabhaengig davon ob Avatar Stufe oder Shop ist.
+    // Stufen-Bild zurueck (aktuelleStufe.avatarBild). Ein Rahmen ist ein
+    // eigenes transparentes PNG, liegt als Overlay ueber dem Avatar-Kreis,
+    // unabhaengig davon ob der gerade ein Stufen- oder Shop-Avatar ist.
     const aktiverAvatar = shopItems.find((item) => item.id === ausgewaehlterAvatarId);
     const aktiverRahmen = shopItems.find((item) => item.id === ausgewaehlterRahmenId);
 
@@ -85,29 +87,22 @@ function ProfilPage(){
 
             <div className="profil-inhalt">
                 <div className="profil-kopf profil-karte">
-                    {aktiverAvatar ? (
-                        <div className="profil-avatar-shop">
-                            <div
-                                className="profil-avatar-shop-kreis"
-                                style={{ borderColor: aktiverRahmen ? aktiverRahmen.farbe : "var(--php-text)" }}
-                            >
-                                <img src={aktiverAvatar.image_url} alt={aktiverAvatar.name}/>
-                            </div>
-                            {aktiverRahmen?.abzeichen && <span className="shop-karte-abzeichen">{aktiverRahmen.abzeichen}</span>}
+                    <div className="profil-avatar-shop">
+                        <div className="profil-avatar-shop-kreis">
+                            {aktiverAvatar ? (
+                                <GeschuetztesBild src={bildUrl(aktiverAvatar.image_url)} alt={aktiverAvatar.name}/>
+                            ) : (
+                                <img src={aktuelleStufe.avatarBild} alt={aktuelleStufe.name}/>
+                            )}
                         </div>
-                    ) : (
-                        <img
-                            src={aktuelleStufe.avatarBild}
-                            alt={aktuelleStufe.name}
-                            style={{
-                                width : "88px",
-                                height : "88px",
-                                borderRadius: "50%",
-                                border: "3px solid var(--php-text)",
-                                objectFit: "cover"
-                            }}
-                            />
-                    )}
+                        {/* Rahmen ist ein eigenes transparentes PNG (Ring-Form), liegt
+                            als Overlay ueber dem Avatar - unabhaengig davon ob der
+                            gerade ein Stufen- oder Shop-Avatar ist (siehe Kommentar
+                            oben bei aktiverAvatar/aktiverRahmen). */}
+                        {aktiverRahmen && (
+                            <GeschuetztesBild src={bildUrl(aktiverRahmen.image_url)} alt={aktiverRahmen.name} className="avatar-rahmen-overlay"/>
+                        )}
+                    </div>
                     <div className="profil-info">
                         <p className="profil-name">{eingeloggterName}</p>
                         <span className="profil-stufe">{aktuelleStufe.name}</span>

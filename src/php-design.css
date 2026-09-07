@@ -102,13 +102,22 @@ nav span {
   gap: 8px;
 }
 
-.profil-menu-avatar {
+/* Wrapper statt Groesse/flex-shrink direkt auf .profil-menu-avatar - noetig
+   als Positionierungs-Kontext fuer ein optionales Rahmen-Overlay
+   (.avatar-rahmen-overlay), gleiches Prinzip wie .profil-avatar-shop. */
+.profil-menu-avatar-wrap {
+  position: relative;
   width: 44px;
   height: 44px;
+  flex-shrink: 0;
+}
+
+.profil-menu-avatar {
+  width: 100%;
+  height: 100%;
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid var(--php-text);
-  flex-shrink: 0;
 }
 
 /* Name mittig ueber der Stufe/Currency-Zeile statt rechtsbuendig - beide
@@ -601,11 +610,11 @@ th {
   margin-bottom: 32px;
 }
 
-/* Shop-Avatar im Profilkopf - ersetzt das <img> mit dem Stufen-Avatar,
-   wenn ein Avatar gekauft+ausgewaehlt ist. Gleiche Groesse/Position wie das
-   <img> vorher, damit das .profil-kopf-Layout unveraendert bleibt. Ring-
-   Farbe kommt inline aus dem ausgewaehlten Rahmen (aktiverRahmen.farbe in
-   ProfilPage.jsx), ohne Rahmen bleibt sie beim normalen --php-text. */
+/* Wrapper fuer Avatar (Stufen- ODER Shop-Avatar, unabhaengig davon) +
+   optionales Rahmen-Bild obendrauf. position: relative haengt hier statt
+   auf .profil-avatar-shop-kreis, weil der Rahmen (.avatar-rahmen-overlay)
+   ueber den GESAMTEN Kreis inkl. Rand reichen soll, nicht nur ueber den
+   inneren Bildausschnitt. */
 .profil-avatar-shop {
   position: relative;
   width: 88px;
@@ -613,9 +622,6 @@ th {
   flex-shrink: 0;
 }
 
-/* Eigener innerer Kreis (statt overflow:hidden direkt auf .profil-avatar-
-   shop) - aus demselben Grund wie .shop-karte-vorschau-rahmen-kreis: das
-   Kronen-Badge darf nicht mit abgeschnitten werden. */
 .profil-avatar-shop-kreis {
   width: 100%;
   height: 100%;
@@ -629,6 +635,30 @@ th {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+/* Rahmen-Bild (transparentes PNG vom Shop, z.B. Dino-Ring) liegt als
+   Overlay über dem Avatar - braucht denselben Positionierungs-Kontext wie
+   sein Elternelement (position: relative + feste Groesse, siehe
+   .profil-avatar-shop/.profil-menu-avatar-wrap). pointer-events: none,
+   damit Klicks durch den Rahmen zum Avatar/Link darunter durchgehen.
+   125% statt 100% + zentriert: die meisten Rahmen-PNGs haben etwas
+   transparenten Rand um den eigentlichen Ring (z.B. wegen des Horns beim
+   Dino-Rahmen) - bei exakt 100% sitzt der sichtbare Ring dadurch kleiner
+   als der Avatar-Kreis und der Avatar-Rand lugt heraus. Per Bild-Komposit
+   getestet (Avatar + dino-rahmen.png): 125% deckt die Avatar-Kante zuverlaessig
+   ab, ohne den Ring selbst unschoen zu verzerren. Ist ein empirischer
+   Default fuer diese Art Rahmen-Bild, kein exakter Wert - kuenftige Rahmen
+   mit anderen Proportionen ggf. nachjustieren. */
+.avatar-rahmen-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 125%;
+  height: 125%;
+  transform: translate(-50%, -50%);
+  object-fit: contain;
+  pointer-events: none;
 }
 
 .profil-info {
@@ -930,23 +960,15 @@ th {
   margin-bottom: 16px;
 }
 
-/* Innerer Kreis schneidet das Bild rund zu (overflow: hidden) - liegt in
-   einem eigenen Wrapper statt direkt auf .shop-karte-vorschau-rahmen, weil
-   das Kronen-Badge (.shop-karte-abzeichen) ueber den Rand hinausragen soll
-   und dafuer NICHT mit abgeschnitten werden darf. */
-.shop-karte-vorschau-rahmen-kreis {
+/* Rahmen-Katalogbild direkt zeigen statt (wie frueher mit shopItemsMock) in
+   einem gefaerbten Kreis um ein Beispiel-Avatar - der echte Katalog liefert
+   den Rahmen selbst als transparentes PNG (Ring-Form, z.B. der Dino-Rahmen),
+   keine Farbe mehr. object-fit: contain statt cover, damit die Ringform
+   nicht angeschnitten wird (das Bild ist eh schon die fertige Vorschau). */
+.shop-karte-vorschau-rahmen-bild {
   width: 100%;
   height: 100%;
-  overflow: hidden;
-  background: var(--php-line);
-  border: 5px solid var(--php-line);
-  border-radius: 50%;
-}
-
-.shop-karte-vorschau-rahmen-kreis img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 /* Kleines Emoji-Badge, ragt bewusst oben etwas ueber den Ring hinaus - wie

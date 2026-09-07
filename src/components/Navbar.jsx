@@ -1,7 +1,8 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import UserContext from "../UserContext";
-import { shopItemsMock } from "../mockData";
+import GeschuetztesBild from "./GeschuetztesBild";
+import { bildUrl } from "../api";
 
 
 function Navbar(){
@@ -17,11 +18,10 @@ function Navbar(){
 
     // Gleiche Aufloesung wie in ProfilPage.jsx: ein gekaufter+ausgewaehlter
     // Shop-Avatar ersetzt den XP-Stufen-Avatar, sonst faellt man auf das
-    // Stufen-Bild zurueck. Rahmenfarbe faerbt nur den Ring.
+    // Stufen-Bild zurueck. Rahmen ist ein eigenes transparentes PNG, liegt
+    // als Overlay ueber dem Avatar.
     const aktiverAvatar = shopItems.find((item) => item.id === ausgewaehlterAvatarId);
     const aktiverRahmen = shopItems.find((item) => item.id === ausgewaehlterRahmenId);
-    const avatarBild = aktiverAvatar ? aktiverAvatar.image_url : aktuelleStufe.avatarBild;
-    const rahmenFarbe = aktiverRahmen ? aktiverRahmen.farbe : "var(--php-text)";
 
     function logout(){
         localStorage.removeItem("token");
@@ -40,10 +40,11 @@ function Navbar(){
         setCurrency(0);
         setTagesKarten([]);
         setVerbleibendeKarten([]);
-        // Shop-Kaeufe sind noch reiner Mock-State (kein Server) - ohne Reset
-        // wuerde der naechste Nutzer auf demselben Geraet die gekauften
-        // Avatare/Rahmen des vorherigen Nutzers sehen.
-        setShopItems(shopItemsMock);
+        // Katalog kommt jetzt live vom Server (eigener owned-Status pro
+        // Nutzer) - ohne Reset wuerde der naechste Nutzer auf demselben
+        // Geraet kurz den Besitzstand des vorherigen Nutzers sehen, bis der
+        // naechste Login ladeShopItems() erneut aufruft.
+        setShopItems([]);
         setAusgewaehlterAvatarId(null);
         setAusgewaehlterRahmenId(null);
         navigate("/login");
@@ -58,7 +59,19 @@ function Navbar(){
             <NavLink to="/wiki" className="nav-link">Wiki</NavLink>
             <NavLink to="/learning" className="nav-link">Daily Learning</NavLink>
             <NavLink to="/profil" className="profil-menu">
-                <img src={avatarBild} alt={eingeloggterName} className="profil-menu-avatar" style={{ borderColor: rahmenFarbe }}/>
+                <div className="profil-menu-avatar-wrap">
+                    {/* aktiverAvatar kommt vom Backend/ngrok (braucht GeschuetztesBild,
+                        s. dort), das Stufen-Bild liegt lokal in public/ (ganz normales
+                        <img>, kein ngrok involviert). */}
+                    {aktiverAvatar ? (
+                        <GeschuetztesBild src={bildUrl(aktiverAvatar.image_url)} alt={eingeloggterName} className="profil-menu-avatar"/>
+                    ) : (
+                        <img src={aktuelleStufe.avatarBild} alt={eingeloggterName} className="profil-menu-avatar"/>
+                    )}
+                    {aktiverRahmen && (
+                        <GeschuetztesBild src={bildUrl(aktiverRahmen.image_url)} alt="" className="avatar-rahmen-overlay"/>
+                    )}
+                </div>
                 <div className="profil-menu-text">
                     <span className="profil-menu-name">{eingeloggterName}</span>
                     <span className="profil-menu-zeile">

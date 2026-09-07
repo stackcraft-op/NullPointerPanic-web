@@ -8,14 +8,13 @@ import ShopPage from "./pages/ShopPage";
 import QuizPage from "./pages/QuizPage";
 import RegisterPage from "./pages/RegisterPage";
 import { useState, useEffect } from "react";
-import { holeTagesKarten, holeProfil } from "./api";
+import { holeTagesKarten, holeProfil, holeShopItems } from "./api";
 import DailyLearningPage from "./pages/DailyLearningPage";
 import "./php-design.css"; // Design aus dem PHP-Projekt übernommen – löschen = diese Zeile + die Datei entfernen
 import "./App.css"; // war bisher nirgends importiert - unsere .tageskarte-Styles brauchen das
 import ProfilBearbeitenPage from "./pages/ProfilBearbeitenPage";
 import UserContext from "./UserContext";
 import WikiPage from "./pages/WikiPage";
-import { shopItemsMock } from "./mockData";
 
 function App() {
   const [xp,setXp] = useState(0);
@@ -69,6 +68,12 @@ const quizFreigeschaltet = tagesKarten.length > 0 && verbleibendeKarten.length =
       // bleibt der Name in der Navbar nach einem Reload leer, obwohl der
       // Token noch gueltig ist und man eingeloggt bleibt.
       setEingeloggterName(daten.username);
+      // avatar/frame kommen seit PR #29 im Backend mit GET /api/profile mit
+      // (null, solange nichts ausgeruestet ist) - ersetzt den bisherigen
+      // rein lokalen ausgewaehlterAvatarId/RahmenId-State, der Login-
+      // uebergreifend nichts wusste.
+      setAusgewaehlterAvatarId(daten.avatar ? daten.avatar.id : null);
+      setAusgewaehlterRahmenId(daten.frame ? daten.frame.id : null);
     })
     .catch((error) => console.error("Profil laden fehlgeschlagen:", error));
   }
@@ -77,14 +82,27 @@ const quizFreigeschaltet = tagesKarten.length > 0 && verbleibendeKarten.length =
     ladeProfil();
   }, []);
 
-
   // Shop-State liegt hier (nicht in ShopPage.jsx), weil ProfilPage.jsx den
   // gekauften/ausgeruesteten Avatar+Rahmen auch braucht (ersetzt dort den
-  // Stufen-Avatar). Noch reiner Mock-State ohne Server-Persistenz - siehe
-  // Kommentar in ShopPage.jsx.
-  const [shopItems, setShopItems] = useState(shopItemsMock);
+  // Stufen-Avatar). Katalog kommt jetzt ueber GET /api/shop/items (inkl.
+  // eigenem owned-Status) statt aus shopItemsMock.
+  const [shopItems, setShopItems] = useState([]);
   const [ausgewaehlterAvatarId, setAusgewaehlterAvatarId] = useState(null);
   const [ausgewaehlterRahmenId, setAusgewaehlterRahmenId] = useState(null);
+
+  // Eigene Funktion statt Code direkt im useEffect, aus demselben Grund wie
+  // ladeTagesKarten/ladeProfil oben - LoginPage ruft sie nach dem Login
+  // zusaetzlich auf, sonst sieht man den eigenen Besitzstand erst nach einem
+  // Reload.
+  function ladeShopItems(){
+    holeShopItems()
+      .then((items) => setShopItems(items))
+      .catch((error) => console.error("Shop-Katalog laden fehlgeschlagen:", error));
+  }
+
+  useEffect(() => {
+    ladeShopItems();
+  }, []);
 
   const [dailyLearningKarten, setDailyLearningKarten] = useState([
     { id: 1, titel: "Verschlüsselung", info: "Verschlüsselung macht Daten unlesbar für alle, die den passenden Schlüssel nicht haben." },
@@ -115,7 +133,7 @@ const quizFreigeschaltet = tagesKarten.length > 0 && verbleibendeKarten.length =
       }}>
       <Routes>
         <Route path = "/" element={<StartPage/>} />
-        <Route path="/login" element={<LoginPage setEingeloggterName={setEingeloggterName} ladeProfil={ladeProfil} ladeTagesKarten={ladeTagesKarten}/>} />
+        <Route path="/login" element={<LoginPage setEingeloggterName={setEingeloggterName} ladeProfil={ladeProfil} ladeTagesKarten={ladeTagesKarten} ladeShopItems={ladeShopItems}/>} />
 
         <Route path="/dashboard" element={<DashboardPage tagesKarten={verbleibendeKarten} setTagesKarten={setVerbleibendeKarten} quizFreigeschaltet={quizFreigeschaltet} tagesKartenGeladen={tagesKartenGeladen}/>}/>
 
