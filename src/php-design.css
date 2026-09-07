@@ -115,6 +115,10 @@ nav span {
 .profil-menu-avatar {
   width: 100%;
   height: 100%;
+  /* border-box, gleicher Grund wie .profil-avatar-shop-kreis - sonst
+     ueberragt der 2px-Rand die 44px des .profil-menu-avatar-wrap-
+     Elternelements, auf das .avatar-rahmen-overlay zentriert ist. */
+  box-sizing: border-box;
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid var(--php-text);
@@ -625,6 +629,11 @@ th {
 .profil-avatar-shop-kreis {
   width: 100%;
   height: 100%;
+  /* border-box, sonst wird der Kreis durch den 3px-Rand groesser als die
+     deklarierten 100% (=88px vom .profil-avatar-shop-Elternelement) - das
+     Rahmen-Overlay (.avatar-rahmen-overlay) ist exakt auf diese 88px
+     zentriert/skaliert und deckt den ueberstehenden Rand sonst nicht ab. */
+  box-sizing: border-box;
   overflow: hidden;
   background: var(--php-line);
   border: 3px solid var(--php-text);

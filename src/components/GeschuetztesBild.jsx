@@ -14,8 +14,12 @@ function GeschuetztesBild({ src, ...imgProps }) {
     const [blobUrl, setBlobUrl] = useState(null);
 
     useEffect(() => {
+        // Sofort zuruecksetzen, nicht erst wenn der neue Fetch fertig ist -
+        // sonst zeigt <img> bei einem src-Wechsel (z.B. anderer Avatar/
+        // Rahmen ausgeruestet) kurz die gerade widerrufene alte Blob-URL
+        // (kaputtes Icon), statt sauber auf "noch am Laden" (null) zu gehen.
+        setBlobUrl(null);
         if (!src) {
-            setBlobUrl(null);
             return;
         }
         let abgebrochen = false;
