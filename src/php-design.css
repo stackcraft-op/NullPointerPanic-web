@@ -53,14 +53,30 @@ p {
 }
 
 /* ===== Navigation ===== */
+/* nav selbst ist jetzt nur noch der aeussere Rahmen (Rand+Padding) -
+   die eigentlichen Links/Profil/Logout stecken in .nav-links (siehe
+   Navbar.jsx), das auf breiten Screens einfach die alten nav-Eigenschaften
+   uebernimmt (sieht dort optisch identisch zu vorher aus) und auf schmalen
+   Screens per Hamburger-Button (.nav-burger) ein-/ausgeklappt wird, siehe
+   Media Query weiter unten. */
 nav {
+  display: flex;
+  align-items: center;
+  padding: 14px 24px;
+  border-bottom: 1px solid var(--php-line);
+  margin-bottom: 24px;
+}
+
+.nav-burger {
+  display: none;
+}
+
+.nav-links {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   gap: 18px;
-  padding: 14px 24px;
-  border-bottom: 1px solid var(--php-line);
-  margin-bottom: 24px;
+  width: 100%;
 }
 
 nav a,
@@ -1015,5 +1031,167 @@ th {
   color: var(--php-muted);
   margin-top: auto;
   padding-top: 8px;
+}
+
+/* ===== Responsive (Handy) ===== */
+@media (max-width: 640px) {
+  /* Genereller Seitenrand: jede Seite hat den Aufbau <div><Navbar/>{Inhalt}
+     </div> - "nav ~ *" trifft damit zuverlaessig auf JEDEN direkten
+     Geschwister-Block von <nav> (h1/h2, Kartenstapel, Tabellen, Karten-
+     Container, ...) auf jeder Seite, ohne dass jede einzelne Seite eine
+     eigene Wrapper-Klasse braeuchte. Ersetzt bei zentrierten Elementen
+     (margin: X auto) nur die linke/rechte Komponente - auf Handy-Breiten
+     ist die verfuegbare Breite eh kleiner als jedes max-width hier im
+     Projekt (400-960px), das "auto" haette also sowieso keinen Effekt
+     mehr gehabt. Ohne das wuerden Ueberschriften/Tabellen/Karten direkt an
+     der Bildschirmkante kleben (aktuell hat z.B. DashboardPage/RankingPage
+     ueberhaupt keinen eigenen Seitenrand). */
+  nav ~ * {
+    margin-left: 16px;
+    margin-right: 16px;
+  }
+
+  h1 {
+    font-size: 24px;
+  }
+
+  .start-hero h1 {
+    font-size: 26px;
+  }
+
+  .cert-rahmen {
+    padding: 32px 20px 28px;
+  }
+
+  .buch-seite {
+    padding: 28px 20px;
+    min-height: unset;
+  }
+
+  .quiz-karte {
+    padding: 24px 20px;
+    margin-top: 16px;
+    margin-bottom: 16px;
+  }
+
+  .auth-karte {
+    margin-top: 24px;
+    margin-bottom: 24px;
+    padding: 28px 20px;
+  }
+
+  /* Kopf-Karte auf der Profilseite: Avatar+Name+Button nebeneinander wird
+     auf Handy-Breite eng (88px-Avatar + Name + Button in einer Zeile) -
+     untereinander statt nebeneinander, mehr Platz pro Element. */
+  .profil-kopf {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 20px;
+  }
+
+  .gesamtfortschritt-karte,
+  .fortschritt-liste {
+    padding: 20px;
+  }
+
+  .shop-karte {
+    padding: 20px 16px;
+  }
+
+  th,
+  td {
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+
+  /* ===== Hamburger-Navbar ===== */
+  /* .nav-links traegt auf breiten Screens die alten nav-Eigenschaften
+     (siehe oben) - hier stattdessen: standardmaessig eingeklappt (display:
+     none), als aufklappbares Dropdown UNTER der Navbar positioniert
+     (position: absolute), volle Breite, untereinander statt nebeneinander. */
+  nav {
+    position: relative;
+    justify-content: space-between;
+    padding: 12px 20px;
+  }
+
+  .nav-burger {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+  }
+
+  .nav-burger span {
+    display: block;
+    width: 100%;
+    height: 2px;
+    background: var(--php-text);
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+
+  /* X-Animation statt der drei Striche, sobald das Menue offen ist -
+     aria-expanded kommt eh schon fuers Screenreader mit (siehe Navbar.jsx),
+     hier zusaetzlich als CSS-Hook genutzt statt einer zweiten Klasse. */
+  .nav-burger[aria-expanded="true"] span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+
+  .nav-burger[aria-expanded="true"] span:nth-child(2) {
+    opacity: 0;
+  }
+
+  .nav-burger[aria-expanded="true"] span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+
+  .nav-links {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    background: var(--php-bg);
+    border-bottom: 1px solid var(--php-line);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    padding: 4px 20px 16px;
+    z-index: 20;
+  }
+
+  .nav-links-offen {
+    display: flex;
+  }
+
+  .nav-link {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--php-line);
+  }
+
+  .profil-menu {
+    margin-left: 0;
+    justify-content: flex-start;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--php-line);
+  }
+
+  .profil-menu-text {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .nav-logout {
+    margin-top: 12px;
+    width: 100%;
+  }
 }
 

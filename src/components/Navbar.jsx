@@ -1,11 +1,17 @@
 import { NavLink, useNavigate } from "react-router-dom";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import UserContext from "../UserContext";
 import GeschuetztesBild from "./GeschuetztesBild";
 import { bildUrl } from "../api";
 
 
 function Navbar(){
+    // Nur auf schmalen Screens relevant (siehe .nav-burger/.nav-links in
+    // php-design.css, ab da erst display:flex/block statt display:none) -
+    // auf breiten Screens bleibt die Navbar wie bisher immer sichtbar,
+    // dieser State hat dort keine Wirkung.
+    const [menuOffen, setMenuOffen] = useState(false);
+
     const {
         eingeloggterName, setEingeloggterName,
         currency, aktuelleStufe,
@@ -52,34 +58,47 @@ function Navbar(){
 
     return (
         <nav>
-            <NavLink to="/dashboard" className="nav-link">Dashboard</NavLink>
-            <NavLink to="/ranking" className="nav-link">Ranking</NavLink>
-            <NavLink to="/shop" className="nav-link">Shop</NavLink>
-            <NavLink to="/quiz" className="nav-link">Quiz</NavLink>
-            <NavLink to="/wiki" className="nav-link">Wiki</NavLink>
-            <NavLink to="/learning" className="nav-link">Daily Learning</NavLink>
-            <NavLink to="/profil" className="profil-menu">
-                <div className="profil-menu-avatar-wrap">
-                    {/* aktiverAvatar kommt vom Backend/ngrok (braucht GeschuetztesBild,
-                        s. dort), das Stufen-Bild liegt lokal in public/ (ganz normales
-                        <img>, kein ngrok involviert). */}
-                    {aktiverAvatar ? (
-                        <GeschuetztesBild src={bildUrl(aktiverAvatar.image_url)} alt={eingeloggterName} className="profil-menu-avatar"/>
-                    ) : (
-                        <img src={aktuelleStufe.avatarBild} alt={eingeloggterName} className="profil-menu-avatar"/>
-                    )}
-                    {aktiverRahmen && (
-                        <GeschuetztesBild src={bildUrl(aktiverRahmen.image_url)} alt="" className="avatar-rahmen-overlay"/>
-                    )}
-                </div>
-                <div className="profil-menu-text">
-                    <span className="profil-menu-name">{eingeloggterName}</span>
-                    <span className="profil-menu-zeile">
-                        {aktuelleStufe.name} <span className="profil-menu-punkt"></span> {currency}
-                    </span>
-                </div>
-            </NavLink>
-            <button className="nav-logout" onClick={()=> logout()}>Logout</button>
+            {/* Nur auf schmalen Screens sichtbar (CSS) - oeffnet/schliesst
+                .nav-links dort. Auf breiten Screens per CSS ausgeblendet,
+                menuOffen bleibt dann einfach ungenutzt false. */}
+            <button
+                className="nav-burger"
+                onClick={() => setMenuOffen(!menuOffen)}
+                aria-label={menuOffen ? "Menü schließen" : "Menü öffnen"}
+                aria-expanded={menuOffen}>
+                <span></span><span></span><span></span>
+            </button>
+
+            <div className={`nav-links ${menuOffen ? "nav-links-offen" : ""}`}>
+                <NavLink to="/dashboard" className="nav-link" onClick={() => setMenuOffen(false)}>Dashboard</NavLink>
+                <NavLink to="/ranking" className="nav-link" onClick={() => setMenuOffen(false)}>Ranking</NavLink>
+                <NavLink to="/shop" className="nav-link" onClick={() => setMenuOffen(false)}>Shop</NavLink>
+                <NavLink to="/quiz" className="nav-link" onClick={() => setMenuOffen(false)}>Quiz</NavLink>
+                <NavLink to="/wiki" className="nav-link" onClick={() => setMenuOffen(false)}>Wiki</NavLink>
+                <NavLink to="/learning" className="nav-link" onClick={() => setMenuOffen(false)}>Daily Learning</NavLink>
+                <NavLink to="/profil" className="profil-menu" onClick={() => setMenuOffen(false)}>
+                    <div className="profil-menu-avatar-wrap">
+                        {/* aktiverAvatar kommt vom Backend/ngrok (braucht GeschuetztesBild,
+                            s. dort), das Stufen-Bild liegt lokal in public/ (ganz normales
+                            <img>, kein ngrok involviert). */}
+                        {aktiverAvatar ? (
+                            <GeschuetztesBild src={bildUrl(aktiverAvatar.image_url)} alt={eingeloggterName} className="profil-menu-avatar"/>
+                        ) : (
+                            <img src={aktuelleStufe.avatarBild} alt={eingeloggterName} className="profil-menu-avatar"/>
+                        )}
+                        {aktiverRahmen && (
+                            <GeschuetztesBild src={bildUrl(aktiverRahmen.image_url)} alt="" className="avatar-rahmen-overlay"/>
+                        )}
+                    </div>
+                    <div className="profil-menu-text">
+                        <span className="profil-menu-name">{eingeloggterName}</span>
+                        <span className="profil-menu-zeile">
+                            {aktuelleStufe.name} <span className="profil-menu-punkt"></span> {currency}
+                        </span>
+                    </div>
+                </NavLink>
+                <button className="nav-logout" onClick={()=> logout()}>Logout</button>
+            </div>
         </nav>
     )
 }
