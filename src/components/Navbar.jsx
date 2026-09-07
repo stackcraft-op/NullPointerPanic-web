@@ -1,6 +1,7 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import UserContext from "../UserContext";
+import GeschuetztesBild from "./GeschuetztesBild";
 import { bildUrl } from "../api";
 
 
@@ -20,7 +21,6 @@ function Navbar(){
     // Stufen-Bild zurueck. Rahmenfarbe faerbt nur den Ring.
     const aktiverAvatar = shopItems.find((item) => item.id === ausgewaehlterAvatarId);
     const aktiverRahmen = shopItems.find((item) => item.id === ausgewaehlterRahmenId);
-    const avatarBild = aktiverAvatar ? bildUrl(aktiverAvatar.image_url) : aktuelleStufe.avatarBild;
     const rahmenFarbe = aktiverRahmen ? aktiverRahmen.farbe : "var(--php-text)";
 
     function logout(){
@@ -59,7 +59,14 @@ function Navbar(){
             <NavLink to="/wiki" className="nav-link">Wiki</NavLink>
             <NavLink to="/learning" className="nav-link">Daily Learning</NavLink>
             <NavLink to="/profil" className="profil-menu">
-                <img src={avatarBild} alt={eingeloggterName} className="profil-menu-avatar" style={{ borderColor: rahmenFarbe }}/>
+                {/* aktiverAvatar kommt vom Backend/ngrok (braucht GeschuetztesBild,
+                    s. dort), das Stufen-Bild liegt lokal in public/ (ganz normales
+                    <img>, kein ngrok involviert). */}
+                {aktiverAvatar ? (
+                    <GeschuetztesBild src={bildUrl(aktiverAvatar.image_url)} alt={eingeloggterName} className="profil-menu-avatar" style={{ borderColor: rahmenFarbe }}/>
+                ) : (
+                    <img src={aktuelleStufe.avatarBild} alt={eingeloggterName} className="profil-menu-avatar" style={{ borderColor: rahmenFarbe }}/>
+                )}
                 <div className="profil-menu-text">
                     <span className="profil-menu-name">{eingeloggterName}</span>
                     <span className="profil-menu-zeile">

@@ -1,4 +1,5 @@
 import Navbar from "../components/Navbar";
+import GeschuetztesBild from "../components/GeschuetztesBild";
 import { Link } from "react-router-dom";
 import { useContext, useState, useEffect } from "react";
 import UserContext from "../UserContext";
@@ -91,7 +92,7 @@ function ProfilPage(){
                                 className="profil-avatar-shop-kreis"
                                 style={{ borderColor: aktiverRahmen ? aktiverRahmen.farbe : "var(--php-text)" }}
                             >
-                                <img src={bildUrl(aktiverAvatar.image_url)} alt={aktiverAvatar.name}/>
+                                <GeschuetztesBild src={bildUrl(aktiverAvatar.image_url)} alt={aktiverAvatar.name}/>
                             </div>
                             {aktiverRahmen?.abzeichen && <span className="shop-karte-abzeichen">{aktiverRahmen.abzeichen}</span>}
                         </div>

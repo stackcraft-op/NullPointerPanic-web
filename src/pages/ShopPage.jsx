@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext } from "react";
 import Navbar from "../components/Navbar";
 import UserContext from "../UserContext";
+import GeschuetztesBild from "../components/GeschuetztesBild";
 import { holeProfil, statusTextAendern, itemKaufen, avatarAusruesten, rahmenAusruesten, bildUrl } from "../api";
 
 // Katalog + Kauf/Ausruesten laufen seit PR #26/#27 im Backend (siehe
@@ -121,13 +122,13 @@ function ShopPage() {
                 {item.type === "frame" ? (
                     <div className="shop-karte-vorschau-rahmen">
                         <div className="shop-karte-vorschau-rahmen-kreis" style={{ borderColor: item.farbe }}>
-                            <img src={bildUrl(item.image_url)} alt={item.name}/>
+                            <GeschuetztesBild src={bildUrl(item.image_url)} alt={item.name}/>
                         </div>
                         {item.abzeichen && <span className="shop-karte-abzeichen">{item.abzeichen}</span>}
                     </div>
                 ) : (
                     <div className="shop-karte-vorschau">
-                        <img src={bildUrl(item.image_url)} alt={item.name}/>
+                        <GeschuetztesBild src={bildUrl(item.image_url)} alt={item.name}/>
                     </div>
                 )}
                 <p className="shop-karte-name">{item.name}</p>
