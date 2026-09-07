@@ -600,3 +600,28 @@ Drei echte Bugs gefunden und gefixt:
 - [x] `QuizPage.jsx`: `antwortKlick()` hatte keine Sperre gegen eine zweite
       Antwort nach der ersten (anders als dasselbe Pattern in
       `DailyLearningPage.jsx`). Fix: gleiche früh-Rückkehr-Sperre ergänzt.
+
+## 07.09 - Responsive Design fürs Handy
+
+`php-design.css` (1019 Zeilen, das eigentliche Design-System der App) hatte
+keine einzige Media Query - nur Vite-Template-Reste in `App.css`/`index.css`
+(`.kartenstapel`/`#next-steps` etc.) waren responsive.
+
+- [x] Navbar.jsx/php-design.css: echtes Hamburger-Menü ab 640px (6 Nav-Links
+      + Profil + Logout wären sonst per `flex-wrap` in mehreren
+      unübersichtlichen Zeilen umgebrochen). Links/Profil/Logout jetzt in
+      `.nav-links` gekapselt, auf breiten Screens optisch identisch zu
+      vorher. X-Animation fürs Icon beim Öffnen.
+- [x] `App.css`: `.tageskarte-buttons` hatte 2 Buttons á 230px + 24px Gap
+      fest verdrahtet (mind. 484px nötig) - lief auf JEDEM Handy seitlich
+      über den Rand. Jetzt gestapelt + volle Breite unter 640px.
+- [x] Allgemeiner Seitenrand für alle Seiten (`nav ~ *`-Selektor - trifft
+      zuverlässig auf jeden Seiteninhalt, da der immer direktes Geschwister
+      von `<nav>` ist) - vorher klebten z.B. Dashboard-/Ranking-Inhalte
+      direkt an der Bildschirmkante.
+- [x] Reduzierte, großzügige Fixed-Paddings auf Handy-Größe gestutzt
+      (Buch-Seite, Zertifikat-Startseite, Quiz-/Auth-Karte, Profil-Karten,
+      Shop-Karten, Tabellenzellen), `.profil-kopf` stapelt jetzt vertikal
+      statt eng nebeneinander.
+- [x] Mit Playwright (iPhone-13-Viewport, echtes Touch statt Maus-Klick)
+      alle Hauptseiten visuell gegengeprüft, keine überlaufenden Elemente.
