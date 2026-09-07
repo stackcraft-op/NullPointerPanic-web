@@ -1,19 +1,19 @@
 import { useState, useEffect, useContext } from "react";
 import Navbar from "../components/Navbar";
 import UserContext from "../UserContext";
-import { holeProfil, statusTextAendern } from "../api";
+import { holeProfil, statusTextAendern, itemKaufen, avatarAusruesten, rahmenAusruesten, bildUrl } from "../api";
 
-// Avatare/Rahmen kommen noch aus mockData.js (Ursprung: shopItemsMock in
-// App.jsx, siehe dort), weil das Backend dafuer noch keinen Endpoint hat
-// (GET /api/shop/items, POST /api/shop/items/:id/purchase sind im
-// API_CONTRACT.md vorgeschlagen). Kauf aendert deshalb erstmal nur
-// State im UserContext, keine echte Persistenz - wird 1:1 gegen echte
-// fetch()-Calls getauscht, sobald der Endpoint da ist. Gleiches gilt fuers
-// "Ausruesten" - welcher Avatar/Rahmen aktiv ist, wird erst dauerhaft,
-// sobald PATCH /api/profile die Felder avatar_id/frame_id kennt.
-// items/Auswahl liegen bewusst in App.jsx statt hier lokal, weil
-// ProfilPage.jsx den ausgeruesteten Avatar/Rahmen auch braucht (ersetzt
-// dort den Stufen-Avatar).
+// Katalog + Kauf/Ausruesten laufen seit PR #26/#27 im Backend (siehe
+// API_CONTRACT.md) ueber echte Endpoints, kein Mock-State mehr. items/
+// Auswahl liegen bewusst in App.jsx statt hier lokal, weil ProfilPage.jsx
+// den ausgeruesteten Avatar/Rahmen auch braucht (ersetzt dort den
+// Stufen-Avatar).
+// Bekannte Luecke (noch mit Kollege zu klaeren): der echte Katalog liefert
+// pro Item nur id/type/name/price/image_url/owned - kein farbe/abzeichen
+// wie bisher in shopItemsMock. Rahmen zeigen deshalb erstmal alle denselben
+// grauen Standard-Ring (CSS-Fallback in .shop-karte-vorschau-rahmen-kreis),
+// bis geklaert ist, ob Rahmen eine Farbe bekommen oder als eigenes Bild
+// (image_url) gerendert werden sollen.
 // Ein Symbol fuer Currency, ueberall im Shop gleich (Guthaben-Badge UND
 // Produktpreise) - vorher stand oben ein Muenz-Emoji, unten "Currency" als
 // Wort, das wirkte inkonsistent.
@@ -43,6 +43,10 @@ function ShopPage() {
     const [statusText, setStatusText] = useState("");
     const [neuerStatusText, setNeuerStatusText] = useState("");
     const [statusFehler, setStatusFehler] = useState("");
+    // Fehler pro Item statt ein einzelnes globales Feld - sonst wuerde ein
+    // fehlgeschlagener Kauf/Ausruesten-Versuch bei Item A auch unter Item B
+    // auftauchen. Key ist die item.id.
+    const [itemFehler, setItemFehler] = useState({});
 
     useEffect(() => {
         holeProfil()
@@ -53,22 +57,39 @@ function ShopPage() {
             });
     }, []);
 
-    function kaufen(itemId) {
-        const item = items.find((i) => i.id === itemId);
-        if (currency < item.price) {
-            return;
+    async function kaufen(itemId) {
+        try {
+            const antwort = await itemKaufen(itemId);
+            setCurrency(antwort.currency);
+            setItems(items.map((i) =>
+                i.id === itemId ? { ...i, owned: true } : i
+            ));
+            setItemFehler((bisher) => ({ ...bisher, [itemId]: "" }));
+        } catch (fehler) {
+            console.error("Kauf fehlgeschlagen:", fehler);
+            setItemFehler((bisher) => ({
+                ...bisher,
+                [itemId]: nutzerFreundlicheFehlermeldung(fehler, "Kauf fehlgeschlagen. Bitte erneut versuchen."),
+            }));
         }
-        setCurrency(currency - item.price);
-        setItems(items.map((i) =>
-            i.id === itemId ? { ...i, owned: true } : i
-        ));
     }
 
-    function auswaehlen(item) {
-        if (item.type === "avatar") {
-            setAusgewaehlterAvatarId(item.id);
-        } else {
-            setAusgewaehlterRahmenId(item.id);
+    async function auswaehlen(item) {
+        try {
+            if (item.type === "avatar") {
+                await avatarAusruesten(item.id);
+                setAusgewaehlterAvatarId(item.id);
+            } else {
+                await rahmenAusruesten(item.id);
+                setAusgewaehlterRahmenId(item.id);
+            }
+            setItemFehler((bisher) => ({ ...bisher, [item.id]: "" }));
+        } catch (fehler) {
+            console.error("Ausruesten fehlgeschlagen:", fehler);
+            setItemFehler((bisher) => ({
+                ...bisher,
+                [item.id]: nutzerFreundlicheFehlermeldung(fehler, "Ausrüsten fehlgeschlagen. Bitte erneut versuchen."),
+            }));
         }
     }
 
@@ -100,13 +121,13 @@ function ShopPage() {
                 {item.type === "frame" ? (
                     <div className="shop-karte-vorschau-rahmen">
                         <div className="shop-karte-vorschau-rahmen-kreis" style={{ borderColor: item.farbe }}>
-                            <img src={item.image_url} alt={item.name}/>
+                            <img src={bildUrl(item.image_url)} alt={item.name}/>
                         </div>
                         {item.abzeichen && <span className="shop-karte-abzeichen">{item.abzeichen}</span>}
                     </div>
                 ) : (
                     <div className="shop-karte-vorschau">
-                        <img src={item.image_url} alt={item.name}/>
+                        <img src={bildUrl(item.image_url)} alt={item.name}/>
                     </div>
                 )}
                 <p className="shop-karte-name">{item.name}</p>
@@ -118,6 +139,7 @@ function ShopPage() {
                 {item.owned && istAusgeruestet(item) && (
                     <span className="shop-karte-ausgeruestet">Ausgerüstet</span>
                 )}
+                {itemFehler[item.id] && <p className="auth-fehler">{itemFehler[item.id]}</p>}
             </div>
         );
     }

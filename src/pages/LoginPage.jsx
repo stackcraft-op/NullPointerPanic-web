@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { einloggen } from "../api";
 
 
-function LoginPage({setEingeloggterName, ladeProfil, ladeTagesKarten}){
+function LoginPage({setEingeloggterName, ladeProfil, ladeTagesKarten, ladeShopItems}){
     const [username,setUsername] = useState("");
     const [passwort, setPasswort] = useState("");
     const navigate = useNavigate();
@@ -15,6 +15,7 @@ function LoginPage({setEingeloggterName, ladeProfil, ladeTagesKarten}){
             localStorage.setItem("token", daten.token)
             ladeProfil();
             ladeTagesKarten();
+            ladeShopItems();
             setEingeloggterName(username);
             navigate("/dashboard")
         }

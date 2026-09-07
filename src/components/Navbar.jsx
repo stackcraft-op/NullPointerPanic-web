@@ -1,7 +1,7 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import UserContext from "../UserContext";
-import { shopItemsMock } from "../mockData";
+import { bildUrl } from "../api";
 
 
 function Navbar(){
@@ -20,7 +20,7 @@ function Navbar(){
     // Stufen-Bild zurueck. Rahmenfarbe faerbt nur den Ring.
     const aktiverAvatar = shopItems.find((item) => item.id === ausgewaehlterAvatarId);
     const aktiverRahmen = shopItems.find((item) => item.id === ausgewaehlterRahmenId);
-    const avatarBild = aktiverAvatar ? aktiverAvatar.image_url : aktuelleStufe.avatarBild;
+    const avatarBild = aktiverAvatar ? bildUrl(aktiverAvatar.image_url) : aktuelleStufe.avatarBild;
     const rahmenFarbe = aktiverRahmen ? aktiverRahmen.farbe : "var(--php-text)";
 
     function logout(){
@@ -40,10 +40,11 @@ function Navbar(){
         setCurrency(0);
         setTagesKarten([]);
         setVerbleibendeKarten([]);
-        // Shop-Kaeufe sind noch reiner Mock-State (kein Server) - ohne Reset
-        // wuerde der naechste Nutzer auf demselben Geraet die gekauften
-        // Avatare/Rahmen des vorherigen Nutzers sehen.
-        setShopItems(shopItemsMock);
+        // Katalog kommt jetzt live vom Server (eigener owned-Status pro
+        // Nutzer) - ohne Reset wuerde der naechste Nutzer auf demselben
+        // Geraet kurz den Besitzstand des vorherigen Nutzers sehen, bis der
+        // naechste Login ladeShopItems() erneut aufruft.
+        setShopItems([]);
         setAusgewaehlterAvatarId(null);
         setAusgewaehlterRahmenId(null);
         navigate("/login");

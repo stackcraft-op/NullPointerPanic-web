@@ -1,6 +1,13 @@
 
 const API_URL = import.meta.env.VITE_API_URL;
 
+// image_url kommt vom Server ueberall als relativer Pfad (Shop-Katalog UND
+// Profil-Avatar/Rahmen) - Basis-URL muss laut API_CONTRACT.md frontend-seitig
+// vorangestellt werden.
+export function bildUrl(pfad) {
+    return pfad ? `${API_URL}${pfad}` : pfad;
+}
+
 // Gemeinsame Auswertung fuer jede fetch()-Antwort: faengt zusaetzlich den Fall
 // ab, dass der Server (z.B. wegen ngrok/Serverfehler) mal HTML statt JSON
 // liefert - ohne das wuerde response.json() mit einem kryptischen
@@ -227,6 +234,66 @@ export async function quizAntwortEinreichen(answerOptionId) {
             "ngrok-skip-browser-warning": "true"
         },
     })
+
+    return parseAntwort(response);
+}
+
+export async function holeShopItems() {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`${API_URL}/api/shop/items`, {
+        method: "GET",
+        headers: {
+            "Authorization": `Bearer ${token}`,
+            "ngrok-skip-browser-warning": "true"
+        },
+    })
+
+    return parseAntwort(response);
+}
+
+export async function itemKaufen(itemId) {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`${API_URL}/api/shop/items/${itemId}/purchase`, {
+        method: "POST",
+        headers: {
+            "Authorization": `Bearer ${token}`,
+            "ngrok-skip-browser-warning": "true"
+        },
+    })
+
+    return parseAntwort(response);
+}
+
+// Zwei eigene Funktionen statt einer gemeinsamen mit {avatar_id, frame_id} -
+// laut API_CONTRACT.md sind beide Felder "unabhaengig voneinander setzbar",
+// beim Ausruesten eines Avatars soll also nicht versehentlich frame_id mit
+// abgeschickt (und z.B. auf null gesetzt) werden, und umgekehrt.
+export async function avatarAusruesten(avatarId) {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`${API_URL}/api/profile`, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+            "ngrok-skip-browser-warning": "true"
+        },
+        body: JSON.stringify({ avatar_id: avatarId }),
+    });
+
+    return parseAntwort(response);
+}
+
+export async function rahmenAusruesten(rahmenId) {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`${API_URL}/api/profile`, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+            "ngrok-skip-browser-warning": "true"
+        },
+        body: JSON.stringify({ frame_id: rahmenId }),
+    });
 
     return parseAntwort(response);
 }

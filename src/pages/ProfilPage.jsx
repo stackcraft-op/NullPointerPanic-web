@@ -2,7 +2,7 @@ import Navbar from "../components/Navbar";
 import { Link } from "react-router-dom";
 import { useContext, useState, useEffect } from "react";
 import UserContext from "../UserContext";
-import { holeThemenFortschritt, holeProfil } from "../api";
+import { holeThemenFortschritt, holeProfil, bildUrl } from "../api";
 
 // Rails liefert Prozentwerte manchmal als String statt Zahl (z.B. bei
 // Decimal-Spalten) - Number(...) erzwingt eine echte Zahl. || 0 faengt
@@ -91,7 +91,7 @@ function ProfilPage(){
                                 className="profil-avatar-shop-kreis"
                                 style={{ borderColor: aktiverRahmen ? aktiverRahmen.farbe : "var(--php-text)" }}
                             >
-                                <img src={aktiverAvatar.image_url} alt={aktiverAvatar.name}/>
+                                <img src={bildUrl(aktiverAvatar.image_url)} alt={aktiverAvatar.name}/>
                             </div>
                             {aktiverRahmen?.abzeichen && <span className="shop-karte-abzeichen">{aktiverRahmen.abzeichen}</span>}
                         </div>
