@@ -34,6 +34,45 @@ function nutzerFreundlicheFehlermeldung(fehler, standardText) {
     return fehler.message;
 }
 
+// Eigene, TOP-LEVEL-Komponente statt (wie vorher) innerhalb von ShopPage
+// definiert - eine innerhalb einer Komponente definierte Komponente gilt bei
+// jedem Render der aeusseren Komponente als neuer Typ, React mountet dann
+// ALLE <Karte>-Instanzen komplett neu (nicht nur re-rendert) - z.B. bei
+// jedem Tastendruck im "Neuer Status"-Feld. Frueher (reines <img src=...>)
+// kaum sichtbar (Browser-Cache faengt's ab), mit GeschuetztesBild (macht
+// bei jedem Mount einen echten fetch()) aber ein sichtbares Neuladen aller
+// Shop-Bilder bei jeder Nutzereingabe. Deshalb hier auf Props statt
+// Closures umgestellt (kaufen/auswaehlen/istAusgeruestet/itemFehler kommen
+// jetzt von aussen rein).
+function Karte({ item, fehler, ausgeruestet, onKaufen, onAuswaehlen }) {
+    return (
+        <div className="shop-karte">
+            {item.type === "frame" ? (
+                <div className="shop-karte-vorschau-rahmen">
+                    <GeschuetztesBild src={bildUrl(item.image_url)} alt={item.name} className="shop-karte-vorschau-rahmen-bild"/>
+                    {item.abzeichen && <span className="shop-karte-abzeichen">{item.abzeichen}</span>}
+                </div>
+            ) : (
+                <div className="shop-karte-vorschau">
+                    <GeschuetztesBild src={bildUrl(item.image_url)} alt={item.name}/>
+                </div>
+            )}
+            <p className="shop-karte-name">{item.name}</p>
+            {/* Preis nur zeigen, solange man's noch kaufen kann - ist bei
+                bereits besessenen Items (Kaufen-Button eh weg) irrelevant. */}
+            {!item.owned && <p className="shop-karte-preis">{CURRENCY_ICON} {item.price}</p>}
+            {!item.owned && <button onClick={() => onKaufen(item.id)}>Kaufen</button>}
+            {item.owned && !ausgeruestet && (
+                <button onClick={() => onAuswaehlen(item)}>Auswählen</button>
+            )}
+            {item.owned && ausgeruestet && (
+                <span className="shop-karte-ausgeruestet">Ausgerüstet</span>
+            )}
+            {fehler && <p className="auth-fehler">{fehler}</p>}
+        </div>
+    );
+}
+
 function ShopPage() {
     const {
         currency, setCurrency,
@@ -114,36 +153,6 @@ function ShopPage() {
         }
     }
 
-    // Eine Karte fuer Avatare UND Rahmen - unterscheiden sich nur in der
-    // Vorschau (Rahmen zeigt einen farbigen Ring um einen Avatar-Platzhalter,
-    // Avatar zeigt sich selbst) und in den drei moeglichen Button-Zustaenden.
-    function Karte({ item }) {
-        return (
-            <div className="shop-karte">
-                {item.type === "frame" ? (
-                    <div className="shop-karte-vorschau-rahmen">
-                        <GeschuetztesBild src={bildUrl(item.image_url)} alt={item.name} className="shop-karte-vorschau-rahmen-bild"/>
-                        {item.abzeichen && <span className="shop-karte-abzeichen">{item.abzeichen}</span>}
-                    </div>
-                ) : (
-                    <div className="shop-karte-vorschau">
-                        <GeschuetztesBild src={bildUrl(item.image_url)} alt={item.name}/>
-                    </div>
-                )}
-                <p className="shop-karte-name">{item.name}</p>
-                <p className="shop-karte-preis">{CURRENCY_ICON} {item.price}</p>
-                {!item.owned && <button onClick={() => kaufen(item.id)}>Kaufen</button>}
-                {item.owned && !istAusgeruestet(item) && (
-                    <button onClick={() => auswaehlen(item)}>Auswählen</button>
-                )}
-                {item.owned && istAusgeruestet(item) && (
-                    <span className="shop-karte-ausgeruestet">Ausgerüstet</span>
-                )}
-                {itemFehler[item.id] && <p className="auth-fehler">{itemFehler[item.id]}</p>}
-            </div>
-        );
-    }
-
     const avatare = items.filter((item) => item.type === "avatar");
     const rahmen = items.filter((item) => item.type === "frame");
 
@@ -184,12 +193,30 @@ function ShopPage() {
 
                 <h2 className="shop-abschnitt-titel">Avatare</h2>
                 <div className="shop-grid">
-                    {avatare.map((item) => <Karte item={item} key={item.id}/>)}
+                    {avatare.map((item) => (
+                        <Karte
+                            item={item}
+                            key={item.id}
+                            fehler={itemFehler[item.id]}
+                            ausgeruestet={istAusgeruestet(item)}
+                            onKaufen={kaufen}
+                            onAuswaehlen={auswaehlen}
+                        />
+                    ))}
                 </div>
 
                 <h2 className="shop-abschnitt-titel">Rahmen</h2>
                 <div className="shop-grid">
-                    {rahmen.map((item) => <Karte item={item} key={item.id}/>)}
+                    {rahmen.map((item) => (
+                        <Karte
+                            item={item}
+                            key={item.id}
+                            fehler={itemFehler[item.id]}
+                            ausgeruestet={istAusgeruestet(item)}
+                            onKaufen={kaufen}
+                            onAuswaehlen={auswaehlen}
+                        />
+                    ))}
                 </div>
             </div>
         </div>

@@ -47,6 +47,7 @@ function QuizPage({tagesKarten, quizFreigeschaltet, ladeProfil}){
     const frage = karte ? karte.multiple_choice_question : undefined;
 
     async function antwortKlick(optionId){
+        if(ausgewaehlteOptionId !== null) return; // schon beantwortet
         try{
             const daten = await beantworten(optionId);
             setServerFehler("");

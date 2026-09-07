@@ -115,6 +115,10 @@ nav span {
 .profil-menu-avatar {
   width: 100%;
   height: 100%;
+  /* border-box, gleicher Grund wie .profil-avatar-shop-kreis - sonst
+     ueberragt der 2px-Rand die 44px des .profil-menu-avatar-wrap-
+     Elternelements, auf das .avatar-rahmen-overlay zentriert ist. */
+  box-sizing: border-box;
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid var(--php-text);
@@ -625,6 +629,11 @@ th {
 .profil-avatar-shop-kreis {
   width: 100%;
   height: 100%;
+  /* border-box, sonst wird der Kreis durch den 3px-Rand groesser als die
+     deklarierten 100% (=88px vom .profil-avatar-shop-Elternelement) - das
+     Rahmen-Overlay (.avatar-rahmen-overlay) ist exakt auf diese 88px
+     zentriert/skaliert und deckt den ueberstehenden Rand sonst nicht ab. */
+  box-sizing: border-box;
   overflow: hidden;
   background: var(--php-line);
   border: 3px solid var(--php-text);
@@ -642,21 +651,17 @@ th {
    sein Elternelement (position: relative + feste Groesse, siehe
    .profil-avatar-shop/.profil-menu-avatar-wrap). pointer-events: none,
    damit Klicks durch den Rahmen zum Avatar/Link darunter durchgehen.
-   125% statt 100% + zentriert: die meisten Rahmen-PNGs haben etwas
-   transparenten Rand um den eigentlichen Ring (z.B. wegen des Horns beim
-   Dino-Rahmen) - bei exakt 100% sitzt der sichtbare Ring dadurch kleiner
-   als der Avatar-Kreis und der Avatar-Rand lugt heraus. Per Bild-Komposit
-   getestet (Avatar + dino-rahmen.png): 125% deckt die Avatar-Kante zuverlaessig
-   ab, ohne den Ring selbst unschoen zu verzerren. Ist ein empirischer
-   Default fuer diese Art Rahmen-Bild, kein exakter Wert - kuenftige Rahmen
-   mit anderen Proportionen ggf. nachjustieren. */
+   147% + 4px nach oben verschoben (statt 125% zentriert) - Feinjustierung
+   nach Live-Test mit dem echten frame3.png (Anime-Rahmen). Ist ein
+   empirischer Default, kein exakter Wert - kuenftige Rahmen mit anderen
+   Proportionen ggf. nachjustieren. */
 .avatar-rahmen-overlay {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 125%;
-  height: 125%;
-  transform: translate(-50%, -50%);
+  width: 147%;
+  height: 147%;
+  transform: translate(-50%, calc(-50% - 4px));
   object-fit: contain;
   pointer-events: none;
 }
