@@ -579,3 +579,24 @@ bei 100% sonst heraus).
       (`.avatar-rahmen-overlay`) umgestellt
 - [x] `dino-rahmen.png` als Vorschlag-Asset committed, noch nicht im
       Backend geseedet - an Kollegen weitergeben zur Entscheidung
+
+## 07.09 - Globaler Bug-Sweep über den kompletten Code
+
+`/code-review`-Skill (nur Diff) + manuelle Durchsicht des ganzen `src/`-Baums.
+Drei echte Bugs gefunden und gefixt:
+
+- [x] `ShopPage.jsx`: `Karte`-Komponente war INNERHALB von `ShopPage`
+      definiert - React mountet sie dadurch bei jedem Render der
+      Elternkomponente komplett neu, nicht nur re-rendert. Mit
+      `GeschuetztesBild` (echter `fetch()` pro Mount) führte das zu
+      sichtbarem Neuladen ALLER Shop-Bilder bei jeder Nutzereingabe (z.B.
+      jeder Tastendruck im Status-Feld). Fix: `Karte` als eigene
+      Top-Level-Komponente, Props statt Closures.
+- [x] `GeschuetztesBild.jsx`: `blobUrl` wurde nur bei leerem `src`
+      zurückgesetzt, nicht bei Wechsel auf eine andere echte URL - beim
+      Avatar-/Rahmen-Wechsel kurz kaputtes Icon (alte, gerade widerrufene
+      Blob-URL) statt sauberem Leerzustand. Fix: Reset direkt am
+      Effekt-Anfang.
+- [x] `QuizPage.jsx`: `antwortKlick()` hatte keine Sperre gegen eine zweite
+      Antwort nach der ersten (anders als dasselbe Pattern in
+      `DailyLearningPage.jsx`). Fix: gleiche früh-Rückkehr-Sperre ergänzt.
