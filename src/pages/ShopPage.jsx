@@ -9,12 +9,13 @@ import { holeProfil, statusTextAendern, itemKaufen, avatarAusruesten, rahmenAusr
 // Auswahl liegen bewusst in App.jsx statt hier lokal, weil ProfilPage.jsx
 // den ausgeruesteten Avatar/Rahmen auch braucht (ersetzt dort den
 // Stufen-Avatar).
-// Bekannte Luecke (noch mit Kollege zu klaeren): der echte Katalog liefert
-// pro Item nur id/type/name/price/image_url/owned - kein farbe/abzeichen
-// wie bisher in shopItemsMock. Rahmen zeigen deshalb erstmal alle denselben
-// grauen Standard-Ring (CSS-Fallback in .shop-karte-vorschau-rahmen-kreis),
-// bis geklaert ist, ob Rahmen eine Farbe bekommen oder als eigenes Bild
-// (image_url) gerendert werden sollen.
+// Rahmen kommen als eigenes transparentes PNG (Ring-Form) statt wie frueher
+// in shopItemsMock als Farbe (item.farbe) - deckt sich mit dem echten
+// Katalog, der pro Item nur id/type/name/price/image_url/owned liefert,
+// kein farbe-Feld. Hier in der Katalog-Vorschau zeigen wir das Rahmenbild
+// deshalb direkt (kein Beispiel-Avatar mehr dahinter); wo der Rahmen
+// tatsaechlich einen Avatar umrahmt (Profilseite/Navbar), liegt er als
+// Overlay ueber dem Avatar-Bild (.avatar-rahmen-overlay, siehe dort).
 // Ein Symbol fuer Currency, ueberall im Shop gleich (Guthaben-Badge UND
 // Produktpreise) - vorher stand oben ein Muenz-Emoji, unten "Currency" als
 // Wort, das wirkte inkonsistent.
@@ -121,9 +122,7 @@ function ShopPage() {
             <div className="shop-karte">
                 {item.type === "frame" ? (
                     <div className="shop-karte-vorschau-rahmen">
-                        <div className="shop-karte-vorschau-rahmen-kreis" style={{ borderColor: item.farbe }}>
-                            <GeschuetztesBild src={bildUrl(item.image_url)} alt={item.name}/>
-                        </div>
+                        <GeschuetztesBild src={bildUrl(item.image_url)} alt={item.name} className="shop-karte-vorschau-rahmen-bild"/>
                         {item.abzeichen && <span className="shop-karte-abzeichen">{item.abzeichen}</span>}
                     </div>
                 ) : (
