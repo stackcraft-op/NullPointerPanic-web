@@ -1,11 +1,16 @@
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-// image_url kommt vom Server ueberall als relativer Pfad (Shop-Katalog UND
-// Profil-Avatar/Rahmen) - Basis-URL muss laut API_CONTRACT.md frontend-seitig
-// vorangestellt werden.
+// image_url kommt vom Server laut API_CONTRACT.md ueberall als relativer
+// Pfad (Shop-Katalog UND Profil-Avatar/Rahmen) - Basis-URL muss frontend-
+// seitig vorangestellt werden. Schon-absolute URLs (http/https) unveraendert
+// durchreichen statt zu verdoppeln - kommt z.B. bei manuell in der DB
+// angelegten Test-Items vor (siehe "Roboter"-Item, zeigt auf example.com).
 export function bildUrl(pfad) {
-    return pfad ? `${API_URL}${pfad}` : pfad;
+    if (!pfad || pfad.startsWith("http://") || pfad.startsWith("https://")) {
+        return pfad;
+    }
+    return `${API_URL}${pfad}`;
 }
 
 // Gemeinsame Auswertung fuer jede fetch()-Antwort: faengt zusaetzlich den Fall
