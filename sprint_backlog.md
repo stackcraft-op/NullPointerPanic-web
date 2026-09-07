@@ -533,3 +533,28 @@ Kartenanzahl - nutzt State, der eh schon da war.
 
 - [x] `.themen-liste`/`.themen-karte`-Styles ergänzt, Themenliste zeigt
       Fortschritt statt nur Kartenanzahl
+
+## 07.09 - Shop: echte API statt shopItemsMock
+
+Backend hat Shop-Katalog + Kauf + Ausrüsten inzwischen gebaut (PR #26/#27/#29
+im Backend-Repo, per `git fetch` entdeckt - lokaler Klon war vorher veraltet).
+`shopItemsMock` in `mockData.js` durch echte Endpoints ersetzt:
+`GET /api/shop/items` (Katalog inkl. `owned`), `POST /api/shop/items/:id/purchase`
+(Kauf), `PATCH /api/profile` mit `avatar_id`/`frame_id` (Ausrüsten, kostenlos).
+`GET /api/profile` liefert jetzt zusätzlich den ausgerüsteten Avatar/Rahmen
+mit, ersetzt den bisherigen rein lokalen State - bleibt jetzt auch nach
+Reload/erneutem Login erhalten. `image_url` ist überall ein relativer Pfad,
+neuer `bildUrl()`-Helper in `api.js` stellt die Basis-URL voran.
+
+- [x] `api.js`: `holeShopItems`, `itemKaufen`, `avatarAusruesten`,
+      `rahmenAusruesten`, `bildUrl`
+- [x] `App.jsx`: Shop-State kommt vom Server (`ladeShopItems`,
+      `ladeProfil` setzt jetzt auch Avatar/Rahmen-ID)
+- [x] `ShopPage.jsx`: Kaufen/Ausrüsten async, Fehler pro Item (Server prüft
+      jetzt "Nicht genug Currency"/"Item bereits im Besitz" statt Frontend)
+- [ ] Mit Kollege klären: echter Katalog liefert kein `farbe`/`abzeichen`
+      für Rahmen (nur `image_url`) - aktuell grauer CSS-Standard-Ring für
+      alle Rahmen, bis geklärt ist ob Rahmen eine Farbe bekommen oder als
+      eigenes Bild gerendert werden
+- [ ] Preis-Diskrepanz weiterhin offen: `STATUS_TEXT_COST` im Backend auf
+      `10`, Frontend zeigt `100` (siehe `API_CONTRACT.md`)
