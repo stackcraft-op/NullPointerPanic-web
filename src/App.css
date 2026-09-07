@@ -250,6 +250,20 @@
   color: var(--text-h);
 }
 
+/* Handy: zwei Buttons a 230px + 24px Gap brauchen mind. 484px Breite -
+   passt auf keinem Handy nebeneinander (liefe seitlich ueber den Rand).
+   Untereinander statt nebeneinander, volle Breite statt fester 230px. */
+@media (max-width: 640px) {
+  .tageskarte-buttons {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .tageskarte-buttons button {
+    width: 100%;
+  }
+}
+
 .ticks {
   position: relative;
   width: 100%;
