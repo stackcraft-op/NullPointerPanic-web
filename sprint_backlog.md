@@ -552,9 +552,30 @@ neuer `bildUrl()`-Helper in `api.js` stellt die Basis-URL voran.
       `ladeProfil` setzt jetzt auch Avatar/Rahmen-ID)
 - [x] `ShopPage.jsx`: Kaufen/Ausrüsten async, Fehler pro Item (Server prüft
       jetzt "Nicht genug Currency"/"Item bereits im Besitz" statt Frontend)
-- [ ] Mit Kollege klären: echter Katalog liefert kein `farbe`/`abzeichen`
-      für Rahmen (nur `image_url`) - aktuell grauer CSS-Standard-Ring für
-      alle Rahmen, bis geklärt ist ob Rahmen eine Farbe bekommen oder als
-      eigenes Bild gerendert werden
 - [ ] Preis-Diskrepanz weiterhin offen: `STATUS_TEXT_COST` im Backend auf
       `10`, Frontend zeigt `100` (siehe `API_CONTRACT.md`)
+
+## 07.09 - Rahmen als Bild-Overlay (Antwort auf die offene Farbe-vs-Bild-Frage)
+
+Bilder aus dem Shop kamen als kaputtes Icon an - Ursache: ngrok (kostenlose
+Stufe) zeigt ohne den Header `ngrok-skip-browser-warning` eine HTML-
+Warnseite statt der echten Antwort, ein `<img>` kann aber keine Custom-
+Header mitschicken. Fix: neue Komponente `GeschuetztesBild.jsx`, laedt
+Bilder per `fetch()` (mit Header) als Blob-URL.
+
+Danach die offene Frage "Rahmen als Farbe oder Bild" (siehe letzter
+Eintrag) mit einem echten, selbst KI-generierten Test-Rahmen (Dino-Ring,
+`public/rahmen-vorschlag/dino-rahmen.png`) beantwortet: Rahmen sind ein
+Bild-Overlay über dem Avatar, keine CSS-Randfarbe. Rendering entsprechend
+umgebaut (Avatar + optionales Rahmenbild jetzt entkoppelt, unabhaengig ob
+Stufen- oder Shop-Avatar). Per Bild-Komposit-Test (Python/Pillow, ohne
+Browser) verifiziert und die Overlay-Groesse auf 125%+zentriert kalibriert,
+weil das Rahmenbild transparenten Rand um den Ring hat (Avatar-Kante guckte
+bei 100% sonst heraus).
+
+- [x] `GeschuetztesBild.jsx` (Blob-Fetch mit ngrok-Header) in
+      `ShopPage.jsx`/`ProfilPage.jsx`/`Navbar.jsx` eingesetzt
+- [x] Rahmen-Rendering von Farbe (`item.farbe`) auf Bild-Overlay
+      (`.avatar-rahmen-overlay`) umgestellt
+- [x] `dino-rahmen.png` als Vorschlag-Asset committed, noch nicht im
+      Backend geseedet - an Kollegen weitergeben zur Entscheidung
