@@ -651,21 +651,17 @@ th {
    sein Elternelement (position: relative + feste Groesse, siehe
    .profil-avatar-shop/.profil-menu-avatar-wrap). pointer-events: none,
    damit Klicks durch den Rahmen zum Avatar/Link darunter durchgehen.
-   125% statt 100% + zentriert: die meisten Rahmen-PNGs haben etwas
-   transparenten Rand um den eigentlichen Ring (z.B. wegen des Horns beim
-   Dino-Rahmen) - bei exakt 100% sitzt der sichtbare Ring dadurch kleiner
-   als der Avatar-Kreis und der Avatar-Rand lugt heraus. Per Bild-Komposit
-   getestet (Avatar + dino-rahmen.png): 125% deckt die Avatar-Kante zuverlaessig
-   ab, ohne den Ring selbst unschoen zu verzerren. Ist ein empirischer
-   Default fuer diese Art Rahmen-Bild, kein exakter Wert - kuenftige Rahmen
-   mit anderen Proportionen ggf. nachjustieren. */
+   147% + 4px nach oben verschoben (statt 125% zentriert) - Feinjustierung
+   nach Live-Test mit dem echten frame3.png (Anime-Rahmen). Ist ein
+   empirischer Default, kein exakter Wert - kuenftige Rahmen mit anderen
+   Proportionen ggf. nachjustieren. */
 .avatar-rahmen-overlay {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 125%;
-  height: 125%;
-  transform: translate(-50%, -50%);
+  width: 147%;
+  height: 147%;
+  transform: translate(-50%, calc(-50% - 4px));
   object-fit: contain;
   pointer-events: none;
 }

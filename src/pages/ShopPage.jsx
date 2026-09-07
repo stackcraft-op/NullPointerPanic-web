@@ -58,7 +58,9 @@ function Karte({ item, fehler, ausgeruestet, onKaufen, onAuswaehlen }) {
                 </div>
             )}
             <p className="shop-karte-name">{item.name}</p>
-            <p className="shop-karte-preis">{CURRENCY_ICON} {item.price}</p>
+            {/* Preis nur zeigen, solange man's noch kaufen kann - ist bei
+                bereits besessenen Items (Kaufen-Button eh weg) irrelevant. */}
+            {!item.owned && <p className="shop-karte-preis">{CURRENCY_ICON} {item.price}</p>}
             {!item.owned && <button onClick={() => onKaufen(item.id)}>Kaufen</button>}
             {item.owned && !ausgeruestet && (
                 <button onClick={() => onAuswaehlen(item)}>Auswählen</button>
