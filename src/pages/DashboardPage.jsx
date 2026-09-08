@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Leaderboard from "../components/Leaderboard";
 import { holeRankingWoche } from "../api";
+import { useKartenSwipe } from "../useKartenSwipe";
 
 function DashboardPage({tagesKarten, setTagesKarten, quizFreigeschaltet, tagesKartenGeladen}){
 
@@ -26,7 +27,7 @@ function DashboardPage({tagesKarten, setTagesKarten, quizFreigeschaltet, tagesKa
         setTagesKarten(restKarten.concat([aktuelleKarte]))
     }
 
-
+    const swipe = useKartenSwipe(kannIch, kannIchNicht);
 
     return(
         <div>
@@ -42,7 +43,12 @@ function DashboardPage({tagesKarten, setTagesKarten, quizFreigeschaltet, tagesKa
                             style={{ transform: `translate(${(i + 1) * 8}px, ${(i + 1) * 8}px)`, zIndex: -(i + 1) }}
                         ></div>
                     ))}
-                    <div className="tageskarte">
+                    <div className="tageskarte" {...swipe.handlers} style={swipe.style}>
+                        {swipe.label && (
+                            <span className="swipe-label" style={{ color: swipe.label.farbe, borderColor: swipe.label.farbe, opacity: swipe.label.deckkraft }}>
+                                {swipe.label.text}
+                            </span>
+                        )}
                         <span className="tageskarte-thema">{aktuelleKarte.topic.name}</span>
                         <p className="tageskarte-antwort">{aktuelleKarte.answer}</p>
                         <div className="tageskarte-buttons">

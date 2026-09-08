@@ -7,6 +7,7 @@ import {
     starteQuiz,
     quizAntwortEinreichen,
 } from "../api";
+import { useKartenSwipe } from "../useKartenSwipe";
 
 const KARTEN_PRO_QUIZ = 20;
 
@@ -71,6 +72,28 @@ function DailyLearningPage() {
         ladeThemen();
     }
 
+    // kannIch/kannIchNicht (und der Swipe-Hook, der sie braucht) muessen auf
+    // oberster Ebene stehen, nicht im "if (ausgewaehltesThema)" weiter unten -
+    // Hooks duerfen nie bedingt aufgerufen werden (Rules of Hooks), auch wenn
+    // die Funktionen inhaltlich nur in diesem Fall gebraucht werden.
+    function kannIch() {
+        const karte = stapelKarten[0];
+        karteAbhaken(karte.id)
+            .then(() => {
+                setAlleKarten(alleKarten.map((k) => (k.id === karte.id ? { ...k, checked: true } : k)));
+                setStapelKarten(stapelKarten.filter((k) => k.id !== karte.id));
+            })
+            .catch((error) => setLadeFehler(error.message));
+    }
+
+    function kannIchNicht() {
+        const karte = stapelKarten[0];
+        const restKarten = stapelKarten.filter((k) => k.id !== karte.id);
+        setStapelKarten(restKarten.concat([karte]));
+    }
+
+    const swipe = useKartenSwipe(kannIch, kannIchNicht);
+
     if (ausgewaehltesThema) {
         const abgehaktAnzahl = alleKarten.filter((karte) => karte.checked).length;
         // Deckt nur den client-seitig sichtbaren Fall ab (>= 20 abgehakt).
@@ -78,22 +101,6 @@ function DailyLearningPage() {
         // Multiple-Choice-Frage haben - schlaegt das fehl, zeigen wir die
         // Serverfehlermeldung (siehe quizStarten) statt hier zu raten.
         const quizVerfuegbar = abgehaktAnzahl >= KARTEN_PRO_QUIZ;
-
-        function kannIch() {
-            const karte = stapelKarten[0];
-            karteAbhaken(karte.id)
-                .then(() => {
-                    setAlleKarten(alleKarten.map((k) => (k.id === karte.id ? { ...k, checked: true } : k)));
-                    setStapelKarten(stapelKarten.filter((k) => k.id !== karte.id));
-                })
-                .catch((error) => setLadeFehler(error.message));
-        }
-
-        function kannIchNicht() {
-            const karte = stapelKarten[0];
-            const restKarten = stapelKarten.filter((k) => k.id !== karte.id);
-            setStapelKarten(restKarten.concat([karte]));
-        }
 
         function quizStarten() {
             starteQuiz(ausgewaehltesThema.id)
@@ -210,7 +217,12 @@ function DailyLearningPage() {
                                 style={{ transform: `translate(${(i + 1) * 8}px, ${(i + 1) * 8}px)`, zIndex: -(i + 1) }}
                             ></div>
                         ))}
-                        <div className="tageskarte">
+                        <div className="tageskarte" {...swipe.handlers} style={swipe.style}>
+                            {swipe.label && (
+                                <span className="swipe-label" style={{ color: swipe.label.farbe, borderColor: swipe.label.farbe, opacity: swipe.label.deckkraft }}>
+                                    {swipe.label.text}
+                                </span>
+                            )}
                             <span className="tageskarte-thema">noch {stapelKarten.length} im Stapel</span>
                             <h2 style={{ textTransform: "none", letterSpacing: "normal" }}>{aktuelleKarte.question}</h2>
                             <p className="tageskarte-antwort">{aktuelleKarte.answer}</p>
