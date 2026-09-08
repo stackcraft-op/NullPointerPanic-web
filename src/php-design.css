@@ -437,6 +437,48 @@ th {
   border-radius: 2px;
 }
 
+/* Dezentere Markierung fuer die UEBRIGEN Treffer desselben Themas (nicht
+   der gerade angesprungene) - heller Hintergrundton statt Outline, damit
+   klar bleibt, welcher der AKTUELLE Treffer ist (.wiki-treffer), aber auch
+   sichtbar ist, wo es noch weitere gibt. */
+.wiki-treffer-weitere {
+  background: var(--php-line);
+  border-radius: 2px;
+}
+
+/* Sprungmarke, fest rechts am Bildschirmrand statt im Textfluss - bleibt
+   dadurch sichtbar, egal wohin man gerade gescrollt ist (springt quasi
+   gleichzeitig mit dem Sprung zum Treffer selbst ins Bild, statt oben aus
+   dem sichtbaren Bereich zu verschwinden). Vertikal mittig, sobald ein
+   Thema mehr als einen Treffer hat. */
+.wiki-treffer-navigation {
+  position: fixed;
+  top: 50%;
+  right: 16px;
+  transform: translateY(-50%);
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+  padding: 14px;
+  background: var(--php-bg);
+  border: 1px solid var(--php-line);
+  border-radius: 4px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+}
+
+.wiki-treffer-navigation button {
+  white-space: nowrap;
+}
+
+.wiki-treffer-zaehler {
+  text-align: center;
+  font-size: 13px;
+  color: var(--php-muted);
+  margin-bottom: 4px;
+}
+
 /* ===== Quiz ===== */
 .quiz-karte {
   max-width: 560px;
@@ -1177,6 +1219,34 @@ th {
 
   .cert-rahmen {
     padding: 32px 20px 28px;
+  }
+
+  /* Auf Handy-Breite ist rechts kein Platz fuer eine seitliche Karte, ohne
+     den Karten-Text zu ueberdecken (Buch-Seite ist da schon fast bildschirm-
+     breit) - stattdessen eine schmale Leiste ganz unten, komplett quer,
+     Buttons nebeneinander statt untereinander. Ueberdeckt so nur den
+     untersten Rand, nicht die (vertikal mittig gescrollte) Treffer-Karte
+     selbst. */
+  .wiki-treffer-navigation {
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    transform: none;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 8px 12px;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+    border-radius: 0;
+  }
+
+  .wiki-treffer-zaehler {
+    margin-bottom: 0;
   }
 
   .buch-seite {
