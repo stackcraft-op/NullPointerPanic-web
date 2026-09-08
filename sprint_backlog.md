@@ -682,3 +682,41 @@ nachdokumentiert (`API_CONTRACT.md`, Backend-PR #38).
 - [x] Offene Frage "kein Avatar ausgerüstet" bleibt vorerst beim festen
       Platzhalter (`/avatare/einsteiger.webp`) - keine neue Information vom
       Kollegen dazu, nicht blockierend fürs Mergen.
+
+## 08.09 - Kartenstapel per Touch-Swipe bedienbar (Dashboard + Daily Learning)
+
+Auf Handy/Touch-Geräten kann die oberste Karte im Stapel jetzt zusätzlich zu
+den Buttons per Wisch bedient werden: links = "Kann ich", rechts = "Kann ich
+noch nicht" (gleiche Reihenfolge wie die Buttons daneben). Branch
+`feature/kartenstapel-swipe`.
+
+- Neuer Hook `useKartenSwipe(kannIch, kannIchNicht)` (`src/useKartenSwipe.js`)
+  - reine `touch*`-Events, keine Maus-Events - eine Maus löst kein
+    `touchstart`/`touchmove`/`touchend` aus, das Wischen ist dadurch
+    automatisch NUR auf echten Touch-Geräten aktiv, Desktop-Nutzer bemerken
+    nichts und bleiben bei den Buttons.
+  - Live-Verschiebung + leichte Rotation während des Ziehens (`translateX`+
+    `rotate`, Feder-Snap-back per CSS-Transition, wenn losgelassen wird ohne
+    die Schwelle zu erreichen).
+  - In `DashboardPage.jsx` und `DailyLearningPage.jsx` auf die `.tageskarte`
+    gelegt (Spread der `handlers` + `style`), beide nutzen exakt denselben
+    Hook statt zweimal dieselbe Logik zu bauen.
+- **Bug beim ersten Versuch gefunden+gefixt:** `versatz` lag zuerst in
+  `useState` - bei einem schnellen Wisch feuern `touchmove`/`touchend` oft im
+  selben Tick, bevor React neu rendert, `onTouchEnd` sah dadurch noch den
+  VERALTETEN Stand (meist `0`) und die Schwellen-Prüfung griff nie. Fix: der
+  Wert liegt jetzt in einem `useRef` (sofort aktuell, unabhängig vom
+  Render-Zyklus), ein separates `useState` erzwingt nur noch das Neuzeichnen
+  fürs visuelle Verschieben.
+- Verifiziert per Playwright mit **echten synthetischen Touch-Events**
+  (`Touch`/`TouchEvent`, `hasTouch: true`-Context) gegen einen
+  Wegwerf-Testaccount, nicht nur Klick-Buttons: Links-Wisch auf Dashboard UND
+  Daily Learning wechselt zur nächsten Karte, Rechts-Wisch behält die Karte
+  im Stapel. Erste Prüfung fälschlich "kein Effekt" gemeldet - lag an einem
+  zu ungenauen Vergleich (nur Themen-Label statt volle Kartenantwort
+  verglichen, zwei Karten hintereinander hatten zufällig dasselbe Thema).
+
+- [x] `useKartenSwipe`-Hook gebaut, in Dashboard + Daily Learning eingebaut
+- [x] Ref-Bug (verzögerter State bei schnellem Wisch) gefunden und gefixt
+- [x] Mit echten simulierten Touch-Events end-to-end verifiziert (beide
+      Seiten, beide Richtungen), Build+Lint sauber
