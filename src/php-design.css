@@ -290,6 +290,72 @@ th {
   background: var(--php-line);
 }
 
+/* Klickbarer Username (oeffnet SpielerProfilPopup) - als <button> statt <a>,
+   weil kein eigener Routen-Wechsel stattfindet, nur ein Popup. Optisch
+   unauffaellig (kein Button-Look), Unterstrich nur bei Hover als Hinweis
+   "hier klicken". */
+.leaderboard-name {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: var(--php-text);
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  transition: text-decoration-color 0.15s ease;
+}
+
+.leaderboard-name:hover {
+  text-decoration-color: currentColor;
+}
+
+/* ===== Ranking-Profil-Popup (SpielerProfilPopup.jsx) ===== */
+.spieler-popup-hintergrund {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 100;
+}
+
+.spieler-popup {
+  position: relative;
+  width: 100%;
+  max-width: 360px;
+  padding: 32px;
+  text-align: center;
+}
+
+.spieler-popup .profil-avatar-shop {
+  margin: 0 auto 16px;
+}
+
+.spieler-popup .gesamtfortschritt-kopf {
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+.spieler-popup-schliessen {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: none;
+  border: none;
+  font-size: 16px;
+  line-height: 1;
+  padding: 4px;
+  cursor: pointer;
+  color: var(--php-muted);
+}
+
+.spieler-popup-schliessen:hover {
+  color: var(--php-text);
+}
+
 /* ===== Wiki-Buchseite (Reader-Look) ===== */
 .buch-seite {
   max-width: 620px;
@@ -1097,6 +1163,10 @@ th {
 
   .shop-karte {
     padding: 20px 16px;
+  }
+
+  .spieler-popup {
+    padding: 24px 20px;
   }
 
   th,

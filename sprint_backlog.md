@@ -625,3 +625,39 @@ keine einzige Media Query - nur Vite-Template-Reste in `App.css`/`index.css`
       statt eng nebeneinander.
 - [x] Mit Playwright (iPhone-13-Viewport, echtes Touch statt Maus-Klick)
       alle Hauptseiten visuell gegengeprüft, keine überlaufenden Elemente.
+
+## 08.09 - Ranking-Profil-Popup (mit Mock-Daten, Klick auf Username)
+
+Neue Fiche: Klick auf einen Username im Ranking öffnet ein Popup mit Avatar,
+Rahmen, Statustext und Gesamtfortschritt des jeweiligen Spielers. Backend-
+Contract dafür ist spezifiziert (`GET /api/users/:id/profile`,
+`NullPointerPanic-api` PR #36), aber noch nicht gebaut - deshalb erstmal mit
+Mock-Daten umgesetzt, Branch `feature/ranking-profil-popup`.
+
+- `spielerProfilMock` in `mockData.js` (2 Beispielspieler, Feldnamen 1:1 aus
+  dem Contract), `holeSpielerProfil(username)` in `api.js` (async, liefert
+  aktuell den Mock - nach `username` statt `id`, weil die echten
+  Ranking-Endpunkte noch kein `id`-Feld liefern; Umstieg auf den echten
+  Endpoint ändert nur diese eine Funktion, keine Aufrufstellen).
+- Neue Komponente `SpielerProfilPopup.jsx` - reine Anzeige-Komponente (kein
+  eigener Ladezustand), bekommt fertige Daten von `RankingPage.jsx` rein.
+  Wiederverwendet bestehende CSS-Klassen (`.profil-avatar-shop`,
+  `.avatar-rahmen-overlay`, `.fortschritt-balken`) statt neuer Optik.
+- `prozentSicher`/`farbeFuerProzent` aus `ProfilPage.jsx` nach `utils.js`
+  ausgelagert (wurden jetzt an zwei Stellen gebraucht, statt zu duplizieren).
+- `Leaderboard.jsx`: Username jetzt klickbar (`onSpielerKlick`-Prop,
+  optional), `RankingPage.jsx` verwaltet den Popup-Zustand.
+- Mit Playwright visuell verifiziert (Desktop + iPhone-Viewport), Build+Lint
+  sauber.
+
+- [x] `GET /api/users/:id/profile`-Contract spezifiziert und mit Kollegen
+      geteilt (Backend-Repo PR #36)
+- [x] Frontend mit Mock-Daten umgesetzt (Popup, Klick-Handler, Styles)
+- [ ] Backend-Endpoint abwarten, dann `holeSpielerProfil()` auf echten
+      `fetch()` umstellen (inkl. `id` statt `username`, `bildUrl()` +
+      `GeschuetztesBild` für Avatar/Rahmen wie in `ProfilPage.jsx`)
+- [ ] Offene Frage an Kollegen: was zeigt das Popup, wenn der fremde Spieler
+      keinen Avatar ausgerüstet hat? Eigenes Profil fällt dann auf den
+      Stufen-Avatar zurück (braucht XP), das ist im öffentlichen Profil aber
+      bewusst nicht enthalten. Aktuell fester Platzhalter
+      (`/avatare/einsteiger.webp`) in `SpielerProfilPopup.jsx`.

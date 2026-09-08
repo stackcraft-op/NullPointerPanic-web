@@ -113,3 +113,32 @@ export const shopItemsMock = [
   { id: 7, type: "frame", name: "Feuer-Rahmen", price: 300, image_url: "/avatare/avatar-1.avif", farbe: "#c0392b", owned: false },
   { id: 8, type: "frame", name: "Kronen-Rahmen", price: 500, image_url: "/avatare/avatar-1.avif", farbe: "#7c3aed", abzeichen: "👑", owned: false },
 ];
+
+// ---------------------------------------------------------------------------
+// Öffentliches Spieler-Profil (Ranking-Klick-Popup)
+// ---------------------------------------------------------------------------
+// Feldnamen 1:1 aus API_CONTRACT.md (GET /api/users/:id/profile) übernommen -
+// der Endpoint ist bisher nur spezifiziert (PR #36 im Backend-Repo), noch
+// nicht gebaut. Nachschlagen hier bewusst nach "username" statt "id", weil
+// die echten Ranking-Endpunkte (GET /api/rankings/...) aktuell noch KEIN
+// id-Feld liefern (Contract-Ergänzung dazu ist Teil derselben PR) - sobald
+// beides da ist, stellt holeSpielerProfil() in api.js auf id + echten fetch()
+// um, an dieser Datei/den Aufrufstellen ändert sich dann nichts.
+export const spielerProfilMock = {
+  maxmuster: {
+    id: 1,
+    username: "maxmuster",
+    status_text: "Grinder seit Tag 1",
+    avatar: { id: 1, image_url: "/avatare/avatar-1.avif" },
+    frame: { id: 99, image_url: "/rahmen-vorschlag/dino-rahmen.png" },
+    overall_progress_percent: 68,
+  },
+  anna: {
+    id: 2,
+    username: "anna",
+    status_text: "Bald AP2 🎯",
+    avatar: { id: 3, image_url: "/avatare/avatar-3.webp" },
+    frame: null,
+    overall_progress_percent: 42,
+  },
+};
