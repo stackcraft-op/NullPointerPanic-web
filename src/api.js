@@ -1,5 +1,3 @@
-import { spielerProfilMock } from "./mockData";
-
 const API_URL = import.meta.env.VITE_API_URL;
 
 // image_url kommt vom Server laut API_CONTRACT.md ueberall als relativer
@@ -177,25 +175,21 @@ export async function holeRankingWoche() {
     return parseAntwort(response);
 }
 
-// TODO: Backend-Endpoint GET /api/users/:id/profile ist noch nicht gebaut
-// (spezifiziert in API_CONTRACT.md, PR #36) - bis dahin liefert diese
-// Funktion Mock-Daten (spielerProfilMock in mockData.js). Nimmt bewusst
-// "username" statt "id" entgegen, weil die echten Ranking-Endpunkte aktuell
-// noch kein id-Feld liefern (siehe Contract). Async, obwohl (noch) kein
-// echtes fetch() drinsteckt - Aufrufstellen (RankingPage.jsx) behandeln das
-// schon jetzt wie jeden anderen API-Call (.then()/.catch()), damit sich beim
-// Umstieg auf den echten Endpoint nichts an den Aufrufstellen ändern muss.
-// Umstieg dann: fetch(`${API_URL}/api/users/${id}/profile`) + parseAntwort(),
-// gleiches Muster wie holeProfil() oben.
-export async function holeSpielerProfil(username) {
-    return spielerProfilMock[username] ?? {
-        id: null,
-        username,
-        status_text: null,
-        avatar: null,
-        frame: null,
-        overall_progress_percent: 0,
-    };
+// Oeffentliches Profil eines ANDEREN Spielers (Ranking-Profil-Popup). Nimmt
+// die user.id (jetzt Teil jedes Ranking-Eintrags, siehe holeRanking*
+// oben/unten) statt username - vor dem Umstieg lief das noch nach username
+// gegen Mock-Daten, siehe Backlog 08.09.
+export async function holeSpielerProfil(id) {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`${API_URL}/api/users/${id}/profile`, {
+        method: "GET",
+        headers: {
+            "Authorization": `Bearer ${token}`,
+            "ngrok-skip-browser-warning": "true"
+        },
+    })
+
+    return parseAntwort(response);
 }
 
 export async function holeThemenFortschritt() {

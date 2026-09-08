@@ -30,7 +30,7 @@ function RankingPage(){
     const [spielerFehler, setSpielerFehler] = useState("");
 
     function spielerAnklicken(person) {
-        holeSpielerProfil(person.username)
+        holeSpielerProfil(person.id)
             .then((daten) => {
                 setAusgewaehlterSpieler(daten);
                 setSpielerFehler("");

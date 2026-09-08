@@ -1,4 +1,6 @@
 import { prozentSicher, farbeFuerProzent } from "../utils";
+import { bildUrl } from "../api";
+import GeschuetztesBild from "./GeschuetztesBild";
 
 // Modal fuers Ranking: zeigt Avatar+Rahmen+Statustext+Gesamtfortschritt
 // eines ANDEREN Spielers, geoeffnet per Klick auf den Username in
@@ -7,18 +9,17 @@ import { prozentSicher, farbeFuerProzent } from "../utils";
 // rein, diese Komponente ist nur fuers Anzeigen zustaendig (gleiche
 // Aufteilung wie z.B. bei Leaderboard.jsx).
 //
-// avatar/frame kommen (noch) als lokale Mock-Pfade (public/avatare/,
-// public/rahmen-vorschlag/) und werden deshalb direkt per <img> gerendert.
-// Sobald holeSpielerProfil() auf den echten Endpoint umgestellt ist, liefert
-// der Server echte, vom Backend gehostete Bilder - dann muessen avatarBild/
-// spieler.frame.image_url wie in ProfilPage.jsx durch bildUrl() +
-// GeschuetztesBild ersetzt werden (ngrok-Workaround, siehe dort).
+// avatar/frame kommen vom Server (GET /api/users/:id/profile) als relativer
+// Pfad, gleiches Muster wie beim eigenen Profil - GeschuetztesBild statt
+// <img> noetig, weil ngrok ohne Custom-Header eine HTML-Warnseite statt des
+// Bilds liefert (siehe ProfilPage.jsx/GeschuetztesBild.jsx fuer Details).
 function SpielerProfilPopup({ spieler, onSchliessen }) {
     // Fallback fuer "kein Avatar ausgeruestet" - anders als im eigenen Profil
     // (ProfilPage.jsx) kennen wir hier keine Stufe/XP des fremden Spielers
-    // (bewusst nicht im Contract, siehe API_CONTRACT.md), darum ein neutraler
-    // Platzhalter statt eines stufenabhaengigen Bilds.
-    const avatarBild = spieler.avatar?.image_url ?? "/avatare/einsteiger.webp";
+    // (bewusst nicht im Contract, siehe API_CONTRACT.md), darum ein neutraler,
+    // lokaler Platzhalter statt eines stufenabhaengigen Bilds - kein
+    // GeschuetztesBild noetig, liegt in public/, kein ngrok involviert.
+    const avatarBild = spieler.avatar && bildUrl(spieler.avatar.image_url);
 
     return (
         <div className="spieler-popup-hintergrund" onClick={onSchliessen}>
@@ -36,10 +37,14 @@ function SpielerProfilPopup({ spieler, onSchliessen }) {
 
                 <div className="profil-avatar-shop">
                     <div className="profil-avatar-shop-kreis">
-                        <img src={avatarBild} alt={spieler.username} />
+                        {avatarBild ? (
+                            <GeschuetztesBild src={avatarBild} alt={spieler.username} />
+                        ) : (
+                            <img src="/avatare/einsteiger.webp" alt={spieler.username} />
+                        )}
                     </div>
                     {spieler.frame && (
-                        <img src={spieler.frame.image_url} alt="" className="avatar-rahmen-overlay" />
+                        <GeschuetztesBild src={bildUrl(spieler.frame.image_url)} alt="" className="avatar-rahmen-overlay" />
                     )}
                 </div>
 
