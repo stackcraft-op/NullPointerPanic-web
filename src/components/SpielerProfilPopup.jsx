@@ -16,9 +16,11 @@ import GeschuetztesBild from "./GeschuetztesBild";
 function SpielerProfilPopup({ spieler, onSchliessen }) {
     // Fallback fuer "kein Avatar ausgeruestet" - anders als im eigenen Profil
     // (ProfilPage.jsx) kennen wir hier keine Stufe/XP des fremden Spielers
-    // (bewusst nicht im Contract, siehe API_CONTRACT.md), darum ein neutraler,
-    // lokaler Platzhalter statt eines stufenabhaengigen Bilds - kein
-    // GeschuetztesBild noetig, liegt in public/, kein ngrok involviert.
+    // (bewusst nicht im Contract, siehe API_CONTRACT.md), darum der
+    // Einsteiger-Avatar als fester Standard (08.09 mit Kollegen abgesprochen:
+    // wird spaeter der serverseitige Standardavatar fuer neue Accounts, bis
+    // dahin nur lokaler Platzhalter hier) - kein GeschuetztesBild noetig,
+    // liegt in public/, kein ngrok involviert.
     const avatarBild = spieler.avatar && bildUrl(spieler.avatar.image_url);
 
     return (
