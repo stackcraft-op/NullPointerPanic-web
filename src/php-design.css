@@ -299,6 +299,11 @@ th {
   border: none;
   padding: 0;
   font: inherit;
+  /* font: inherit setzt KEIN text-transform/letter-spacing zurueck (kein
+     Teil des font-Shorthands) - der globale button-Style (weiter oben)
+     wuerde sonst UPPERCASE+Buchstabenabstand erzwingen. */
+  text-transform: none;
+  letter-spacing: normal;
   color: var(--php-text);
   cursor: pointer;
   text-decoration: underline;
@@ -306,7 +311,13 @@ th {
   transition: text-decoration-color 0.15s ease;
 }
 
+/* Eigener Hover noetig, sonst gewinnt der globale button:hover-Style
+   (background: var(--php-text); color: #fff) - der Selektor dort ist zwar
+   weniger spezifisch, setzt aber background/color, die .leaderboard-name
+   im Grundzustand nie explizit fuer :hover zurueckgesetzt hat. */
 .leaderboard-name:hover {
+  background: none;
+  color: var(--php-text);
   text-decoration-color: currentColor;
 }
 
