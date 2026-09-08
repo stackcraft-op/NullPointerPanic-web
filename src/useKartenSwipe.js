@@ -92,6 +92,14 @@ export function useKartenSwipe(kannIch, kannIchNicht) {
     return {
         handlers: { onTouchStart, onTouchMove, onTouchEnd },
         style: {
+            // Ohne das hier versucht der Browser beim Ziehen zusaetzlich zu
+            // unserer eigenen Logik noch seine eigene Touch-Geste (Scrollen/
+            // Zurueck-Navigation) auf der Karte auszufuehren - fuehlte sich
+            // beim Wisch nach RECHTS besonders stark an (ganze Seite
+            // "rutschte" mit), war aber grundsaetzlich in beide Richtungen
+            // moeglich. touch-action: none uebergibt dem Browser die
+            // Kontrolle komplett an uns.
+            touchAction: "none",
             transform: `translateX(${versatzRef.current}px) rotate(${rotation}deg)`,
             transition: phaseRef.current === "fliegt" ? `transform ${AUSFLUG_DAUER}ms ease-in` : phaseRef.current === "ruhe" ? "transform 0.25s ease" : "none",
         },
