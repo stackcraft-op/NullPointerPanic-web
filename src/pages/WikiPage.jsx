@@ -113,12 +113,17 @@ function WikiPage (){
             {/* Sprungmarke: zeigt an, dass es in diesem Thema mehrere
                 Treffer gibt, und erlaubt, nacheinander dorthin zu springen -
                 vorher blieb man beim ersten Treffer haengen, weitere Treffer
-                im selben Thema waren unauffindbar. */}
+                im selben Thema waren unauffindbar. Fest rechts am
+                Bildschirmrand (position: fixed, siehe CSS) statt im
+                normalen Textfluss - sonst waere sie nach dem Sprung zum
+                Treffer (scrollIntoView) meist gar nicht mehr sichtbar, weil
+                oben aus dem Bild gescrollt. */}
             {zielKarteIds.length > 1 && (
                 <div className="wiki-treffer-navigation">
-                    <span>Treffer {zielIndex + 1} von {zielKarteIds.length}</span>
-                    <button onClick={()=> vorherigerTreffer()} disabled={zielIndex === 0}>◀ vorheriger</button>
-                    <button onClick={()=> naechsterTreffer()} disabled={zielIndex === zielKarteIds.length - 1}>nächster ▶</button>
+                    <span className="wiki-treffer-zaehler">{zielIndex + 1} / {zielKarteIds.length}</span>
+                    <button onClick={()=> setZielIndex(0)} disabled={zielIndex === 0}>Zum Anfang</button>
+                    <button onClick={()=> vorherigerTreffer()} disabled={zielIndex === 0}>◀ Zurück</button>
+                    <button onClick={()=> naechsterTreffer()} disabled={zielIndex === zielKarteIds.length - 1}>Weiter ▶</button>
                 </div>
             )}
             {themaKarten.length === 0 && <p>Noch kein Inhalt geladen.</p>}
