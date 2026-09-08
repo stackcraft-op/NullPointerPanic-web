@@ -1,4 +1,3 @@
-
 const API_URL = import.meta.env.VITE_API_URL;
 
 // image_url kommt vom Server laut API_CONTRACT.md ueberall als relativer
@@ -166,6 +165,23 @@ export async function holeRankingNachBundesland(bundesland) {
 export async function holeRankingWoche() {
     const token = localStorage.getItem("token");
     const response = await fetch(`${API_URL}/api/rankings/weekly`,{
+        method: "GET",
+        headers: {
+            "Authorization": `Bearer ${token}`,
+            "ngrok-skip-browser-warning": "true"
+        },
+    })
+
+    return parseAntwort(response);
+}
+
+// Oeffentliches Profil eines ANDEREN Spielers (Ranking-Profil-Popup). Nimmt
+// die user.id (jetzt Teil jedes Ranking-Eintrags, siehe holeRanking*
+// oben/unten) statt username - vor dem Umstieg lief das noch nach username
+// gegen Mock-Daten, siehe Backlog 08.09.
+export async function holeSpielerProfil(id) {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`${API_URL}/api/users/${id}/profile`, {
         method: "GET",
         headers: {
             "Authorization": `Bearer ${token}`,

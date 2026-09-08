@@ -625,3 +625,60 @@ keine einzige Media Query - nur Vite-Template-Reste in `App.css`/`index.css`
       statt eng nebeneinander.
 - [x] Mit Playwright (iPhone-13-Viewport, echtes Touch statt Maus-Klick)
       alle Hauptseiten visuell gegengeprüft, keine überlaufenden Elemente.
+
+## 08.09 - Ranking-Profil-Popup (mit Mock-Daten, Klick auf Username)
+
+Neue Fiche: Klick auf einen Username im Ranking öffnet ein Popup mit Avatar,
+Rahmen, Statustext und Gesamtfortschritt des jeweiligen Spielers. Backend-
+Contract dafür ist spezifiziert (`GET /api/users/:id/profile`,
+`NullPointerPanic-api` PR #36), aber noch nicht gebaut - deshalb erstmal mit
+Mock-Daten umgesetzt, Branch `feature/ranking-profil-popup`.
+
+- `spielerProfilMock` in `mockData.js` (2 Beispielspieler, Feldnamen 1:1 aus
+  dem Contract), `holeSpielerProfil(username)` in `api.js` (async, liefert
+  aktuell den Mock - nach `username` statt `id`, weil die echten
+  Ranking-Endpunkte noch kein `id`-Feld liefern; Umstieg auf den echten
+  Endpoint ändert nur diese eine Funktion, keine Aufrufstellen).
+- Neue Komponente `SpielerProfilPopup.jsx` - reine Anzeige-Komponente (kein
+  eigener Ladezustand), bekommt fertige Daten von `RankingPage.jsx` rein.
+  Wiederverwendet bestehende CSS-Klassen (`.profil-avatar-shop`,
+  `.avatar-rahmen-overlay`, `.fortschritt-balken`) statt neuer Optik.
+- `prozentSicher`/`farbeFuerProzent` aus `ProfilPage.jsx` nach `utils.js`
+  ausgelagert (wurden jetzt an zwei Stellen gebraucht, statt zu duplizieren).
+- `Leaderboard.jsx`: Username jetzt klickbar (`onSpielerKlick`-Prop,
+  optional), `RankingPage.jsx` verwaltet den Popup-Zustand.
+- Mit Playwright visuell verifiziert (Desktop + iPhone-Viewport), Build+Lint
+  sauber.
+
+- [x] `GET /api/users/:id/profile`-Contract spezifiziert und mit Kollegen
+      geteilt (Backend-Repo PR #36)
+- [x] Frontend mit Mock-Daten umgesetzt (Popup, Klick-Handler, Styles)
+- [x] Hover-Fix: globaler `button:hover`-Style (schwarze Box) hat den
+      klickbaren Username überdeckt, `.leaderboard-name:hover` jetzt mit
+      eigenem Override (nur Unterstrich, siehe `php-design.css`).
+
+### Nachtrag 08.09, später - Backend fertig, auf echte API umgestellt
+
+Kollege hat Backend-Endpoint gebaut und gepusht (Repo `NullPointerPanic-api`
+PR #37, Branch `feature/ranking-profile-popup`) - `git fetch` bestätigt
+(nicht nur geglaubt, siehe Lehre vom 07.09). Zusätzlich zum abgesprochenen
+Contract liefert er `avatar_url`/`frame_url` jetzt auch direkt in allen drei
+Ranking-Endpunkten mit (fürs spätere Thumbnail-Feature) - Contract dafür
+nachdokumentiert (`API_CONTRACT.md`, Backend-PR #38).
+
+- [x] Gegen echten Wegwerf-Testaccount gegen die ngrok-URL verifiziert:
+      Registrierung, `GET /api/users/:id/profile` (mit UND ohne
+      Avatar/Rahmen, plus 404-Fall) - liefert exakt die vereinbarte Form.
+- [x] `holeSpielerProfil()` in `api.js` auf echten `fetch()` umgestellt
+      (Parameter jetzt `id` statt `username`, ranking liefert `id` jetzt
+      mit). `spielerProfilMock` in `mockData.js` entfernt (nicht mehr
+      gebraucht).
+- [x] `SpielerProfilPopup.jsx`: Avatar/Rahmen jetzt über `bildUrl()` +
+      `GeschuetztesBild` (ngrok-Workaround, gleiches Muster wie
+      `ProfilPage.jsx`) statt direktem `<img>`.
+- [x] End-to-End mit Playwright verifiziert (echter Login-Flow im Browser,
+      Klick auf einen echten Ranking-Eintrag mit Avatar+Rahmen) - beide
+      Bilder laden korrekt, kein kaputtes Icon.
+- [x] Offene Frage "kein Avatar ausgerüstet" bleibt vorerst beim festen
+      Platzhalter (`/avatare/einsteiger.webp`) - keine neue Information vom
+      Kollegen dazu, nicht blockierend fürs Mergen.

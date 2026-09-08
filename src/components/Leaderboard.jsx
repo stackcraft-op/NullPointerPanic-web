@@ -1,4 +1,7 @@
-function Leaderboard({spieler}) {
+// onSpielerKlick ist optional - Leaderboard wird an mehreren Stellen genutzt
+// (aktuell nur RankingPage.jsx), nicht ueberall soll ein Klick auf den Namen
+// zwingend ein Popup oeffnen.
+function Leaderboard({spieler, onSpielerKlick}) {
 
     return (
         <table className="leaderboard">
@@ -14,7 +17,19 @@ function Leaderboard({spieler}) {
                 {spieler.map((person)=>(
                     <tr key={person.username}>
                         <td>#{person.rank}</td>
-                        <td>{person.username}</td>
+                        <td>
+                            {onSpielerKlick ? (
+                                <button
+                                    type="button"
+                                    className="leaderboard-name"
+                                    onClick={() => onSpielerKlick(person)}
+                                >
+                                    {person.username}
+                                </button>
+                            ) : (
+                                person.username
+                            )}
+                        </td>
                         <td>{person.score}</td>
                     </tr>
                 ))}

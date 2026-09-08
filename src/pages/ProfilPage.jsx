@@ -4,28 +4,7 @@ import { Link } from "react-router-dom";
 import { useContext, useState, useEffect } from "react";
 import UserContext from "../UserContext";
 import { holeThemenFortschritt, holeProfil, bildUrl } from "../api";
-
-// Rails liefert Prozentwerte manchmal als String statt Zahl (z.B. bei
-// Decimal-Spalten) - Number(...) erzwingt eine echte Zahl. || 0 faengt
-// zusaetzlich undefined/NaN ab. Danach auf [0, 100] geklemmt, damit ein
-// kaputter/ungewoehnlicher Wert weder die Balkenbreite noch die Farbe
-// durcheinanderbringt - beide nutzen jetzt denselben, sicheren Wert.
-function prozentSicher(wert) {
-    const zahl = Number(wert) || 0;
-    return Math.min(Math.max(zahl, 0), 100);
-}
-
-// Kein Rot/Ampel-Schema mehr (wirkte zu aggressiv) - stattdessen eine
-// sanfte Einfaerbung, die zwischen Lila (App-Akzentfarbe, wie schon beim
-// Dashboard-Themen-Tag) und Gruen interpoliert. 0% = reines Lila, 100% =
-// reines Gruen, dazwischen linear gemischt.
-function farbeFuerProzent(prozent) {
-    const anteil = prozentSicher(prozent) / 100;
-    const lila = [170, 59, 255];
-    const gruen = [34, 197, 94];
-    const [r, g, b] = lila.map((start, i) => Math.round(start + (gruen[i] - start) * anteil));
-    return `rgb(${r}, ${g}, ${b})`;
-}
+import { prozentSicher, farbeFuerProzent } from "../utils";
 
 function ProfilPage(){
 
