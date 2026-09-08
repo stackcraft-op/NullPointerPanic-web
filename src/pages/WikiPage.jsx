@@ -16,7 +16,15 @@ function WikiPage (){
 
     
     const[suchbegriff,setSuchbegriff] = useState("");
-    const [zielKarteId, setZielKarteId] = useState(null);
+    // Frueher gab's nur EINE zielKarteId (die erste Treffer-Karte in einem
+    // Thema, alle weiteren Treffer im selben Thema wurden ignoriert). Jetzt
+    // stattdessen ALLE Treffer-IDs des angeklickten Themas + ein Index, auf
+    // welchem Treffer man gerade "steht" - so lassen sich mehrere Treffer im
+    // selben Thema nacheinander anspringen statt beim ersten stehen zu
+    // bleiben.
+    const [zielKarteIds, setZielKarteIds] = useState([]);
+    const [zielIndex, setZielIndex] = useState(0);
+    const zielKarteId = zielKarteIds[zielIndex] ?? null;
     const gefilterteThemen = wikiThemenMock.filter((thema)=>{
         const titelPasst = thema.titel.toLowerCase().includes(suchbegriff.toLowerCase());
         const kartePasst = alleKarten.some((karte)=>
@@ -31,14 +39,27 @@ function WikiPage (){
         const index = wikiThemenMock.findIndex((t)=> t.id === thema.id)
         setSeitenIndex(index +1)
 
-        const treffer = alleKarten.find((karte)=>
+        // .filter() statt .find() - ALLE passenden Karten in diesem Thema,
+        // nicht nur die erste.
+        const treffer = alleKarten.filter((karte)=>
             karte.topic.name === thema.titel &&
             (karte.question.toLowerCase().includes(suchbegriff.toLowerCase()) ||
              karte.answer.toLowerCase().includes(suchbegriff.toLowerCase()))
         );
-        setZielKarteId(treffer ? treffer.id : null);
+        setZielKarteIds(treffer.map((karte)=> karte.id));
+        setZielIndex(0);
 
         setSuchbegriff("");
+    }
+
+    // Zwischen mehreren Treffern im selben Thema vor/zurueck springen -
+    // Math.max/min klemmt an den Raendern, statt ueber die Liste hinaus zu
+    // zaehlen (Buttons sind zusaetzlich per disabled abgesichert, siehe unten).
+    function vorherigerTreffer(){
+        setZielIndex((i)=> Math.max(0, i - 1));
+    }
+    function naechsterTreffer(){
+        setZielIndex((i)=> Math.min(zielKarteIds.length - 1, i + 1));
     }
 
     useEffect(()=>{
@@ -89,13 +110,28 @@ function WikiPage (){
     seitenInhalt = (
         <>
             <h2>{aktuellesThema.titel}</h2>
+            {/* Sprungmarke: zeigt an, dass es in diesem Thema mehrere
+                Treffer gibt, und erlaubt, nacheinander dorthin zu springen -
+                vorher blieb man beim ersten Treffer haengen, weitere Treffer
+                im selben Thema waren unauffindbar. */}
+            {zielKarteIds.length > 1 && (
+                <div className="wiki-treffer-navigation">
+                    <span>Treffer {zielIndex + 1} von {zielKarteIds.length}</span>
+                    <button onClick={()=> vorherigerTreffer()} disabled={zielIndex === 0}>◀ vorheriger</button>
+                    <button onClick={()=> naechsterTreffer()} disabled={zielIndex === zielKarteIds.length - 1}>nächster ▶</button>
+                </div>
+            )}
             {themaKarten.length === 0 && <p>Noch kein Inhalt geladen.</p>}
             <ul>
                 {themaKarten.map((karte)=>(
                     <li
                         key={karte.id}
                         id={`karte-${karte.id}`}
-                        className={karte.id === zielKarteId ? "wiki-treffer" : undefined}
+                        className={
+                            karte.id === zielKarteId ? "wiki-treffer" :
+                            zielKarteIds.includes(karte.id) ? "wiki-treffer-weitere" :
+                            undefined
+                        }
                     >
                         <strong>{karte.question}</strong>
                         <p>{karte.answer}</p>

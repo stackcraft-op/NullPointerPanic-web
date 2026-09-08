@@ -437,6 +437,27 @@ th {
   border-radius: 2px;
 }
 
+/* Dezentere Markierung fuer die UEBRIGEN Treffer desselben Themas (nicht
+   der gerade angesprungene) - heller Hintergrundton statt Outline, damit
+   klar bleibt, welcher der AKTUELLE Treffer ist (.wiki-treffer), aber auch
+   sichtbar ist, wo es noch weitere gibt. */
+.wiki-treffer-weitere {
+  background: var(--php-line);
+  border-radius: 2px;
+}
+
+/* Sprungmarke ueber der Buch-Seite: zeigt "Treffer X von Y" + Vor/Zurueck,
+   sobald ein Thema mehr als einen Treffer hat. */
+.wiki-treffer-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin: 12px 0;
+  font-size: 13px;
+  color: var(--php-muted);
+}
+
 /* ===== Quiz ===== */
 .quiz-karte {
   max-width: 560px;
