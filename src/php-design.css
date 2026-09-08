@@ -951,6 +951,21 @@ th {
   gap: 8px;
 }
 
+/* "Status ändern"-Spalte (rechts) 20px weiter vom "Aktuell"-Block (links)
+   abgesetzt - reiner visueller Nudge auf Wunsch, keine funktionale
+   Änderung. */
+.shop-status-spalte:last-child {
+  margin-left: 20px;
+}
+
+/* "Aktuell"-Spalte (links, Label+Text) mittig statt linksbündig - nur diese
+   eine Spalte, "Status ändern" (Input+Button) bleibt linksbündig, sonst
+   waeren Input/Button auch mittig ausgerichtet. */
+.shop-status-spalte:first-child {
+  align-items: center;
+  text-align: center;
+}
+
 /* Die globale input[type="text"]-Regel (fuer die zentrierten Login/
    Register-Formulare gedacht) setzt max-width: 320px + margin: 0 auto -
    das zentriert das Feld unabhaengig von width: 100%. Hier beides
