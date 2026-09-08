@@ -44,6 +44,11 @@ function DashboardPage({tagesKarten, setTagesKarten, quizFreigeschaltet, tagesKa
                         ></div>
                     ))}
                     <div className="tageskarte" {...swipe.handlers} style={swipe.style}>
+                        {swipe.label && (
+                            <span className="swipe-label" style={{ color: swipe.label.farbe, borderColor: swipe.label.farbe, opacity: swipe.label.deckkraft }}>
+                                {swipe.label.text}
+                            </span>
+                        )}
                         <span className="tageskarte-thema">{aktuelleKarte.topic.name}</span>
                         <p className="tageskarte-antwort">{aktuelleKarte.answer}</p>
                         <div className="tageskarte-buttons">

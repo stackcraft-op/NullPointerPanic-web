@@ -367,6 +367,30 @@ th {
   color: var(--php-text);
 }
 
+/* ===== Kartenstapel-Swipe-Feedback (useKartenSwipe.js) ===== */
+/* Label über der Karte, faerbt sich waehrend des Ziehens langsam ein (an
+   Quizlet angelehnt) - .tageskarte hat schon position:relative (App.css),
+   deshalb reicht hier absolute Positionierung ohne eigenen Wrapper.
+   pointer-events:none, damit das Label nicht versehentlich Touch-Events
+   abfaengt, die eigentlich der Karte darunter gehoeren. */
+.swipe-label {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 4px 14px;
+  border: 2px solid;
+  border-radius: 999px;
+  background: var(--php-bg);
+  font-family: "Cinzel", serif;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
 /* ===== Wiki-Buchseite (Reader-Look) ===== */
 .buch-seite {
   max-width: 620px;

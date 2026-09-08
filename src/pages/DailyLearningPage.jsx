@@ -218,6 +218,11 @@ function DailyLearningPage() {
                             ></div>
                         ))}
                         <div className="tageskarte" {...swipe.handlers} style={swipe.style}>
+                            {swipe.label && (
+                                <span className="swipe-label" style={{ color: swipe.label.farbe, borderColor: swipe.label.farbe, opacity: swipe.label.deckkraft }}>
+                                    {swipe.label.text}
+                                </span>
+                            )}
                             <span className="tageskarte-thema">noch {stapelKarten.length} im Stapel</span>
                             <h2 style={{ textTransform: "none", letterSpacing: "normal" }}>{aktuelleKarte.question}</h2>
                             <p className="tageskarte-antwort">{aktuelleKarte.answer}</p>
