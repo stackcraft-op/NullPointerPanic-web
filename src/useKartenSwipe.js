@@ -9,6 +9,7 @@ import { useRef, useState } from "react";
 // merken davon nichts und bleiben ganz normal bei den Buttons, das Wischen
 // ist automatisch nur auf Touch-Geraeten (Handy/Tablet) aktiv.
 const SCHWELLE = 80; // ab wieviel px seitlichem Versatz gilt der Wisch als Kann-ich/-noch-nicht
+const MAX_ROTATION = 12; // Grad - Obergrenze fuer die Kippung, egal wie weit gezogen wird
 
 export function useKartenSwipe(kannIch, kannIchNicht) {
     // versatz liegt in einem Ref, NICHT in State - bei einem schnellen Wisch
@@ -56,7 +57,7 @@ export function useKartenSwipe(kannIch, kannIchNicht) {
         // Karte - transition nur im Ruhezustand (versatz 0), sonst wuerde
         // sie dem Finger beim Ziehen leicht hinterherhinken.
         style: {
-            transform: `translateX(${versatzRef.current}px) rotate(${versatzRef.current / 20}deg)`,
+            transform: `translateX(${versatzRef.current}px) rotate(${Math.max(-MAX_ROTATION, Math.min(MAX_ROTATION, versatzRef.current / 20))}deg)`,
             transition: versatzRef.current === 0 ? "transform 0.25s ease" : "none",
         },
     };
