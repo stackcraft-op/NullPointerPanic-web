@@ -679,6 +679,9 @@ nachdokumentiert (`API_CONTRACT.md`, Backend-PR #38).
 - [x] End-to-End mit Playwright verifiziert (echter Login-Flow im Browser,
       Klick auf einen echten Ranking-Eintrag mit Avatar+Rahmen) - beide
       Bilder laden korrekt, kein kaputtes Icon.
-- [x] Offene Frage "kein Avatar ausgerüstet" bleibt vorerst beim festen
-      Platzhalter (`/avatare/einsteiger.webp`) - keine neue Information vom
-      Kollegen dazu, nicht blockierend fürs Mergen.
+- [x] Offene Frage "kein Avatar ausgerüstet" geklärt: `/avatare/einsteiger.webp`
+      ist ab jetzt offiziell der Standardavatar - User hat dem Kollegen die
+      Bilddatei geschickt. Geplant (noch nicht umgesetzt): jeder Account
+      bekommt diesen Avatar später serverseitig als echten Standard, der
+      Rest bleibt Shop-Freischaltung. Bis dahin bleibt's beim lokalen
+      Frontend-Fallback in `SpielerProfilPopup.jsx`.
