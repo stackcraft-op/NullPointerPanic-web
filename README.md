@@ -35,13 +35,17 @@ VITE_API_URL=http://localhost:3000
 ## Projektstruktur
 
 src/
-├─ pages/        eine Datei pro Route (Dashboard, Ranking, Profil, Quiz, ...)
-├─ components/   wiederverwendbare Bausteine (Navbar, Leaderboard, XPBar)
-├─ api.js        fetch()-Calls ans Ruby-Backend (Login, Register, Profil speichern)
-├─ UserContext.jsx  globaler State ohne Prop-Drilling (Name, Titel, Currency)
-└─ php-design.css   Design/Layout (Farben, Nav, Buttons, Tabelle, ...)
-
-
+├─ pages/             eine Datei pro Route (Dashboard, Ranking, Profil, Shop, Quiz, ...)
+├─ components/        wiederverwendbare Bausteine (Navbar, Leaderboard, XPBar,
+│                     GeschuetztesBild – ngrok-Workaround fürs Laden von Bildern
+│                     vom Backend, SpielerProfilPopup – Ranking-Profil-Popup)
+├─ api.js             fetch()-Calls ans Ruby-Backend (Login, Register, Profil,
+│                     Shop, Ranking, Daily Learning, ...)
+├─ mockData.js        Mock-Daten für Features, die (noch) mit Testdaten laufen
+├─ utils.js           kleine seitenübergreifende Helfer (Fortschrittsbalken-Farbe/-Breite)
+├─ useKartenSwipe.js  Hook fürs Touch-Wischen auf dem Kartenstapel (Dashboard + Daily Learning)
+├─ UserContext.jsx    globaler State ohne Prop-Drilling (Name, Titel, Currency)
+└─ php-design.css     Design/Layout (Farben, Nav, Buttons, Tabelle, responsive ab 640px)
 
 ## Seiten
 
@@ -49,14 +53,16 @@ src/
 |---|---|
 | `/` | Startseite |
 | `/login`, `/registrieren` | Login / Registrierung |
-| `/dashboard` | Tageskarte + Weekly Ranking |
-| `/ranking` | Komplettes Ranking (Weekly + Global) |
+| `/dashboard` | Tageskarte + Weekly Ranking (Karte per Klick oder Touch-Wisch beantworten) |
+| `/ranking` | Komplettes Ranking (Weekly + Global, nach Bundesland filterbar) – Klick auf einen Username öffnet ein Profil-Popup (Avatar, Rahmen, Statustext, Gesamtfortschritt) |
+| `/shop` | Avatare & Rahmen kaufen/ausrüsten, Statustext ändern |
 | `/profil`, `/profil/bearbeiten` | Profil ansehen / bearbeiten |
 | `/quiz` | Quiz |
-| `/karteikarten` | Karteikarten (Feature in Arbeit) |
-| `/learning` | Daily Learning |
+| `/karteikarten` | Karteikarten (aktuell toter Zweig – kein Weg mehr, Karten hineinzuspeichern, seit `/learning` das übernommen hat) |
+| `/learning` | Daily Learning – Thema wählen, Karten abarbeiten (Klick oder Wisch), Quiz ab 20 abgehakten Karten |
+| `/wiki` | Nachschlagewerk mit Volltextsuche, springt bei mehreren Treffern im selben Thema nacheinander zu jedem einzelnen |
 
 ## Backend
 
 Läuft getrennt im Repo `NullPointerPanic-api` (Ruby on Rails). Die
-API-Verträge (Request/Response-Formate) stehen dort in `API
+API-Verträge (Request/Response-Formate) stehen dort in `API_CONTRACT.md`.
