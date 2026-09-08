@@ -34,6 +34,7 @@ VITE_API_URL=http://localhost:3000
 
 ## Projektstruktur
 
+```
 src/
 ├─ pages/             eine Datei pro Route (Dashboard, Ranking, Profil, Shop, Quiz, ...)
 ├─ components/        wiederverwendbare Bausteine (Navbar, Leaderboard, XPBar,
@@ -46,6 +47,7 @@ src/
 ├─ useKartenSwipe.js  Hook fürs Touch-Wischen auf dem Kartenstapel (Dashboard + Daily Learning)
 ├─ UserContext.jsx    globaler State ohne Prop-Drilling (Name, Titel, Currency)
 └─ php-design.css     Design/Layout (Farben, Nav, Buttons, Tabelle, responsive ab 640px)
+```
 
 ## Seiten
 
