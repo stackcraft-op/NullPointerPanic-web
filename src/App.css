@@ -238,16 +238,21 @@
 
 /* "Kann ich" faerbt beim Hover komplett um (schwarz/weiss), "Kann ich noch
    nicht" nur dezent hellgrau - unterschiedliches Gewicht macht den positiven
-   Pfad (Karte kann weg) staerker als den negativen (Karte bleibt im Stapel). */
-.tageskarte-buttons button:first-child:hover {
-  background: var(--text-h);
-  color: var(--bg);
-  border-color: var(--text-h);
-}
+   Pfad (Karte kann weg) staerker als den negativen (Karte bleibt im Stapel).
+   In (hover: hover) gekapselt, sonst bleibt der Button auf dem Handy nach
+   dem Antippen im Hover-Zustand haengen (v.a. "Kann ich" wuerde dann
+   dauerhaft schwarz stehen bleiben statt nur kurz beim echten Hover). */
+@media (hover: hover) {
+  .tageskarte-buttons button:first-child:hover {
+    background: var(--text-h);
+    color: var(--bg);
+    border-color: var(--text-h);
+  }
 
-.tageskarte-buttons button:last-child:hover {
-  background: var(--code-bg);
-  color: var(--text-h);
+  .tageskarte-buttons button:last-child:hover {
+    background: var(--code-bg);
+    color: var(--text-h);
+  }
 }
 
 /* Handy: zwei Buttons a 230px + 24px Gap brauchen mind. 484px Breite -

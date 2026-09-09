@@ -69,6 +69,37 @@ function Navbar(){
                 <span></span><span></span><span></span>
             </button>
 
+            {/* Mobil: kompaktes Profilbild direkt in der immer sichtbaren
+                Kopfzeile statt erst im aufgeklappten Burger-Menue versteckt
+                (dort steckt unten in .nav-links weiterhin die volle Version
+                mit Name/Stufe/Currency). Eigenes Element statt das per CSS
+                aus .nav-links "herausgezogen" - display:none auf .nav-links
+                wuerde sonst auch ein Kind-Element mit ausblenden. Auf
+                breiten Screens per CSS wieder ausgeblendet, da unten in
+                .nav-links schon die normale Version sichtbar ist. */}
+            <NavLink to="/profil" className="nav-profil-mobil" onClick={() => setMenuOffen(false)} aria-label="Profil">
+                {/* Zum Testen: Name/Stufe/Currency VOR (also links von) dem
+                    Bild im Markup - eigene Klasse fuer die Ausrichtung, damit
+                    das die zentrierte Version im Burger-Dropdown (.profil-menu
+                    .profil-menu-text) nicht mit-beeinflusst. */}
+                <div className="profil-menu-text nav-profil-mobil-text">
+                    <span className="profil-menu-name">{eingeloggterName}</span>
+                    <span className="profil-menu-zeile">
+                        {aktuelleStufe.name} <span className="profil-menu-punkt"></span> {currency}
+                    </span>
+                </div>
+                <div className="profil-menu-avatar-wrap">
+                    {aktiverAvatar ? (
+                        <GeschuetztesBild src={bildUrl(aktiverAvatar.image_url)} alt={eingeloggterName} className="profil-menu-avatar"/>
+                    ) : (
+                        <img src={aktuelleStufe.avatarBild} alt={eingeloggterName} className="profil-menu-avatar"/>
+                    )}
+                    {aktiverRahmen && (
+                        <GeschuetztesBild src={bildUrl(aktiverRahmen.image_url)} alt="" className="avatar-rahmen-overlay"/>
+                    )}
+                </div>
+            </NavLink>
+
             <div className={`nav-links ${menuOffen ? "nav-links-offen" : ""}`}>
                 <NavLink to="/dashboard" className="nav-link" onClick={() => setMenuOffen(false)}>Dashboard</NavLink>
                 <NavLink to="/ranking" className="nav-link" onClick={() => setMenuOffen(false)}>Ranking</NavLink>

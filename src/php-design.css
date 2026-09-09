@@ -71,6 +71,20 @@ nav {
   display: none;
 }
 
+/* Ohne das hier greift der globale button:hover (background: var(--php-text),
+   also fast schwarz) - auf Touch-Geraeten bleibt der :hover-Zustand nach dem
+   Antippen oft haengen, der Burger wuerde dann als schwarzes Rechteck stehen
+   bleiben statt wie gewohnt auszusehen. */
+.nav-burger:hover {
+  background: none;
+}
+
+/* Nur auf schmalen Screens sichtbar (siehe Media Query weiter unten) - auf
+   breiten Screens steckt das Profilbild schon regulaer in .nav-links. */
+.nav-profil-mobil {
+  display: none;
+}
+
 .nav-links {
   display: flex;
   align-items: center;
@@ -229,9 +243,16 @@ button {
   transition: background 0.2s ease, color 0.2s ease;
 }
 
-button:hover {
-  background: var(--php-text);
-  color: #fff;
+/* (hover: hover) = Geraet hat einen echten Mauszeiger (PC). Ohne das bleibt
+   der Hover-Zustand auf Touch-Geraeten (Handy) nach dem Antippen haengen -
+   Button sieht dann dauerhaft schwarz gefuellt aus statt nur kurz beim
+   echten Hover. Betrifft ueberall dort, wo Buttons keinen eigenen Hover
+   definieren, z.B. die Quiz-Antworten (.quiz-antworten button). */
+@media (hover: hover) {
+  button:hover {
+    background: var(--php-text);
+    color: #fff;
+  }
 }
 
 /* ===== Listen (Karteikarten, Achievements) ===== */
@@ -1342,6 +1363,33 @@ th {
     transform: translateY(-7px) rotate(-45deg);
   }
 
+  /* .nav-links ist per position: absolute aus dem Flex-Fluss von nav
+     herausgenommen (siehe unten) - dadurch bleiben hier nur .nav-burger und
+     .nav-profil-mobil als Flex-Items uebrig, justify-content: space-between
+     (siehe nav oben) schiebt sie an die beiden Raender der Kopfzeile. */
+  .nav-profil-mobil {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    /* Etwas Abstand vom rechten Rand, sonst schneidet der Viewport-Rand
+       die letzten Ziffern der Currency-Zahl ab. */
+    margin-right: 8px;
+  }
+
+  /* Text rechtsbuendig, also "an das Bild herangeschmiegt" statt mittig -
+     typisches App-Muster (Name/Meta direkt links neben dem runden Avatar). */
+  .nav-profil-mobil-text {
+    align-items: flex-end;
+    text-align: right;
+  }
+
+  /* 10% kleiner (44px -> 40px) als das Original in .profil-menu, nur hier
+     im Kopfzeilen-Element - Dropdown-Avatar bleibt unangetastet. */
+  .nav-profil-mobil .profil-menu-avatar-wrap {
+    width: 40px;
+    height: 40px;
+  }
+
   .nav-links {
     display: none;
     position: absolute;
@@ -1367,16 +1415,10 @@ th {
     border-bottom: 1px solid var(--php-line);
   }
 
+  /* Name/Stufe/Currency (+ Bild) komplett aus dem Burger-Dropdown - steckt
+     oben in der Kopfzeile schon als .nav-profil-mobil, hier waer's doppelt. */
   .profil-menu {
-    margin-left: 0;
-    justify-content: flex-start;
-    padding: 14px 0;
-    border-bottom: 1px solid var(--php-line);
-  }
-
-  .profil-menu-text {
-    align-items: flex-start;
-    text-align: left;
+    display: none;
   }
 
   .nav-logout {
