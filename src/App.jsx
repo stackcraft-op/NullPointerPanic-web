@@ -15,6 +15,7 @@ import "./App.css"; // war bisher nirgends importiert - unsere .tageskarte-Style
 import ProfilBearbeitenPage from "./pages/ProfilBearbeitenPage";
 import UserContext from "./UserContext";
 import WikiPage from "./pages/WikiPage";
+import GeschuetzteRoute from "./components/GeschuetzteRoute";
 
 function App() {
   const [xp,setXp] = useState(0);
@@ -132,22 +133,28 @@ const quizFreigeschaltet = tagesKarten.length > 0 && verbleibendeKarten.length =
         setXp, setCurrency, setTagesKarten, setVerbleibendeKarten,
       }}>
       <Routes>
+        {/* Oeffentliche Seiten - brauchen keinen Login, hier waere eine
+            Weiterleitung zu /login sinnlos (Start ist die Landingpage,
+            Login/Registrieren sind der Weg dorthin ueberhaupt erst). */}
         <Route path = "/" element={<StartPage/>} />
         <Route path="/login" element={<LoginPage setEingeloggterName={setEingeloggterName} ladeProfil={ladeProfil} ladeTagesKarten={ladeTagesKarten} ladeShopItems={ladeShopItems}/>} />
-
-        <Route path="/dashboard" element={<DashboardPage tagesKarten={verbleibendeKarten} setTagesKarten={setVerbleibendeKarten} quizFreigeschaltet={quizFreigeschaltet} tagesKartenGeladen={tagesKartenGeladen}/>}/>
-
-        <Route path="/ranking" element={<RankingPage/>}/>
-        <Route path="/profil" element={<ProfilPage/>}/>
-        <Route path="/shop" element={<ShopPage/>}/>
-        <Route path="/quiz" element={<QuizPage tagesKarten={tagesKarten} quizFreigeschaltet={quizFreigeschaltet} ladeProfil={ladeProfil}/>}/>
-
-
-        <Route path="/wiki" element={<WikiPage/>}/>
         <Route path="/registrieren" element={<RegisterPage/>}/>
-        <Route path="/learning" element={<DailyLearningPage/>}/>
 
-        <Route path="/profil/bearbeiten" element ={<ProfilBearbeitenPage profilDaten={profilDaten} setProfilDaten={setProfilDaten}/>}/>
+        {/* Alle folgenden Seiten brauchen einen eingeloggten Nutzer - jede
+            von ihnen ruft im Hintergrund mindestens einen Endpoint mit
+            Authorization-Header auf (siehe api.js), waere also ohne Token
+            ohnehin nur eine leere/kaputte Seite voller 401-Fehler. */}
+        <Route path="/dashboard" element={<GeschuetzteRoute><DashboardPage tagesKarten={verbleibendeKarten} setTagesKarten={setVerbleibendeKarten} quizFreigeschaltet={quizFreigeschaltet} tagesKartenGeladen={tagesKartenGeladen}/></GeschuetzteRoute>}/>
+
+        <Route path="/ranking" element={<GeschuetzteRoute><RankingPage/></GeschuetzteRoute>}/>
+        <Route path="/profil" element={<GeschuetzteRoute><ProfilPage/></GeschuetzteRoute>}/>
+        <Route path="/shop" element={<GeschuetzteRoute><ShopPage/></GeschuetzteRoute>}/>
+        <Route path="/quiz" element={<GeschuetzteRoute><QuizPage tagesKarten={tagesKarten} quizFreigeschaltet={quizFreigeschaltet} ladeProfil={ladeProfil}/></GeschuetzteRoute>}/>
+
+        <Route path="/wiki" element={<GeschuetzteRoute><WikiPage/></GeschuetzteRoute>}/>
+        <Route path="/learning" element={<GeschuetzteRoute><DailyLearningPage/></GeschuetzteRoute>}/>
+
+        <Route path="/profil/bearbeiten" element ={<GeschuetzteRoute><ProfilBearbeitenPage profilDaten={profilDaten} setProfilDaten={setProfilDaten}/></GeschuetzteRoute>}/>
 
       </Routes>
       </UserContext.Provider>
