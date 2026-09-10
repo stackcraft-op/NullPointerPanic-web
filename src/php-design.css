@@ -452,6 +452,14 @@ th {
   color: var(--php-danger);
 }
 
+.wiki-inhaltsverzeichnis-eintrag {
+  cursor: pointer;
+}
+
+.wiki-inhaltsverzeichnis-eintrag:hover {
+  color: var(--php-danger);
+}
+
 .wiki-treffer {
   outline: 2px solid var(--php-danger);
   outline-offset: 4px;
