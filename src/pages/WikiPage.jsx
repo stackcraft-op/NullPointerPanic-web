@@ -35,6 +35,19 @@ function WikiPage (){
         return titelPasst || kartePasst;
     });
 
+    // Fuer Klicks im Inhaltsverzeichnis (Seite 0): reine Navigation zur
+    // Themenseite, ohne Treffer-Highlighting/-Navigation - anders als
+    // zuSeiteSpringen() unten, das fuer Suchtreffer gedacht ist und deshalb
+    // zielKarteIds befuellt. Mit leerem suchbegriff wuerde
+    // karte.question.includes("") sonst faelschlich ALLE Karten des Themas
+    // als "Treffer" markieren.
+    function zuThemaSpringen(thema){
+        const index = wikiThemenMock.findIndex((t)=> t.id === thema.id);
+        setSeitenIndex(index + 1);
+        setZielKarteIds([]);
+        setZielIndex(0);
+    }
+
     function zuSeiteSpringen(thema){
         const index = wikiThemenMock.findIndex((t)=> t.id === thema.id)
         setSeitenIndex(index +1)
@@ -99,7 +112,7 @@ function WikiPage (){
             <h2>Inhaltsverzeichnis</h2>
                 <ul>
                     {wikiThemenMock.map((thema)=>(
-                    <li key={thema.id}>{thema.id}. {thema.titel}</li>
+                    <li key={thema.id} className="wiki-inhaltsverzeichnis-eintrag" onClick={()=> zuThemaSpringen(thema)}>{thema.id}. {thema.titel}</li>
                 ))}
                 </ul>
             </>
@@ -121,7 +134,11 @@ function WikiPage (){
             {zielKarteIds.length > 1 && (
                 <div className="wiki-treffer-navigation">
                     <span className="wiki-treffer-zaehler">{zielIndex + 1} / {zielKarteIds.length}</span>
-                    <button onClick={()=> setZielIndex(0)} disabled={zielIndex === 0}>Zum Anfang</button>
+                    {/* Springt zum Seitenanfang selbst (window.scrollTo), nicht zum
+                        ersten Treffer - das waere mit setZielIndex(0) verwechselbar
+                        gewesen, macht aber inhaltlich etwas anderes ("ganz nach oben"
+                        vs. "erster Treffer"). */}
+                    <button onClick={()=> window.scrollTo({top: 0, behavior: "smooth"})}>Zum Anfang</button>
                     <button onClick={()=> vorherigerTreffer()} disabled={zielIndex === 0}>◀ Zurück</button>
                     <button onClick={()=> naechsterTreffer()} disabled={zielIndex === zielKarteIds.length - 1}>Weiter ▶</button>
                 </div>
