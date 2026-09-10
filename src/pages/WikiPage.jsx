@@ -134,7 +134,11 @@ function WikiPage (){
             {zielKarteIds.length > 1 && (
                 <div className="wiki-treffer-navigation">
                     <span className="wiki-treffer-zaehler">{zielIndex + 1} / {zielKarteIds.length}</span>
-                    <button onClick={()=> setZielIndex(0)} disabled={zielIndex === 0}>Zum Anfang</button>
+                    {/* Springt zum Seitenanfang selbst (window.scrollTo), nicht zum
+                        ersten Treffer - das waere mit setZielIndex(0) verwechselbar
+                        gewesen, macht aber inhaltlich etwas anderes ("ganz nach oben"
+                        vs. "erster Treffer"). */}
+                    <button onClick={()=> window.scrollTo({top: 0, behavior: "smooth"})}>Zum Anfang</button>
                     <button onClick={()=> vorherigerTreffer()} disabled={zielIndex === 0}>◀ Zurück</button>
                     <button onClick={()=> naechsterTreffer()} disabled={zielIndex === zielKarteIds.length - 1}>Weiter ▶</button>
                 </div>
