@@ -97,6 +97,15 @@ function WikiPage (){
 
     const gesamtSeiten = wikiThemenMock.length +1;
 
+    // Zuruecksetzen von zielKarteIds/zielIndex aus demselben Grund wie in
+    // zuThemaSpringen() - sonst wuerde man bei einem spaeteren Klick auf
+    // eine andere Themenseite kurzzeitig noch alte Treffer-Highlights sehen.
+    function zumInhaltsverzeichnis(){
+        setSeitenIndex(0);
+        setZielKarteIds([]);
+        setZielIndex(0);
+    }
+
     function vorherigeSeite(){
         setSeitenIndex(seitenIndex - 1);
     }
@@ -180,6 +189,9 @@ function WikiPage (){
             </div>
             <button onClick={()=>vorherigeSeite()} disabled={seitenIndex===0}>Vorherige Seite</button>
             <button onClick={()=>naechsteSeite()} disabled={seitenIndex === gesamtSeiten - 1}>Nächste Seite</button>
+            {seitenIndex !== 0 && (
+                <button onClick={()=> zumInhaltsverzeichnis()}>Zum Inhaltsverzeichnis</button>
+            )}
         </div>
     )
 }
