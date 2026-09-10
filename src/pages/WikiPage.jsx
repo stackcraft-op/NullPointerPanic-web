@@ -1,6 +1,7 @@
 import Navbar from "../components/Navbar";
 import { wikiThemenMock } from "../mockData";
 import { useState,useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { holeAlleKarteikarten } from "../api";
 
 function WikiPage (){
@@ -13,6 +14,21 @@ function WikiPage (){
         .then((karten)=> setAlleKarten(karten))
         .catch((error)=> console.error("Karteikarten laden fehlgeschlagen:", error))
     }, []);
+
+    // location.key aendert sich bei JEDEM Klick auf den Wiki-Navbar-Link,
+    // auch wenn man schon auf /wiki ist (react-router vergibt bei jeder
+    // Navigation einen neuen Key, unabhaengig davon ob sich der Pfad
+    // aendert) - anders als beim reinen Blaettern innerhalb der Seite
+    // (setSeitenIndex direkt, keine Router-Navigation), das hier NICHT
+    // greift. Damit springt ein erneuter Klick auf "Wiki" zurueck zum
+    // Inhaltsverzeichnis, statt auf der zuletzt offenen Themenseite
+    // stehenzubleiben.
+    const location = useLocation();
+    useEffect(()=>{
+        setSeitenIndex(0);
+        setZielKarteIds([]);
+        setZielIndex(0);
+    }, [location.key]);
 
     
     const[suchbegriff,setSuchbegriff] = useState("");
